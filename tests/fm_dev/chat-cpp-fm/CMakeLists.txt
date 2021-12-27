@@ -1,0 +1,2 @@
+add_executable(ChatCC1516e_fm ChatCC1516e_fm.cpp)
+target_link_libraries(ChatCC1516e_fm rti1516e fedtime1516e OpenRTI)

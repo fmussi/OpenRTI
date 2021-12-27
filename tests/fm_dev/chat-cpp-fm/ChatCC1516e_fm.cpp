@@ -88,7 +88,7 @@ public:
       vector<wstring> FOMmoduleUrls;
       std::wstring mimModule;
 
-      FOMmoduleUrls.push_back(OpenRTI::localeToUcs("/home/admin/git_repo/OpenRTI/tests/rti1516e/fddget/fdd-1.xml"));
+      FOMmoduleUrls.push_back(OpenRTI::localeToUcs("/home/admin/git_repo/OpenRTI/build/bin/Chat-evolved.xml"));
       mimModule = OpenRTI::localeToUcs("/home/admin/git_repo/OpenRTI/share/rti1516e/HLAstandardMIM.xml");
       
       try {
@@ -129,7 +129,7 @@ public:
          wstring localSettingsDesignator(L"rti://" + host);
          wcout << L"connecting to: " << localSettingsDesignator << endl;
          //_rtiAmbassador->connect(*this, HLA_IMMEDIATE,localSettingsDesignator);
-         _rtiAmbassador->connect(*this, HLA_EVOKED,localSettingsDesignator);
+         _rtiAmbassador->connect(*this, HLA_IMMEDIATE,localSettingsDesignator);
 
          try {
          //   _rtiAmbassador->destroyFederationExecution(L"ChatRoom");
@@ -187,9 +187,9 @@ public:
                _reservationComplete = false;
                _rtiAmbassador->reserveObjectInstanceName(_username);
                pthread_mutex_lock(&_mutex);
-               while (!_reservationComplete) {
+/*                while (!_reservationComplete) {
                   pthread_cond_wait(&_threshold_cv, &_mutex);
-               }
+               } */
                pthread_mutex_unlock(&_mutex);
                if (!_reservationSucceeded) {
                   wcout << L"Name already taken, try again.\n";

@@ -8,7 +8,7 @@
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "/home/admin/git_repo/OpenRTI/build/bin/ChatCC1516e_fm",
+            "program": "/home/admin/git_repo/OpenRTI/build/bin/ChatCC1516e_fm_mt",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",

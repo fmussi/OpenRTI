@@ -13,3 +13,4 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # Just for proper recursion
 add_subdirectory(chat-cpp-fm)
+add_subdirectory(multithread)

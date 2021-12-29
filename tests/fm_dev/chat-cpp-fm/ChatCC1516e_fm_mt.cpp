@@ -29,6 +29,12 @@ using namespace rti1516e;
 pthread_mutex_t _mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t _threshold_cv = PTHREAD_COND_INITIALIZER;
 
+//thread handshake vars
+bool _reservationSucceeded;
+bool _reservationComplete;
+
+void *ChatUI(void *threadarg);
+
 void string2wstring(wstring &dest, const string &src);
 
 // main class
@@ -48,8 +54,8 @@ private:
    wstring _username;
    wstring _message;
 
-   bool _reservationSucceeded;
-   bool _reservationComplete;
+   // bool _reservationSucceeded;
+   // bool _reservationComplete;
 
 public:
    ChatCCFederate() {
@@ -87,6 +93,9 @@ public:
       wchar_t tmpUsername[128];
       vector<wstring> FOMmoduleUrls;
       std::wstring mimModule;
+
+      int rc;
+      pthread_t threadId;
 
       FOMmoduleUrls.push_back(OpenRTI::localeToUcs("/home/admin/git_repo/OpenRTI/build/bin/Chat-evolved.xml"));
       mimModule = OpenRTI::localeToUcs("/home/admin/git_repo/OpenRTI/share/rti1516e/HLAstandardMIM.xml");
@@ -132,7 +141,7 @@ public:
          _rtiAmbassador->connect(*this, HLA_EVOKED,localSettingsDesignator);
 
          try {
-         //   _rtiAmbassador->destroyFederationExecution(L"ChatRoom");
+         _rtiAmbassador->destroyFederationExecution(L"ChatRoom");
          } catch (FederatesCurrentlyJoined ignored) {
          } catch (FederationExecutionDoesNotExist ignored) {
          } catch (RTIinternalError ignored) {
@@ -171,62 +180,72 @@ public:
          _setmode(_fileno(stderr), _O_TEXT);
          _setmode(_fileno(stdin), _O_TEXT);
 #endif
+// spawn to a new thread
+         rc = pthread_create(&threadId,NULL,ChatUI,reinterpret_cast<void *>(_rtiAmbassador.get()));
+         if (rc) {
+            cout << "Error: unable to create thread, " << rc << endl;
+            exit (-1);
+        }
+         // do {
+         //    wcout << L"Enter your name: ";
+         //    wcout.flush();
+         //    wcin.getline(tmpUsername, 128, '\n');
+         //    if (wcin.fail()) {
+         //       wcin.clear();
+         //       wcin.ignore(128, '\n');
+         //    }
 
-         do {
-            wcout << L"Enter your name: ";
-            wcout.flush();
-            wcin.getline(tmpUsername, 128, '\n');
-            if (wcin.fail()) {
-               wcin.clear();
-               wcin.ignore(128, '\n');
-            }
+         //    _username = tmpUsername;
 
-            _username = tmpUsername;
+         //    try {
+         //       _reservationComplete = false;
+         //       _rtiAmbassador->reserveObjectInstanceName(_username);
+         //       pthread_mutex_lock(&_mutex);
+         //       while (!_reservationComplete) {
+         //          pthread_cond_wait(&_threshold_cv, &_mutex);
+         //       }
+         //       pthread_mutex_unlock(&_mutex);
+         //       if (!_reservationSucceeded) {
+         //          wcout << L"Name already taken, try again.\n";
+         //       }
+         //    }
+         //    catch (IllegalName& e) {
+         //       wcout << L"Illegal name. Try again.\n";
+         //    }
+         //    catch (Exception&) {
+         //       wcout << L"RTI exception when reserving name: \n";
+         //       return;
+         //    }
+         // } while (!_reservationSucceeded);
 
-            try {
-               _reservationComplete = false;
-               _rtiAmbassador->reserveObjectInstanceName(_username);
-               pthread_mutex_lock(&_mutex);
-               while (!_reservationComplete) {
-                  pthread_cond_wait(&_threshold_cv, &_mutex);
-               } 
-               pthread_mutex_unlock(&_mutex);
-               if (!_reservationSucceeded) {
-                  wcout << L"Name already taken, try again.\n";
-               }
-            }
-            catch (IllegalName& e) {
-               wcout << L"Illegal name. Try again.\n";
-            }
-            catch (Exception&) {
-               wcout << L"RTI exception when reserving name: \n";
-               return;
-            }
-         } while (!_reservationSucceeded);
+         // HLAunicodeString unicodeUserName(_username);
+         // _iParticipantHdl = _rtiAmbassador->registerObjectInstance(_oParticipantId, _username);
+         // _aHandleValueMap[_aNameId] = unicodeUserName.encode();
+         // _rtiAmbassador->updateAttributeValues(_iParticipantHdl, _aHandleValueMap, VariableLengthData());
 
-         HLAunicodeString unicodeUserName(_username);
-         _iParticipantHdl = _rtiAmbassador->registerObjectInstance(_oParticipantId, _username);
-         _aHandleValueMap[_aNameId] = unicodeUserName.encode();
-         _rtiAmbassador->updateAttributeValues(_iParticipantHdl, _aHandleValueMap, VariableLengthData());
+         // wcout << L"Type messages you want to send. To exit, type . <ENTER>" << endl;
+         // while (true) {
+         //    wchar_t msg[256];
+         //    wstring wmsg;
+         //    wcout << L"> ";
+         //    wcout.flush();
+         //    wcin.getline(msg, sizeof(msg));
+         //    wmsg = msg;
 
-         wcout << L"Type messages you want to send. To exit, type . <ENTER>" << endl;
-         while (true) {
-            wchar_t msg[256];
-            wstring wmsg;
-            wcout << L"> ";
-            wcout.flush();
-            wcin.getline(msg, sizeof(msg));
-            wmsg = msg;
+         //    if (wmsg == L".") {
+         //       break;
+         //    }
 
-            if (wmsg == L".") {
-               break;
-            }
-
-            HLAunicodeString unicodeMessage(wmsg);
-            _pHandleValueMap[_pTextId] = unicodeMessage.encode();
-            _pHandleValueMap[_pSenderId] = unicodeUserName.encode();
-            _rtiAmbassador->sendInteraction(_iMessageId, _pHandleValueMap, VariableLengthData());
+         //    HLAunicodeString unicodeMessage(wmsg);
+         //    _pHandleValueMap[_pTextId] = unicodeMessage.encode();
+         //    _pHandleValueMap[_pSenderId] = unicodeUserName.encode();
+         //    _rtiAmbassador->sendInteraction(_iMessageId, _pHandleValueMap, VariableLengthData());
+         // }
+// end thread function
+         while(true) {
+            _rtiAmbassador->evokeMultipleCallbacks(2.0,5.0);
          }
+         pthread_join(threadId,NULL);
 
          _rtiAmbassador->resignFederationExecution(CANCEL_THEN_DELETE_THEN_DIVEST );
          try {
@@ -360,6 +379,86 @@ public:
       }
    }
 };
+
+void *ChatUI(void *threadarg) {
+
+   InteractionClassHandle _iMessageId;
+   ParameterHandle _pTextId;
+   ParameterHandle _pSenderId;
+   ObjectClassHandle _oParticipantId;
+   ObjectInstanceHandle _iParticipantHdl;
+   AttributeHandle _aNameId;
+   AttributeHandleSet _aHandleSet;
+   ParameterHandleValueMap _pHandleValueMap;
+   AttributeHandleValueMap _aHandleValueMap;
+
+   wstring _username;
+   wstring _message;
+
+   // bool _reservationSucceeded;
+   // bool _reservationComplete;
+
+   wchar_t tmpUsername[128];
+
+   auto_ptr<RTIambassador> _rtiAmbassador(reinterpret_cast<RTIambassador*>(threadarg));
+
+   do {
+      wcout << L"Enter your name: ";
+       wcout.flush();       wcin.getline(tmpUsername, 128, '\n');
+       if (wcin.fail()) {
+          wcin.clear();
+          wcin.ignore(128, '\n');
+      }
+
+      _username = tmpUsername;
+
+      try {
+         _reservationComplete = false;
+         _rtiAmbassador->reserveObjectInstanceName(_username);
+         pthread_mutex_lock(&_mutex);
+         while (!_reservationComplete) {
+            pthread_cond_wait(&_threshold_cv, &_mutex);
+         }
+         pthread_mutex_unlock(&_mutex);
+         if (!_reservationSucceeded) {
+            wcout << L"Name already taken, try again.\n";
+         }
+      }
+      catch (IllegalName& e) {
+         wcout << L"Illegal name. Try again.\n";
+      }
+      catch (Exception&) {
+         wcout << L"RTI exception when reserving name: \n";
+         pthread_exit(NULL);
+      }
+   } while (!_reservationSucceeded);
+
+   HLAunicodeString unicodeUserName(_username);
+   _iParticipantHdl = _rtiAmbassador->registerObjectInstance(_oParticipantId, _username);
+   _aHandleValueMap[_aNameId] = unicodeUserName.encode();
+   _rtiAmbassador->updateAttributeValues(_iParticipantHdl, _aHandleValueMap, VariableLengthData());
+
+   wcout << L"Type messages you want to send. To exit, type . <ENTER>" << endl;
+   while (true) {
+      wchar_t msg[256];
+      wstring wmsg;
+      wcout << L"> ";
+      wcout.flush();
+      wcin.getline(msg, sizeof(msg));
+      wmsg = msg;
+
+      if (wmsg == L".") {
+         break;
+      }
+
+      HLAunicodeString unicodeMessage(wmsg);
+      _pHandleValueMap[_pTextId] = unicodeMessage.encode();
+      _pHandleValueMap[_pSenderId] = unicodeUserName.encode();
+      _rtiAmbassador->sendInteraction(_iMessageId, _pHandleValueMap, VariableLengthData());
+   }
+
+}
+
 
 int main(int argc, char* argv[])
 {

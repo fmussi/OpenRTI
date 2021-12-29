@@ -1,0 +1,5 @@
+add_executable(multithreadTest multithread.cpp)
+target_link_libraries(multithreadTest pthread)
+
+add_executable(multipthreadTest multipthread.cpp)
+target_link_libraries(multipthreadTest pthread)

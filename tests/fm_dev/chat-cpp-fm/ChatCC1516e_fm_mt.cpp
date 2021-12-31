@@ -86,6 +86,34 @@ public:
 
    map<ObjectInstanceHandle, Participant> _knownObjects;	
 
+   // Accessors and mutators
+   auto_ptr<RTIambassador> get_rtiAmbassador(){return _rtiAmbassador;}
+   
+   InteractionClassHandle get_iMessageId(){return _iMessageId;}
+
+   ObjectInstanceHandle get_iParticipantHdl(){return _iParticipantHdl;}
+   void set_iParticipantHdl(ObjectInstanceHandle _iParticipantHdlIn)
+   {
+      this->_iParticipantHdl = _iParticipantHdlIn;
+   }  
+
+   AttributeHandleValueMap get_aHandleValueMap(){return _aHandleValueMap;}
+   void set_aHandleValueMapElement(AttributeHandle k, VariableLengthData v)
+   {
+      this->_aHandleValueMap[k] = v;
+   }  
+
+   ParameterHandleValueMap get_pHandleValueMap(){return _pHandleValueMap;}
+   void set_pHandleValueMapElement(ParameterHandle k, VariableLengthData v)
+   {
+      this->_pHandleValueMap[k] = v;
+   }
+
+   ParameterHandle get_pTextId(){return _pTextId;}
+   ParameterHandle get_pSenderId(){return _pSenderId;}
+   ObjectClassHandle get_oParticipantId(){return _oParticipantId;}
+   AttributeHandle get_aNameId(){return _aNameId;}
+
    void run(int argc, char* argv[]){
       wstring host = L"localhost";
       wstring port = L"8989";
@@ -180,8 +208,9 @@ public:
          _setmode(_fileno(stderr), _O_TEXT);
          _setmode(_fileno(stdin), _O_TEXT);
 #endif
-// spawn to a new thread
-         rc = pthread_create(&threadId,NULL,ChatUI,reinterpret_cast<void *>(_rtiAmbassador.get()));
+         // spawn to a new thread
+         // rc = pthread_create(&threadId,NULL,ChatUI,reinterpret_cast<void *>(_rtiAmbassador.get()));
+         rc = pthread_create(&threadId,NULL,ChatUI,static_cast<void *>(this));
          if (rc) {
             cout << "Error: unable to create thread, " << rc << endl;
             exit (-1);
@@ -380,17 +409,34 @@ public:
    }
 };
 
+int main(int argc, char* argv[])
+{
+   ChatCCFederate* chatCCFederate = new ChatCCFederate();
+   chatCCFederate->run(argc, argv);
+   delete chatCCFederate;
+   return 0;
+}
+
+void string2wstring (wstring &dest, const string &src)
+{
+    dest.resize(src.size());
+    for (string::size_type i = 0; i < src.size(); i++) {
+        dest[i] = static_cast<unsigned char>(src[i]);
+    }
+}
+
 void *ChatUI(void *threadarg) {
 
-   InteractionClassHandle _iMessageId;
-   ParameterHandle _pTextId;
-   ParameterHandle _pSenderId;
-   ObjectClassHandle _oParticipantId;
-   ObjectInstanceHandle _iParticipantHdl;
-   AttributeHandle _aNameId;
-   AttributeHandleSet _aHandleSet;
-   ParameterHandleValueMap _pHandleValueMap;
-   AttributeHandleValueMap _aHandleValueMap;
+   // InteractionClassHandle _iMessageId;
+   // ParameterHandle _pTextId;
+   // ParameterHandle _pSenderId;
+   // ObjectClassHandle _oParticipantId;
+   // ObjectInstanceHandle _iParticipantHdl;
+   // AttributeHandle _aNameId;
+   // AttributeHandleSet _aHandleSet;
+   // ParameterHandleValueMap _pHandleValueMap;
+   // AttributeHandleValueMap _aHandleValueMap;
+   ChatCCFederate *_oFederate(static_cast<ChatCCFederate*>(threadarg));
 
    wstring _username;
    wstring _message;
@@ -400,7 +446,8 @@ void *ChatUI(void *threadarg) {
 
    wchar_t tmpUsername[128];
 
-   auto_ptr<RTIambassador> _rtiAmbassador(reinterpret_cast<RTIambassador*>(threadarg));
+   //auto_ptr<RTIambassador> _rtiAmbassador(reinterpret_cast<RTIambassador*>(threadarg));
+   //auto_ptr<RTIambassador> _rtiAmbassador(static_cast<RTIambassador*>(threadarg));
 
    do {
       wcout << L"Enter your name: ";
@@ -414,7 +461,8 @@ void *ChatUI(void *threadarg) {
 
       try {
          _reservationComplete = false;
-         _rtiAmbassador->reserveObjectInstanceName(_username);
+         _oFederate->get_rtiAmbassador()->reserveObjectInstanceName(_username);
+         //_rtiAmbassador->reserveObjectInstanceName(_username);
          pthread_mutex_lock(&_mutex);
          while (!_reservationComplete) {
             pthread_cond_wait(&_threshold_cv, &_mutex);
@@ -434,9 +482,12 @@ void *ChatUI(void *threadarg) {
    } while (!_reservationSucceeded);
 
    HLAunicodeString unicodeUserName(_username);
-   _iParticipantHdl = _rtiAmbassador->registerObjectInstance(_oParticipantId, _username);
-   _aHandleValueMap[_aNameId] = unicodeUserName.encode();
-   _rtiAmbassador->updateAttributeValues(_iParticipantHdl, _aHandleValueMap, VariableLengthData());
+   _oFederate->set_iParticipantHdl(_oFederate->get_rtiAmbassador()->registerObjectInstance(_oFederate->get_oParticipantId(), _username));
+   //_iParticipantHdl = _rtiAmbassador->registerObjectInstance(_oParticipantId, _username);
+   //_aHandleValueMap[_aNameId] = unicodeUserName.encode();
+   _oFederate->set_aHandleValueMapElement(_oFederate->get_aNameId(),unicodeUserName.encode());
+   //_rtiAmbassador->updateAttributeValues(_iParticipantHdl, _aHandleValueMap, VariableLengthData());
+   _oFederate->get_rtiAmbassador()->updateAttributeValues(_oFederate->get_iParticipantHdl(), _oFederate->get_aHandleValueMap(), VariableLengthData());
 
    wcout << L"Type messages you want to send. To exit, type . <ENTER>" << endl;
    while (true) {
@@ -452,26 +503,12 @@ void *ChatUI(void *threadarg) {
       }
 
       HLAunicodeString unicodeMessage(wmsg);
-      _pHandleValueMap[_pTextId] = unicodeMessage.encode();
-      _pHandleValueMap[_pSenderId] = unicodeUserName.encode();
-      _rtiAmbassador->sendInteraction(_iMessageId, _pHandleValueMap, VariableLengthData());
+      // _pHandleValueMap[_pTextId] = unicodeMessage.encode();
+      // _pHandleValueMap[_pSenderId] = unicodeUserName.encode();
+      _oFederate->set_pHandleValueMapElement(_oFederate->get_pTextId(),unicodeMessage.encode());
+      _oFederate->set_pHandleValueMapElement(_oFederate->get_pSenderId(),unicodeUserName.encode());
+      //_rtiAmbassador->sendInteraction(_oFederate->get_iMessageId(), _pHandleValueMap, VariableLengthData());
+      _oFederate->get_rtiAmbassador()->sendInteraction(_oFederate->get_iMessageId(), _oFederate->get_pHandleValueMap(), VariableLengthData());
    }
 
-}
-
-
-int main(int argc, char* argv[])
-{
-   ChatCCFederate* chatCCFederate = new ChatCCFederate();
-   chatCCFederate->run(argc, argv);
-   delete chatCCFederate;
-   return 0;
-}
-
-void string2wstring (wstring &dest, const string &src)
-{
-    dest.resize(src.size());
-    for (string::size_type i = 0; i < src.size(); i++) {
-        dest[i] = static_cast<unsigned char>(src[i]);
-    }
 }

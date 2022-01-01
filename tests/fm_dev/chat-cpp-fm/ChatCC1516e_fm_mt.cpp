@@ -7,9 +7,10 @@
 #include <assert.h>
 #include <exception>
 #include <map>
-#include <pthread.h>
+//#include <pthread.h>
 #include <semaphore.h>
 #include <string.h>
+#include <thread>
 
 // RTI specific headers
 #include <RTI/RTIambassadorFactory.h>
@@ -32,8 +33,6 @@ pthread_cond_t _threshold_cv = PTHREAD_COND_INITIALIZER;
 //thread handshake vars
 bool _reservationSucceeded;
 bool _reservationComplete;
-
-void *ChatUI(void *threadarg);
 
 void string2wstring(wstring &dest, const string &src);
 
@@ -58,6 +57,7 @@ private:
    // bool _reservationComplete;
 
 public:
+
    ChatCCFederate() {
    }
 
@@ -86,33 +86,77 @@ public:
 
    map<ObjectInstanceHandle, Participant> _knownObjects;	
 
-   // Accessors and mutators
-   auto_ptr<RTIambassador> get_rtiAmbassador(){return _rtiAmbassador;}
-   
-   InteractionClassHandle get_iMessageId(){return _iMessageId;}
 
-   ObjectInstanceHandle get_iParticipantHdl(){return _iParticipantHdl;}
-   void set_iParticipantHdl(ObjectInstanceHandle _iParticipantHdlIn)
-   {
-      this->_iParticipantHdl = _iParticipantHdlIn;
-   }  
+   void ChatUI() {
 
-   AttributeHandleValueMap get_aHandleValueMap(){return _aHandleValueMap;}
-   void set_aHandleValueMapElement(AttributeHandle k, VariableLengthData v)
-   {
-      this->_aHandleValueMap[k] = v;
-   }  
+      wchar_t tmpUsername[128];
 
-   ParameterHandleValueMap get_pHandleValueMap(){return _pHandleValueMap;}
-   void set_pHandleValueMapElement(ParameterHandle k, VariableLengthData v)
-   {
-      this->_pHandleValueMap[k] = v;
+      //auto_ptr<RTIambassador> _rtiAmbassador(reinterpret_cast<RTIambassador*>(threadarg));
+      //auto_ptr<RTIambassador> _rtiAmbassador(static_cast<RTIambassador*>(threadarg));
+
+      do {
+         wcout << L"Enter your name: ";
+         wcout.flush();
+         wcin.getline(tmpUsername, 128, '\n');
+         if (wcin.fail()) {
+            wcin.clear();
+            wcin.ignore(128, '\n');
+         }
+
+         _username = tmpUsername;
+
+         try {
+            _reservationComplete = false;
+            _rtiAmbassador->reserveObjectInstanceName(_username);
+            //_rtiAmbassador->reserveObjectInstanceName(_username);
+            pthread_mutex_lock(&_mutex);
+            while (!_reservationComplete) {
+               pthread_cond_wait(&_threshold_cv, &_mutex);
+            }
+            pthread_mutex_unlock(&_mutex);
+            if (!_reservationSucceeded) {
+               wcout << L"Name already taken, try again.\n";
+            }
+         }
+         catch (IllegalName& e) {
+            wcout << L"Illegal name. Try again.\n";
+         }
+         catch (Exception&) {
+            wcout << L"RTI exception when reserving name: \n";
+            pthread_exit(NULL);
+         }
+      } while (!_reservationSucceeded);
+
+      HLAunicodeString unicodeUserName(_username);
+      _iParticipantHdl = _rtiAmbassador->registerObjectInstance(_oParticipantId, _username);
+      _aHandleValueMap[_aNameId] = unicodeUserName.encode();
+      _rtiAmbassador->updateAttributeValues(_iParticipantHdl, _aHandleValueMap, VariableLengthData());
+      
+      wcout << L"Type messages you want to send. To exit, type . <ENTER>" << endl;
+      while (true) {
+         wchar_t msg[256];
+         wstring wmsg;
+         wcout << L"> ";
+         wcout.flush();
+         wcin.getline(msg, sizeof(msg));
+         wmsg = msg;
+
+         if (wmsg == L".") {
+            break;
+         }
+
+         HLAunicodeString unicodeMessage(wmsg);
+         _pHandleValueMap[_pTextId] = unicodeMessage.encode();
+         _pHandleValueMap[_pSenderId] = unicodeUserName.encode();
+         _rtiAmbassador->sendInteraction(_iMessageId, _pHandleValueMap, VariableLengthData());
+      }
+
    }
-
-   ParameterHandle get_pTextId(){return _pTextId;}
-   ParameterHandle get_pSenderId(){return _pSenderId;}
-   ObjectClassHandle get_oParticipantId(){return _oParticipantId;}
-   AttributeHandle get_aNameId(){return _aNameId;}
+   // static class to be used as a thread arg
+   static void thread_ChatUI(void* data) {
+      ChatCCFederate *ccInstance = static_cast<ChatCCFederate *>(data);
+      ccInstance->ChatUI();
+   }
 
    void run(int argc, char* argv[]){
       wstring host = L"localhost";
@@ -209,12 +253,13 @@ public:
          _setmode(_fileno(stdin), _O_TEXT);
 #endif
          // spawn to a new thread
+         thread th1(thread_ChatUI,this);
          // rc = pthread_create(&threadId,NULL,ChatUI,reinterpret_cast<void *>(_rtiAmbassador.get()));
-         rc = pthread_create(&threadId,NULL,ChatUI,static_cast<void *>(this));
-         if (rc) {
-            cout << "Error: unable to create thread, " << rc << endl;
-            exit (-1);
-        }
+         //rc = pthread_create(&threadId,NULL,&ChatUI,NULL);
+         //    if (rc) {
+         //       cout << "Error: unable to create thread, " << rc << endl;
+         //       exit (-1);
+         //   }
          // do {
          //    wcout << L"Enter your name: ";
          //    wcout.flush();
@@ -274,7 +319,8 @@ public:
          while(true) {
             _rtiAmbassador->evokeMultipleCallbacks(2.0,5.0);
          }
-         pthread_join(threadId,NULL);
+         //pthread_join(threadId,NULL);
+         th1.join();
 
          _rtiAmbassador->resignFederationExecution(CANCEL_THEN_DELETE_THEN_DIVEST );
          try {
@@ -296,6 +342,7 @@ public:
       wchar_t emptybuffer[256];
       wcin.getline(emptybuffer, sizeof(emptybuffer));
    }
+
 
    virtual
    void
@@ -423,92 +470,4 @@ void string2wstring (wstring &dest, const string &src)
     for (string::size_type i = 0; i < src.size(); i++) {
         dest[i] = static_cast<unsigned char>(src[i]);
     }
-}
-
-void *ChatUI(void *threadarg) {
-
-   // InteractionClassHandle _iMessageId;
-   // ParameterHandle _pTextId;
-   // ParameterHandle _pSenderId;
-   // ObjectClassHandle _oParticipantId;
-   // ObjectInstanceHandle _iParticipantHdl;
-   // AttributeHandle _aNameId;
-   // AttributeHandleSet _aHandleSet;
-   // ParameterHandleValueMap _pHandleValueMap;
-   // AttributeHandleValueMap _aHandleValueMap;
-   ChatCCFederate *_oFederate(static_cast<ChatCCFederate*>(threadarg));
-
-   wstring _username;
-   wstring _message;
-
-   // bool _reservationSucceeded;
-   // bool _reservationComplete;
-
-   wchar_t tmpUsername[128];
-
-   //auto_ptr<RTIambassador> _rtiAmbassador(reinterpret_cast<RTIambassador*>(threadarg));
-   //auto_ptr<RTIambassador> _rtiAmbassador(static_cast<RTIambassador*>(threadarg));
-
-   do {
-      wcout << L"Enter your name: ";
-       wcout.flush();       wcin.getline(tmpUsername, 128, '\n');
-       if (wcin.fail()) {
-          wcin.clear();
-          wcin.ignore(128, '\n');
-      }
-
-      _username = tmpUsername;
-
-      try {
-         _reservationComplete = false;
-         _oFederate->get_rtiAmbassador()->reserveObjectInstanceName(_username);
-         //_rtiAmbassador->reserveObjectInstanceName(_username);
-         pthread_mutex_lock(&_mutex);
-         while (!_reservationComplete) {
-            pthread_cond_wait(&_threshold_cv, &_mutex);
-         }
-         pthread_mutex_unlock(&_mutex);
-         if (!_reservationSucceeded) {
-            wcout << L"Name already taken, try again.\n";
-         }
-      }
-      catch (IllegalName& e) {
-         wcout << L"Illegal name. Try again.\n";
-      }
-      catch (Exception&) {
-         wcout << L"RTI exception when reserving name: \n";
-         pthread_exit(NULL);
-      }
-   } while (!_reservationSucceeded);
-
-   HLAunicodeString unicodeUserName(_username);
-   _oFederate->set_iParticipantHdl(_oFederate->get_rtiAmbassador()->registerObjectInstance(_oFederate->get_oParticipantId(), _username));
-   //_iParticipantHdl = _rtiAmbassador->registerObjectInstance(_oParticipantId, _username);
-   //_aHandleValueMap[_aNameId] = unicodeUserName.encode();
-   _oFederate->set_aHandleValueMapElement(_oFederate->get_aNameId(),unicodeUserName.encode());
-   //_rtiAmbassador->updateAttributeValues(_iParticipantHdl, _aHandleValueMap, VariableLengthData());
-   _oFederate->get_rtiAmbassador()->updateAttributeValues(_oFederate->get_iParticipantHdl(), _oFederate->get_aHandleValueMap(), VariableLengthData());
-
-   wcout << L"Type messages you want to send. To exit, type . <ENTER>" << endl;
-   while (true) {
-      wchar_t msg[256];
-      wstring wmsg;
-      wcout << L"> ";
-      wcout.flush();
-      wcin.getline(msg, sizeof(msg));
-      wmsg = msg;
-
-      if (wmsg == L".") {
-         break;
-      }
-
-      HLAunicodeString unicodeMessage(wmsg);
-      // _pHandleValueMap[_pTextId] = unicodeMessage.encode();
-      // _pHandleValueMap[_pSenderId] = unicodeUserName.encode();
-      _oFederate->set_pHandleValueMapElement(_oFederate->get_pTextId(),unicodeMessage.encode());
-      _oFederate->set_pHandleValueMapElement(_oFederate->get_pSenderId(),unicodeUserName.encode());
-      //_rtiAmbassador->sendInteraction(_oFederate->get_iMessageId(), _pHandleValueMap, VariableLengthData());
-      _oFederate->get_rtiAmbassador()->sendInteraction(_oFederate->get_iMessageId(), _oFederate->get_pHandleValueMap(), VariableLengthData());
-   }
-
 }

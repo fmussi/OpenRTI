@@ -68,7 +68,7 @@ namespace rti1516eLv
         return 12345;
     }
 
-    EXTERNC auto_ptr<RTIambassador> createRTIambassadorLv()
+    EXTERNC void* createRTIambassadorLv()
     {
         auto_ptr<RTIambassador> _rtiAmbassador;
 
@@ -77,19 +77,20 @@ namespace rti1516eLv
             _rtiAmbassador = rtiAmbassadorFactory->createRTIambassador();
             
             //return sizeof(_rtiAmbassador);
-            return _rtiAmbassador;
+            return static_cast<void*>(_rtiAmbassador.get());
         }
         catch (RTIinternalError &e) {
             e.what();
         }
     }
 
-    EXTERNC int connectLv(auto_ptr<RTIambassador> _rtiAmbassador, const char address[])
+    EXTERNC int connectLv(void* _rtiAmbassadorIn, const char address[])
     {
         LvFederate oLvFed;
         string addrStrr(address);
         wstring host;
         host.assign(addrStrr.begin(),addrStrr.end());
+        RTIambassador *_rtiAmbassador = static_cast<RTIambassador*>(_rtiAmbassadorIn);
 
         try {
             wstring localSettingsDesignator(L"rti://" + host);
@@ -108,9 +109,18 @@ namespace rti1516eLv
         }
     }
 
-    EXTERNC int disconnectLv(auto_ptr<RTIambassador> _rtiAmbassador)
+    EXTERNC int disconnectLv(void* _rtiAmbassadorIn)
     {
+        RTIambassador *_rtiAmbassador = static_cast<RTIambassador*>(_rtiAmbassadorIn);
         _rtiAmbassador->disconnect();
+        return 0;
+    }
+
+    EXTERNC int destroyRTIambassadorLv(void* _rtiAmbassadorIn)
+    {
+        RTIambassador *_rtiAmbassador = static_cast<RTIambassador*>(_rtiAmbassadorIn);
+
+        delete _rtiAmbassador;
         return 0;
     }
 

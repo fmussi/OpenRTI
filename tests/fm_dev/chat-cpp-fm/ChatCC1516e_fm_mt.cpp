@@ -108,7 +108,6 @@ public:
          try {
             _reservationComplete = false;
             _rtiAmbassador->reserveObjectInstanceName(_username);
-            //_rtiAmbassador->reserveObjectInstanceName(_username);
             pthread_mutex_lock(&_mutex);
             while (!_reservationComplete) {
                pthread_cond_wait(&_threshold_cv, &_mutex);
@@ -260,62 +259,7 @@ public:
          //       cout << "Error: unable to create thread, " << rc << endl;
          //       exit (-1);
          //   }
-         // do {
-         //    wcout << L"Enter your name: ";
-         //    wcout.flush();
-         //    wcin.getline(tmpUsername, 128, '\n');
-         //    if (wcin.fail()) {
-         //       wcin.clear();
-         //       wcin.ignore(128, '\n');
-         //    }
-
-         //    _username = tmpUsername;
-
-         //    try {
-         //       _reservationComplete = false;
-         //       _rtiAmbassador->reserveObjectInstanceName(_username);
-         //       pthread_mutex_lock(&_mutex);
-         //       while (!_reservationComplete) {
-         //          pthread_cond_wait(&_threshold_cv, &_mutex);
-         //       }
-         //       pthread_mutex_unlock(&_mutex);
-         //       if (!_reservationSucceeded) {
-         //          wcout << L"Name already taken, try again.\n";
-         //       }
-         //    }
-         //    catch (IllegalName& e) {
-         //       wcout << L"Illegal name. Try again.\n";
-         //    }
-         //    catch (Exception&) {
-         //       wcout << L"RTI exception when reserving name: \n";
-         //       return;
-         //    }
-         // } while (!_reservationSucceeded);
-
-         // HLAunicodeString unicodeUserName(_username);
-         // _iParticipantHdl = _rtiAmbassador->registerObjectInstance(_oParticipantId, _username);
-         // _aHandleValueMap[_aNameId] = unicodeUserName.encode();
-         // _rtiAmbassador->updateAttributeValues(_iParticipantHdl, _aHandleValueMap, VariableLengthData());
-
-         // wcout << L"Type messages you want to send. To exit, type . <ENTER>" << endl;
-         // while (true) {
-         //    wchar_t msg[256];
-         //    wstring wmsg;
-         //    wcout << L"> ";
-         //    wcout.flush();
-         //    wcin.getline(msg, sizeof(msg));
-         //    wmsg = msg;
-
-         //    if (wmsg == L".") {
-         //       break;
-         //    }
-
-         //    HLAunicodeString unicodeMessage(wmsg);
-         //    _pHandleValueMap[_pTextId] = unicodeMessage.encode();
-         //    _pHandleValueMap[_pSenderId] = unicodeUserName.encode();
-         //    _rtiAmbassador->sendInteraction(_iMessageId, _pHandleValueMap, VariableLengthData());
-         // }
-// end thread function
+         // TODO - add logic to monitor thread
          while(true) {
             _rtiAmbassador->evokeMultipleCallbacks(2.0,5.0);
          }

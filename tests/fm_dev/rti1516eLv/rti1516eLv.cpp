@@ -33,6 +33,18 @@ namespace rti1516eLv
 {   
     int _rtiCount = 0;
     //map<int,auto_ptr<RTIambassador>> _rtiMap;
+    // temp LVuser event store
+    LVUserEventRef tempUserEvStore;
+
+    wstring chararray2wstring(const char charArray[])
+    {
+        wstring wStringOut;
+        // allocate strings
+        string sStringTemp(charArray);
+        wStringOut.assign(sStringTemp.begin(),sStringTemp.end());
+
+        return wStringOut;
+    }
 
     class LvFederate : public NullFederateAmbassador {
     private:
@@ -45,6 +57,11 @@ namespace rti1516eLv
         AttributeHandleSet _aHandleSet;
         ParameterHandleValueMap _pHandleValueMap;
         AttributeHandleValueMap _aHandleValueMap;
+
+        //LV user event references
+        LVUserEventRef lueObjInsNameResSucceeded;
+        LVUserEventRef lueObjInsNameResFailed;
+        
 
         wstring _username;
         wstring _message;
@@ -64,12 +81,42 @@ namespace rti1516eLv
             //ChatCCFederate *ccInstance = static_cast<ChatCCFederate *>(data);
             //ccInstance->ChatUI();
         }
+        
+        virtual void objectInstanceNameReservationSucceeded(
+            wstring const & theObjectInstanceName)
+            throw (FederateInternalError)
+        {
+            double eventData = 12345.0;
+            // send LV event
+            PostLVUserEvent(lueObjInsNameResSucceeded,&eventData);
+        }
 
+        virtual void objectInstanceNameReservationFailed(
+            wstring const & theObjectInstanceName)
+            throw (FederateInternalError)
+        {            
+            double eventData = 54321.0;
+            // send LV event
+            PostLVUserEvent(lueObjInsNameResFailed,&eventData);
+        }
     };
     
     EXTERNC int testFunc()
     {
         return 12345;
+    }
+
+    EXTERNC int regObjInstNameResSuccEvent(LVUserEventRef *eventRef)
+    {
+        tempUserEvStore = *eventRef;
+        return 0;
+    }
+
+    EXTERNC MgErr testFireEvent(int value)
+    {
+        MgErr status;
+        status = PostLVUserEvent(tempUserEvStore,&value);
+        return status;
     }
 
     EXTERNC int createRTIambassadorLv(RTIambassador **rtiHandle)
@@ -79,9 +126,6 @@ namespace rti1516eLv
         try {
             auto_ptr<RTIambassadorFactory> rtiAmbassadorFactory(new RTIambassadorFactory());
             _rtiAmbassador = rtiAmbassadorFactory->createRTIambassador();
-            
-            //return sizeof(_rtiAmbassador);
-            //return static_cast<void*>(_rtiAmbassador.get());
 
             *rtiHandle = _rtiAmbassador.release();
             _rtiCount++;
@@ -100,11 +144,10 @@ namespace rti1516eLv
     {
         LvFederate oLvFed;
         auto_ptr<RTIambassador> _rtiAmbassador;
-        string addrStr(address);
-        wstring host;
-        host.assign(addrStr.begin(),addrStr.end());
-        //RTIambassador *_rtiAmbassador = static_cast<RTIambassador*>(_rtiAmbassadorIn);
-
+        //string addrStr(address);
+        //host.assign(addrStr.begin(),addrStr.end());
+        wstring host = chararray2wstring(address);
+        
         try {
             wstring localSettingsDesignator(L"rti://" + host);
             rtiHandle->connect(oLvFed,HLA_EVOKED,localSettingsDesignator);
@@ -133,11 +176,8 @@ namespace rti1516eLv
         // implementation
         vector<wstring> FOMmoduleUrls;
         wstring mimModuleUrl;
-        // allocate strings
-        string sFedExecName(federationExecutionName);
-        wstring wFedExecName;
-        wFedExecName.assign(sFedExecName.begin(),sFedExecName.end());
-        
+        wstring wFedExecName = chararray2wstring(federationExecutionName);
+
         FOMmoduleUrls.push_back(OpenRTI::localeToUcs(fomModules));
         mimModuleUrl = OpenRTI::localeToUcs(mimModule);
 
@@ -157,11 +197,13 @@ namespace rti1516eLv
     {
         // implementation
         vector<wstring> FOMmoduleUrls;
-        string sFedType(federateType);
-        string sFedExecName(federationExecutionName);
-        wstring wFedType,wFedExecName;
-        wFedType.assign(sFedType.begin(),sFedType.end());
-        wFedExecName.assign(sFedExecName.begin(),sFedExecName.end());
+        // string sFedType(federateType);
+        // string sFedExecName(federationExecutionName);
+        // wstring wFedType,wFedExecName;
+        // wFedType.assign(sFedType.begin(),sFedType.end());
+        // wFedExecName.assign(sFedExecName.begin(),sFedExecName.end());
+        wstring wFedType = chararray2wstring(federateType);
+        wstring wFedExecName = chararray2wstring(federationExecutionName);
 
         FOMmoduleUrls.push_back(OpenRTI::localeToUcs(additionalFomModules));
 
@@ -209,6 +251,13 @@ namespace rti1516eLv
         const char theObjectInstanceName[])
     {
         // implementation
+        // string sObjInstName(theObjectInstanceName);
+        // wstring wObjInstName;
+        // wObjInstName.assign(sObjInstName.begin(),sObjInstName.end());
+        wstring wObjInstName = chararray2wstring(theObjectInstanceName);
+
+        rtiHandle->reserveObjectInstanceName(wObjInstName);
+
     }  
 
     EXTERNC int registerObjectInstanceLv(
@@ -291,9 +340,10 @@ namespace rti1516eLv
         const char federationExecutionName[])
     {
         // implementation
-        string sFedExecName(federationExecutionName);
-        wstring wFedExecName;
-        wFedExecName.assign(sFedExecName.begin(),sFedExecName.end());
+        // string sFedExecName(federationExecutionName);
+        // wstring wFedExecName;
+        // wFedExecName.assign(sFedExecName.begin(),sFedExecName.end());
+        wstring wFedExecName = chararray2wstring(federationExecutionName);
     
         try{
             rtiHandle->destroyFederationExecution(wFedExecName);

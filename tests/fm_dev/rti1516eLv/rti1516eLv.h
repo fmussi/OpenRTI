@@ -1,11 +1,11 @@
-#ifndef _RTI1516ELV_H__
-#define _RTI1516ELV_H__
+#ifndef RTI1516ELV_H
+#define RTI1516ELV_H
 
 // #ifdef __cplusplus
 // extern "C" {
 // #endif
 
-#include "rti1516eLv_EXPORTS.h"
+//#include "rti1516eLv_EXPORTS.h"
 #include "cintools/extcode.h"
 
 

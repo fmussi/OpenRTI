@@ -28,8 +28,12 @@
 using namespace std;
 using namespace rti1516e;
 
+
 namespace rti1516eLv
-{
+{   
+    int _rtiCount = 0;
+    //map<int,auto_ptr<RTIambassador>> _rtiMap;
+
     class LvFederate : public NullFederateAmbassador {
     private:
         InteractionClassHandle _iMessageId;
@@ -68,7 +72,7 @@ namespace rti1516eLv
         return 12345;
     }
 
-    EXTERNC void* createRTIambassadorLv()
+    EXTERNC int createRTIambassadorLv(RTIambassador **rtiHandle)
     {
         auto_ptr<RTIambassador> _rtiAmbassador;
 
@@ -77,24 +81,34 @@ namespace rti1516eLv
             _rtiAmbassador = rtiAmbassadorFactory->createRTIambassador();
             
             //return sizeof(_rtiAmbassador);
-            return static_cast<void*>(_rtiAmbassador.get());
+            //return static_cast<void*>(_rtiAmbassador.get());
+
+            *rtiHandle = _rtiAmbassador.release();
+            _rtiCount++;
+            return _rtiCount;
+            
+
         }
         catch (RTIinternalError &e) {
             e.what();
         }
     }
 
-    EXTERNC int connectLv(void* _rtiAmbassadorIn, const char address[])
+    EXTERNC int connectLv(
+        RTIambassador *rtiHandle, 
+        const char address[])
     {
         LvFederate oLvFed;
-        string addrStrr(address);
+        auto_ptr<RTIambassador> _rtiAmbassador;
+        string addrStr(address);
         wstring host;
-        host.assign(addrStrr.begin(),addrStrr.end());
-        RTIambassador *_rtiAmbassador = static_cast<RTIambassador*>(_rtiAmbassadorIn);
+        host.assign(addrStr.begin(),addrStr.end());
+        //RTIambassador *_rtiAmbassador = static_cast<RTIambassador*>(_rtiAmbassadorIn);
 
         try {
             wstring localSettingsDesignator(L"rti://" + host);
-            _rtiAmbassador->connect(oLvFed,HLA_EVOKED,localSettingsDesignator);
+            rtiHandle->connect(oLvFed,HLA_EVOKED,localSettingsDesignator);
+            //_rtiAmbassador->connect(oLvFed,HLA_EVOKED,localSettingsDesignator);
 
         }
         catch (CouldNotOpenFDD &fdde) {
@@ -109,20 +123,197 @@ namespace rti1516eLv
         }
     }
 
-    EXTERNC int disconnectLv(void* _rtiAmbassadorIn)
+    EXTERNC int createFederationExecutionWithMIMLv(
+        RTIambassador *rtiHandle, 
+        const char federationExecutionName[],
+        const char fomModules[],
+        const char mimModule[],
+        const char logicalTimeImplementationName[])
     {
-        RTIambassador *_rtiAmbassador = static_cast<RTIambassador*>(_rtiAmbassadorIn);
-        _rtiAmbassador->disconnect();
+        // implementation
+        vector<wstring> FOMmoduleUrls;
+        wstring mimModuleUrl;
+        // allocate strings
+        string sFedExecName(federationExecutionName);
+        wstring wFedExecName;
+        wFedExecName.assign(sFedExecName.begin(),sFedExecName.end());
+        
+        FOMmoduleUrls.push_back(OpenRTI::localeToUcs(fomModules));
+        mimModuleUrl = OpenRTI::localeToUcs(mimModule);
+
+        try {
+            rtiHandle->createFederationExecutionWithMIM(
+            wFedExecName,FOMmoduleUrls,mimModuleUrl,L""
+        );
+        } catch (FederationExecutionAlreadyExists ignored) {
+        }
+    }
+
+    EXTERNC int joinFederationExecutionLv(
+        RTIambassador *rtiHandle,
+        const char federateType[],
+        const char federationExecutionName[],
+        const char additionalFomModules[])
+    {
+        // implementation
+        vector<wstring> FOMmoduleUrls;
+        string sFedType(federateType);
+        string sFedExecName(federationExecutionName);
+        wstring wFedType,wFedExecName;
+        wFedType.assign(sFedType.begin(),sFedType.end());
+        wFedExecName.assign(sFedExecName.begin(),sFedExecName.end());
+
+        FOMmoduleUrls.push_back(OpenRTI::localeToUcs(additionalFomModules));
+
+        FederateHandle federateHandle = rtiHandle->joinFederationExecution(
+            wFedType,
+            wFedExecName,
+            FOMmoduleUrls
+        );
+    }
+
+    EXTERNC int getInteractionClassHandleLv(
+        RTIambassador *rtiHandle,
+        const char federateType[],
+        const char federationExecutionName[],
+        const char additionalFomModules[])
+    {
+        // implementation
+    }   
+
+    EXTERNC int getParameterHandleLv(
+        RTIambassador *rtiHandle,
+        InteractionClassHandle whichClass,
+        const char theName[])
+    {
+        // implementation
+    } 
+
+    EXTERNC int getObjectClassHandleLv(
+        RTIambassador *rtiHandle,
+        const char theName[])
+    {
+        // implementation
+    }
+
+    EXTERNC int getAttributeHandleLv(
+        RTIambassador *rtiHandle,
+        InteractionClassHandle whichClass,
+        const char theName[])
+    {
+        // implementation
+    } 
+
+    EXTERNC int reserveObjectInstanceNameLv(
+        RTIambassador *rtiHandle,
+        const char theObjectInstanceName[])
+    {
+        // implementation
+    }  
+
+    EXTERNC int registerObjectInstanceLv(
+        RTIambassador *rtiHandle,
+        ObjectClassHandle theClass,
+        const char theObjectInstanceName[])
+    {
+        // implementation
+    }  
+
+    EXTERNC int updateAttributeValuesLv(
+        RTIambassador *rtiHandle,
+        ObjectInstanceHandle theObject,
+        AttributeHandleValueMap const & theAttributeValues,
+        VariableLengthData const & theUserSuppliedTag)
+    {
+        // implementation
+    }  
+
+    EXTERNC int sendInteractionLv(
+        RTIambassador *rtiHandle,
+        InteractionClassHandle theInteraction,
+        ParameterHandleValueMap const & theParameterValues,
+        VariableLengthData const & theUserSuppliedTag)
+    {
+        // implementation
+    }  
+
+    EXTERNC int subscribeInteractionClassLv(
+        RTIambassador *rtiHandle,
+        InteractionClassHandle theClass,
+        bool active = true)
+    {
+        // implementation
+    }
+
+    EXTERNC int publishInteractionClassLv(
+        RTIambassador *rtiHandle,
+        InteractionClassHandle theInteraction)
+    {
+        // implementation
+    }
+
+    EXTERNC int subscribeObjectClassAttributesLv(
+        RTIambassador *rtiHandle,
+        ObjectClassHandle theClass,
+        AttributeHandleSet const & attributeList,
+        bool active,
+        const char updateRateDesignator[])
+    {
+        // implementation
+    }
+
+    EXTERNC int publishObjectClassAttributesLv(
+        RTIambassador *rtiHandle,
+        ObjectClassHandle theClass,
+        AttributeHandleSet const & attributeList)
+    {
+        // implementation
+    }
+
+    EXTERNC int evokeMultipleCallbacksLv(
+        RTIambassador *rtiHandle,
+        double approximateMinimumTimeInSeconds,
+        double approximateMaximumTimeInSeconds)
+    {
+        // implementation
+    }
+
+    EXTERNC int resignFederationExecutionLv(
+        RTIambassador *rtiHandle,
+        ResignAction resignAction)
+    {
+        // implementation
+        rtiHandle->resignFederationExecution(CANCEL_THEN_DELETE_THEN_DIVEST);
+    }
+
+    EXTERNC int destroyFederationExecutionLv(
+        RTIambassador *rtiHandle,
+        const char federationExecutionName[])
+    {
+        // implementation
+        string sFedExecName(federationExecutionName);
+        wstring wFedExecName;
+        wFedExecName.assign(sFedExecName.begin(),sFedExecName.end());
+    
+        try{
+            rtiHandle->destroyFederationExecution(wFedExecName);
+        } catch (FederatesCurrentlyJoined &ignored) {}
+    }  
+
+    EXTERNC int disconnectLv(RTIambassador *rtiHandle)
+    {
+        auto_ptr<RTIambassador> _rtiAmbassador;
+        rtiHandle->disconnect();
+        //RTIambassador *_rtiAmbassador = static_cast<RTIambassador*>(_rtiAmbassadorIn);
+        //_rtiAmbassador->disconnect();
         return 0;
     }
 
-    EXTERNC int destroyRTIambassadorLv(void* _rtiAmbassadorIn)
+    EXTERNC int destroyRTIambassadorLv(RTIambassador *rtiHandle)
     {
-        RTIambassador *_rtiAmbassador = static_cast<RTIambassador*>(_rtiAmbassadorIn);
-
-        delete _rtiAmbassador;
-        return 0;
+        delete rtiHandle;
     }
+
 
 
 } // namespace rti1516eLv

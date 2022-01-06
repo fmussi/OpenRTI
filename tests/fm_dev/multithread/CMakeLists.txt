@@ -3,3 +3,6 @@ target_link_libraries(multithreadTest pthread)
 
 add_executable(multipthreadTest multipthread.cpp)
 target_link_libraries(multipthreadTest pthread)
+
+add_executable(thWrapExample thWrapExample.cpp)
+target_link_libraries(thWrapExample pthread)

@@ -32,7 +32,9 @@ using namespace rti1516e;
 namespace rti1516eLv
 {   
     int _rtiCount = 0;
-    //map<int,auto_ptr<RTIambassador>> _rtiMap;
+    // thread signaling variables
+    // TODO
+
     // temp LVuser event store
     LVUserEventRef tempUserEvStore;
 
@@ -62,7 +64,6 @@ namespace rti1516eLv
         LVUserEventRef lueObjInsNameResSucceeded;
         LVUserEventRef lueObjInsNameResFailed;
         
-
         wstring _username;
         wstring _message;
 
@@ -73,9 +74,34 @@ namespace rti1516eLv
 
         ~LvFederate() throw() {}
 
-        void core_cb_consumer() {
+        void connectToRTI(RTIambassador *rtiHandle,const char address[])
+        {
+            // connect to RTI
+            wstring host = chararray2wstring(address);
+        
+            try {
+                wstring localSettingsDesignator(L"rti://" + host);
+                rtiHandle->connect(*this,HLA_EVOKED,localSettingsDesignator);
+                //_rtiAmbassador->connect(oLvFed,HLA_EVOKED,localSettingsDesignator);
 
+            }
+            catch (CouldNotOpenFDD &fdde) {
+            wcerr << fdde.what() << endl;
+            wcerr.flush();
+            } catch (Exception &e) {
+            wcerr << e.what() << endl;
+            wcerr.flush();
+            } catch (exception &e2) {
+            wcerr << e2.what() << endl;
+            wcerr.flush();
+            }
+
+            // process events
+            while(true) {
+                rtiHandle->evokeMultipleCallbacks(2.0,5.0);
+            }
         }
+
         // map<ObjectInstanceHandle, Participant> _knownObjects;	
         static void th_cb_consumer(void *data) {
             //ChatCCFederate *ccInstance = static_cast<ChatCCFederate *>(data);
@@ -101,6 +127,15 @@ namespace rti1516eLv
         }
     };
     
+    // thread function to be called by connectLv
+
+    void th_connect(RTIambassador *rtiHandle, const char address[]) 
+    {
+        LvFederate* lvFederate = new LvFederate();
+        lvFederate->connectToRTI(rtiHandle,address);
+        // signal varible to be sent to caller
+    }
+
     EXTERNC int testFunc()
     {
         return 12345;
@@ -129,41 +164,22 @@ namespace rti1516eLv
 
             *rtiHandle = _rtiAmbassador.release();
             _rtiCount++;
-            return _rtiCount;
-            
-
+        
         }
         catch (RTIinternalError &e) {
             e.what();
         }
+
+        return _rtiCount;
     }
 
     EXTERNC int connectLv(
         RTIambassador *rtiHandle, 
         const char address[])
     {
-        LvFederate oLvFed;
-        auto_ptr<RTIambassador> _rtiAmbassador;
-        //string addrStr(address);
-        //host.assign(addrStr.begin(),addrStr.end());
-        wstring host = chararray2wstring(address);
-        
-        try {
-            wstring localSettingsDesignator(L"rti://" + host);
-            rtiHandle->connect(oLvFed,HLA_EVOKED,localSettingsDesignator);
-            //_rtiAmbassador->connect(oLvFed,HLA_EVOKED,localSettingsDesignator);
-
-        }
-        catch (CouldNotOpenFDD &fdde) {
-         wcerr << fdde.what() << endl;
-         wcerr.flush();
-        } catch (Exception &e) {
-         wcerr << e.what() << endl;
-         wcerr.flush();
-        } catch (exception &e2) {
-         wcerr << e2.what() << endl;
-         wcerr.flush();
-        }
+        // LvFederate oLvFed;
+        // spawn thread
+        thread thRtiHandle(th_connect,rtiHandle,address);
     }
 
     EXTERNC int createFederationExecutionWithMIMLv(

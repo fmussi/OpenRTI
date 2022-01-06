@@ -15,6 +15,8 @@ link_directories(${lvrt})
 
 option(BUILD_TEST_APP "Build test application" OFF)
 
+option(BUILD_SHARED_LIB "Build shared library" OFF)
+
 if(BUILD_TEST_APP)
     # add executable
     add_executable(testapp app.cpp)
@@ -24,15 +26,16 @@ if(BUILD_TEST_APP)
     
 endif()
 
-add_library(rti1516elv SHARED rti1516eLv.cpp)
+if(BUILD_SHARED_LIB)
+    add_library(rti1516elv SHARED rti1516eLv.cpp)
 
-target_include_directories(shlib PUBLIC "${PROJECT_BINARY_DIR}/cintools")
+    target_include_directories(shlib PUBLIC "${PROJECT_BINARY_DIR}/cintools")
 
-set_target_properties(rti1516elv PROPERTIES VERSION ${PROJECT_VERSION})
-set_target_properties(rti1516elv PROPERTIES SOVERSION 1)
+    set_target_properties(rti1516elv PROPERTIES VERSION ${PROJECT_VERSION})
+    set_target_properties(rti1516elv PROPERTIES SOVERSION 1)
 
-target_link_libraries(rti1516elv rti1516e fedtime1516e OpenRTI pthread lvrt)
-
+    target_link_libraries(rti1516elv rti1516e fedtime1516e OpenRTI pthread lvrt)
+endif()
 
 
 

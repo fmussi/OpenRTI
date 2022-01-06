@@ -33,7 +33,11 @@ namespace rti1516eLv
 {   
     int _rtiCount = 0;
     // thread signaling variables
-    // TODO
+    // TODO 
+    pthread_mutex_t _mutex = PTHREAD_MUTEX_INITIALIZER;
+    pthread_cond_t _threshold_cv = PTHREAD_COND_INITIALIZER;
+    bool _connected = false;
+    bool _stopped = false;
 
     // temp LVuser event store
     LVUserEventRef tempUserEvStore;
@@ -74,9 +78,9 @@ namespace rti1516eLv
 
         ~LvFederate() throw() {}
 
-        void connectToRTI(RTIambassador *rtiHandle,const char address[])
+        void RTIdaemon(RTIambassador *rtiHandle,const char address[])
         {
-            // connect to RTI
+            // connect to RTI and process callbacks
             wstring host = chararray2wstring(address);
         
             try {
@@ -95,9 +99,15 @@ namespace rti1516eLv
             wcerr << e2.what() << endl;
             wcerr.flush();
             }
-
+            // set connected flag
+            pthread_mutex_lock(&_mutex);
+            _connected = true;
+            pthread_cond_signal(&_threshold_cv);
+            pthread_mutex_unlock(&_mutex);
             // process events
-            while(true) {
+            // TODO: manage how to exit function and how to manage errors
+            // e.g. rtiHandle invalid
+            while(!_stopped) {
                 rtiHandle->evokeMultipleCallbacks(2.0,5.0);
             }
         }
@@ -132,7 +142,8 @@ namespace rti1516eLv
     void th_connect(RTIambassador *rtiHandle, const char address[]) 
     {
         LvFederate* lvFederate = new LvFederate();
-        lvFederate->connectToRTI(rtiHandle,address);
+        lvFederate->RTIdaemon(rtiHandle,address);
+        // TODO: exit thread function
         // signal varible to be sent to caller
     }
 
@@ -179,7 +190,15 @@ namespace rti1516eLv
     {
         // LvFederate oLvFed;
         // spawn thread
+        _connected = false;
         thread thRtiHandle(th_connect,rtiHandle,address);
+        pthread_mutex_lock(&_mutex);
+        while (!_connected) {
+            pthread_cond_wait(&_threshold_cv, &_mutex);
+        }
+        pthread_mutex_unlock(&_mutex);
+        // check that connection has been succesful
+
     }
 
     EXTERNC int createFederationExecutionWithMIMLv(
@@ -369,6 +388,7 @@ namespace rti1516eLv
     EXTERNC int disconnectLv(RTIambassador *rtiHandle)
     {
         auto_ptr<RTIambassador> _rtiAmbassador;
+        _stopped = true;
         rtiHandle->disconnect();
         //RTIambassador *_rtiAmbassador = static_cast<RTIambassador*>(_rtiAmbassadorIn);
         //_rtiAmbassador->disconnect();

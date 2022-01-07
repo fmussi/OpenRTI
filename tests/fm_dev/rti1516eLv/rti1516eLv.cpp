@@ -43,6 +43,7 @@ namespace rti1516eLv
 
     class LvFederate : public NullFederateAmbassador {
     private:
+        auto_ptr<RTIambassador> _rtiAmbassador;
         InteractionClassHandle _iMessageId;
         ParameterHandle _pTextId;
         ParameterHandle _pSenderId;
@@ -66,6 +67,35 @@ namespace rti1516eLv
         LvFederate() {}
 
         ~LvFederate() throw() {}
+
+        void createRTIambassador()
+        {
+            try {
+                auto_ptr<RTIambassadorFactory> rtiAmbassadorFactory(new RTIambassadorFactory());
+                _rtiAmbassador = rtiAmbassadorFactory->createRTIambassador();
+            }
+            catch (RTIinternalError) {
+             wcout << endl << L"Unable to create RTI ambassador" << endl;
+            return;
+            }
+        }
+
+        void connect(wstring host)
+        {
+            try {
+                wstring localSettingsDesignator(L"rti://" + host);
+                wcout << L"connecting to: " << localSettingsDesignator << endl;
+                //_rtiAmbassador->connect(*this, HLA_IMMEDIATE,localSettingsDesignator);
+                _rtiAmbassador->connect(*this, HLA_EVOKED,localSettingsDesignator);
+            } catch (RTIinternalError ignored) {}
+        }
+
+        void disconnect ()
+        {
+            try {
+                _rtiAmbassador->disconnect();
+            } catch (RTIinternalError ignored) {}
+        }
 
         void RTIdaemon(RTIambassador *rtiHandle,const char address[])
         {
@@ -134,6 +164,7 @@ namespace rti1516eLv
         }
     };
     
+    LvFederate* oLvFederate; 
     // thread function to be called by connectLv
 
     void th_connect(RTIambassador *rtiHandle, const char address[]) 
@@ -164,19 +195,22 @@ namespace rti1516eLv
 
     EXTERNC int createRTIambassadorLv(RTIambassador **rtiHandle)
     {
-        auto_ptr<RTIambassador> _rtiAmbassador;
+        // previous implmentation
+        // auto_ptr<RTIambassador> _rtiAmbassador;
 
-        try {
-            auto_ptr<RTIambassadorFactory> rtiAmbassadorFactory(new RTIambassadorFactory());
-            _rtiAmbassador = rtiAmbassadorFactory->createRTIambassador();
+        // try {
+        //     auto_ptr<RTIambassadorFactory> rtiAmbassadorFactory(new RTIambassadorFactory());
+        //     _rtiAmbassador = rtiAmbassadorFactory->createRTIambassador();
 
-            *rtiHandle = _rtiAmbassador.release();
-            _rtiCount++;
+        //     *rtiHandle = _rtiAmbassador.release();
+        //     _rtiCount++;
         
-        }
-        catch (RTIinternalError &e) {
-            wcout << "createRTIambassador: error -> " << e.what() << "returned.\n" << endl;
-        }
+        // }
+        // catch (RTIinternalError &e) {
+        //     wcout << "createRTIambassador: error -> " << e.what() << "returned.\n" << endl;
+        // }
+        oLvFederate = new LvFederate();
+        oLvFederate->createRTIambassador();
 
         return _rtiCount;
     }
@@ -187,16 +221,17 @@ namespace rti1516eLv
     {
         // LvFederate oLvFed;
         // spawn thread
-        _connected = false;
-        thread thRtiHandle(th_connect,rtiHandle,address);
-        pthread_mutex_lock(&_mutex);
-        while (!_connected) {
-            pthread_cond_wait(&_threshold_cv, &_mutex);
-        }
-        pthread_mutex_unlock(&_mutex);
+        // _connected = false;
+        // thread thRtiHandle(th_connect,rtiHandle,address);
+        // pthread_mutex_lock(&_mutex);
+        // while (!_connected) {
+        //     pthread_cond_wait(&_threshold_cv, &_mutex);
+        // }
+        // pthread_mutex_unlock(&_mutex);
         // thRtiHandle.detach();
         // check that connection has been succesful
-
+        wstring host = chararray2wstring(address);
+        oLvFederate->connect(host);
     }
 
     EXTERNC int createFederationExecutionWithMIMLv(
@@ -387,18 +422,19 @@ namespace rti1516eLv
 
     EXTERNC int disconnectLv(RTIambassador *rtiHandle)
     {
-        auto_ptr<RTIambassador> _rtiAmbassador;
-        _stopped = true;
-        // wait for disconnection on the RTIdaemon
-        // rtiHandle->disconnect();
-        //RTIambassador *_rtiAmbassador = static_cast<RTIambassador*>(_rtiAmbassadorIn);
-        //_rtiAmbassador->disconnect();
-        _disconnected = false;
-        pthread_mutex_lock(&_mutex);
-        while (!_disconnected) {
-            pthread_cond_wait(&_threshold_cv, &_mutex);
-        }
-        pthread_mutex_unlock(&_mutex);
+        // auto_ptr<RTIambassador> _rtiAmbassador;
+        // _stopped = true;
+        // // wait for disconnection on the RTIdaemon
+        // // rtiHandle->disconnect();
+        // //RTIambassador *_rtiAmbassador = static_cast<RTIambassador*>(_rtiAmbassadorIn);
+        // //_rtiAmbassador->disconnect();
+        // _disconnected = false;
+        // pthread_mutex_lock(&_mutex);
+        // while (!_disconnected) {
+        //     pthread_cond_wait(&_threshold_cv, &_mutex);
+        // }
+        // pthread_mutex_unlock(&_mutex);
+        oLvFederate->disconnect();
         return 0;
     }
 

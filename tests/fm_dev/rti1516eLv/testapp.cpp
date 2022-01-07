@@ -39,7 +39,7 @@ int main()
     //connect
     connectLv(rtiHandle,connectionString);
 
-    createFederationExecutionWithMIMLv(rtiHandle,"ChatRoom",fomModule,mimModule,"");
+    //createFederationExecutionWithMIMLv(rtiHandle,"ChatRoom",fomModule,mimModule,"");
     //wait for a certain amoung 
     //this_thread::sleep_for(chrono::seconds(5));
 
@@ -47,7 +47,7 @@ int main()
     disconnectLv(rtiHandle);
 
     //destroy RTIambassador
-    destroyRTIambassadorLv(rtiHandle);
+    //destroyRTIambassadorLv(rtiHandle);
 
     return 0;
 

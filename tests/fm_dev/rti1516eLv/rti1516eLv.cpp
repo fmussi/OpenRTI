@@ -21,7 +21,7 @@ namespace rti1516eLv
 {   
     int _rtiCount = 0;
     // thread signaling variables
-    // TODO 
+    // TODO
     pthread_mutex_t _mutex = PTHREAD_MUTEX_INITIALIZER;
     pthread_cond_t _threshold_cv = PTHREAD_COND_INITIALIZER;
     bool _connected = false;
@@ -194,7 +194,7 @@ namespace rti1516eLv
             pthread_cond_wait(&_threshold_cv, &_mutex);
         }
         pthread_mutex_unlock(&_mutex);
-        thRtiHandle.detach();
+        // thRtiHandle.detach();
         // check that connection has been succesful
 
     }
@@ -219,6 +219,8 @@ namespace rti1516eLv
             wFedExecName,FOMmoduleUrls,mimModuleUrl,L""
         );
         } catch (FederationExecutionAlreadyExists ignored) {
+        } catch (RTIinternalError &e){
+            wcout << "createFederationExecutionWithMIM: error -> " << e.what() << "returned.\n" << endl;
         }
     }
 

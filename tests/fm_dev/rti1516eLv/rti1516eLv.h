@@ -29,27 +29,44 @@ namespace rti1516eLv
     EXTERNC MgErr testFireEvent(int value);
     EXTERNC int regObjInstNameResSuccEvent(LVUserEventRef *eventRef);
 
+    EXTERNC int regLvUserEvents(
+        LVUserEventRef *objInstNameResSucc,
+        LVUserEventRef *objInstNameResFail);
     // LV wrapper functions to OpenRTI
 
-    EXTERNC int createRTIambassadorLv(RTIambassador **rtiHandle);
+    EXTERNC int createRTIambassadorLvEx(RTIambassador **rtiHandle);
 
-    EXTERNC int connectLv(
+    // LV specific wrappers to control callback processing
+    EXTERNC int startRTIambassadorLvEx(RTIambassador *rtiHandle);
+    EXTERNC int stopRTIambassadorLvEx(RTIambassador *rtiHandle);
+
+    EXTERNC int connectLvEx(
         RTIambassador *rtiHandle, 
         const char address[]);
 
-    EXTERNC int createFederationExecutionWithMIMLv(
+    EXTERNC int createFederationExecutionWithMIMLvEx(
     RTIambassador *rtiHandle, 
     const char federationExecutionName[],
     const char fomModules[],
     const char mimModule[],
     const char logicalTimeImplementationName[]);
 
-    EXTERNC int destroyFederationExecutionLv(
+    EXTERNC int joinFederationExecutionLvEx(
+        RTIambassador *rtiHandle,
+        const char federateType[],
+        const char federationExecutionName[],
+        const char additionalFomModules[]);
+
+    EXTERNC int resignFederationExecutionLvEx(
+        RTIambassador *rtiHandle,
+        ResignAction resignAction);
+
+    EXTERNC int destroyFederationExecutionLvEx(
         RTIambassador *rtiHandle,
         const char federationExecutionName[]);
 
-    EXTERNC int disconnectLv(RTIambassador *rtiHandle);
-    EXTERNC int destroyRTIambassadorLv(RTIambassador *rtiHandle);
+    EXTERNC int disconnectLvEx(RTIambassador *rtiHandle);
+    EXTERNC int destroyRTIambassadorLvEx(RTIambassador *rtiHandle);
 }
 
 #endif

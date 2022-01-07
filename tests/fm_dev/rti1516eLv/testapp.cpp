@@ -34,19 +34,26 @@ int main()
     const char *mimModule = "/home/admin/git_repo/OpenRTI/share/rti1516e/HLAstandardMIM.xml";
       
     //create RTIambassador
-    createRTIambassadorLv(&rtiHandle);
+    createRTIambassadorLvEx(&rtiHandle);
 
     //connect
-    connectLv(rtiHandle,connectionString);
+    connectLvEx(rtiHandle,connectionString);
 
-    createFederationExecutionWithMIMLv(rtiHandle,"ChatRoom",fomModule,mimModule,"");
+    createFederationExecutionWithMIMLvEx(rtiHandle,"ChatRoom",fomModule,mimModule,"");
     //wait for a certain amoung 
-    this_thread::sleep_for(chrono::seconds(5));
 
-    destroyFederationExecutionLv(rtiHandle,"ChatRoom");
+    joinFederationExecutionLvEx(rtiHandle,"Chat","ChatRoom",fomModule);
+
+    startRTIambassadorLvEx(rtiHandle);
+    this_thread::sleep_for(chrono::seconds(5));
+    stopRTIambassadorLvEx(rtiHandle);
+
+    resignFederationExecutionLvEx(rtiHandle,CANCEL_THEN_DELETE_THEN_DIVEST);
+
+    destroyFederationExecutionLvEx(rtiHandle,"ChatRoom");
     
     //disconnect
-    disconnectLv(rtiHandle);
+    disconnectLvEx(rtiHandle);
 
     //destroy RTIambassador
     //destroyRTIambassadorLv(rtiHandle);

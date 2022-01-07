@@ -8,18 +8,7 @@
 #include <semaphore.h>
 #include <string.h>
 #include <thread>
-
-#include <Options.h>
-#include <StringUtils.h>
-
-// RTI specific headers
-#include <RTI/RTIambassadorFactory.h>
-#include <RTI/RTIambassador.h>
-#include <RTI/NullFederateAmbassador.h>
-#include <RTI/time/HLAinteger64TimeFactory.h>
-#include <RTI/time/HLAinteger64Time.h>
-#include <RTI/time/HLAinteger64Interval.h>
-#include <RTI/encoding/BasicDataElements.h>
+#include <chrono>
 
 // shared lib header
 #include "rti1516eLv.h"
@@ -27,7 +16,6 @@
 // namespaces
 using namespace std;
 using namespace rti1516e;
-
 
 namespace rti1516eLv
 {   
@@ -38,6 +26,7 @@ namespace rti1516eLv
     pthread_cond_t _threshold_cv = PTHREAD_COND_INITIALIZER;
     bool _connected = false;
     bool _stopped = false;
+    bool _disconnected = false;
 
     // temp LVuser event store
     LVUserEventRef tempUserEvStore;
@@ -107,9 +96,17 @@ namespace rti1516eLv
             // process events
             // TODO: manage how to exit function and how to manage errors
             // e.g. rtiHandle invalid
-            while(!_stopped) {
-                rtiHandle->evokeMultipleCallbacks(2.0,5.0);
+            while(!_stopped && (rtiHandle != NULL)) {
+                rtiHandle->evokeMultipleCallbacks(1.0,1.0);
+                //this_thread::sleep_for(chrono::milliseconds(100));
+                wcout << "Processing callbacks." << endl;
             }
+            wcout << "RTIdeamon completed." << endl;
+            rtiHandle->disconnect();
+            pthread_mutex_lock(&_mutex);
+            _disconnected = true;
+            pthread_cond_signal(&_threshold_cv);
+            pthread_mutex_unlock(&_mutex);
         }
 
         // map<ObjectInstanceHandle, Participant> _knownObjects;	
@@ -152,17 +149,17 @@ namespace rti1516eLv
         return 12345;
     }
 
-    EXTERNC int regObjInstNameResSuccEvent(LVUserEventRef *eventRef)
-    {
-        tempUserEvStore = *eventRef;
-        return 0;
-    }
-
     EXTERNC MgErr testFireEvent(int value)
     {
         MgErr status;
         status = PostLVUserEvent(tempUserEvStore,&value);
         return status;
+    }
+
+    EXTERNC int regObjInstNameResSuccEvent(LVUserEventRef *eventRef)
+    {
+        tempUserEvStore = *eventRef;
+        return 0;
     }
 
     EXTERNC int createRTIambassadorLv(RTIambassador **rtiHandle)
@@ -178,7 +175,7 @@ namespace rti1516eLv
         
         }
         catch (RTIinternalError &e) {
-            e.what();
+            wcout << "createRTIambassador: error -> " << e.what() << "returned.\n" << endl;
         }
 
         return _rtiCount;
@@ -197,6 +194,7 @@ namespace rti1516eLv
             pthread_cond_wait(&_threshold_cv, &_mutex);
         }
         pthread_mutex_unlock(&_mutex);
+        thRtiHandle.detach();
         // check that connection has been succesful
 
     }
@@ -389,9 +387,16 @@ namespace rti1516eLv
     {
         auto_ptr<RTIambassador> _rtiAmbassador;
         _stopped = true;
-        rtiHandle->disconnect();
+        // wait for disconnection on the RTIdaemon
+        // rtiHandle->disconnect();
         //RTIambassador *_rtiAmbassador = static_cast<RTIambassador*>(_rtiAmbassadorIn);
         //_rtiAmbassador->disconnect();
+        _disconnected = false;
+        pthread_mutex_lock(&_mutex);
+        while (!_disconnected) {
+            pthread_cond_wait(&_threshold_cv, &_mutex);
+        }
+        pthread_mutex_unlock(&_mutex);
         return 0;
     }
 

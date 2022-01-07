@@ -2,13 +2,16 @@
     // Use IntelliSense to learn about possible attributes.
     // Hover to view descriptions of existing attributes.
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    // Program paths:
+    // /home/admin/git_repo/OpenRTI/build/lib64/librti1516elv.so
+    // /home/admin/git_repo/OpenRTI/build/bin/ChatCC1516e_fm_mt
     "version": "0.2.0",
     "configurations": [
         {
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "/home/admin/git_repo/OpenRTI/build/bin/ChatCC1516e_fm_mt",
+            "program": "/home/admin/git_repo/OpenRTI/build/bin/testapp",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",

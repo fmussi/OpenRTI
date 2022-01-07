@@ -44,6 +44,10 @@ namespace rti1516eLv
     const char mimModule[],
     const char logicalTimeImplementationName[]);
 
+    EXTERNC int destroyFederationExecutionLv(
+        RTIambassador *rtiHandle,
+        const char federationExecutionName[]);
+
     EXTERNC int disconnectLv(RTIambassador *rtiHandle);
     EXTERNC int destroyRTIambassadorLv(RTIambassador *rtiHandle);
 }

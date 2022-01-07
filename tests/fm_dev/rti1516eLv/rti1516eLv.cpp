@@ -27,6 +27,7 @@ namespace rti1516eLv
     bool _connected = false;
     bool _stopped = false;
     bool _disconnected = false;
+    bool _processCB = false;
 
     // temp LVuser event store
     LVUserEventRef tempUserEvStore;
@@ -86,14 +87,58 @@ namespace rti1516eLv
                 wstring localSettingsDesignator(L"rti://" + host);
                 wcout << L"connecting to: " << localSettingsDesignator << endl;
                 //_rtiAmbassador->connect(*this, HLA_IMMEDIATE,localSettingsDesignator);
+                _connected = false;
                 _rtiAmbassador->connect(*this, HLA_EVOKED,localSettingsDesignator);
+                // spawn thread
+                thread thCbProc(th_cb_consumer,this);
+                // wait for thread to be launched
+                pthread_mutex_lock(&_mutex);
+                while (!_connected) {
+                    pthread_cond_wait(&_threshold_cv, &_mutex);
+                }
+                pthread_mutex_unlock(&_mutex);
+                thCbProc.detach();
+
             } catch (RTIinternalError ignored) {}
+        }
+
+        void createFederationExecutionWithMIM(
+            wstring const & federationExecutionName,
+            vector<std::wstring> const & fomModules,
+            wstring const & mimModule,
+            wstring const & logicalTimeImplementationName = L""
+        )
+        {
+            try {
+                _rtiAmbassador->createFederationExecutionWithMIM(federationExecutionName,fomModules,mimModule);
+            } catch (FederationExecutionAlreadyExists ignored) {
+            } catch (RTIinternalError &e){
+            wcout << "createFederationExecutionWithMIM: error -> " << e.what() << "returned.\n" << endl;
+            }
+        }
+
+        void destroyFederationExecution(wstring const & federationExecutionName)
+        {
+            try {
+                _rtiAmbassador->destroyFederationExecution(federationExecutionName);
+            } catch (RTIinternalError &e){
+            wcout << "destroyFederationExecution: error -> " << e.what() << "returned.\n" << endl;
+            }
         }
 
         void disconnect ()
         {
             try {
+                _disconnected = false;
+                // set stop flag for cb_consumer
+                _stopped = true;
+                    pthread_mutex_lock(&_mutex);
+                while (!_disconnected) {
+                    pthread_cond_wait(&_threshold_cv, &_mutex);
+                }
+                pthread_mutex_unlock(&_mutex);
                 _rtiAmbassador->disconnect();
+
             } catch (RTIinternalError ignored) {}
         }
 
@@ -143,6 +188,38 @@ namespace rti1516eLv
         static void th_cb_consumer(void *data) {
             //ChatCCFederate *ccInstance = static_cast<ChatCCFederate *>(data);
             //ccInstance->ChatUI();
+            LvFederate *lvFedInstance = static_cast<LvFederate *>(data);
+            _stopped = false;
+            // set connected flag
+            pthread_mutex_lock(&_mutex);
+            _disconnected = false;
+            _connected = true;
+            pthread_cond_signal(&_threshold_cv);
+            pthread_mutex_unlock(&_mutex);
+            // start callback event processing
+            _processCB = false;
+            lvFedInstance->cb_consumer();
+            // send disconnect
+            pthread_mutex_lock(&_mutex);
+            _connected = false;
+            _disconnected = true;
+            pthread_cond_signal(&_threshold_cv);
+            pthread_mutex_unlock(&_mutex);
+
+        }
+
+        void cb_consumer(void)
+        {
+            while(!_stopped)  {
+                if (_processCB) _rtiAmbassador->evokeMultipleCallbacks(1.0,2.0);
+                else this_thread::sleep_for(chrono::milliseconds(100));
+                wcout << "Processing callbacks." << endl;
+            }
+            wcout << "RTIdeamon completed." << endl;
+            pthread_mutex_lock(&_mutex);
+            _disconnected = true;
+            pthread_cond_signal(&_threshold_cv);
+            pthread_mutex_unlock(&_mutex);
         }
         
         virtual void objectInstanceNameReservationSucceeded(
@@ -250,9 +327,8 @@ namespace rti1516eLv
         mimModuleUrl = OpenRTI::localeToUcs(mimModule);
 
         try {
-            rtiHandle->createFederationExecutionWithMIM(
-            wFedExecName,FOMmoduleUrls,mimModuleUrl,L""
-        );
+            oLvFederate->createFederationExecutionWithMIM(wFedExecName,FOMmoduleUrls,mimModuleUrl,L"");
+            //rtiHandle->createFederationExecutionWithMIM(wFedExecName,FOMmoduleUrls,mimModuleUrl,L"");
         } catch (FederationExecutionAlreadyExists ignored) {
         } catch (RTIinternalError &e){
             wcout << "createFederationExecutionWithMIM: error -> " << e.what() << "returned.\n" << endl;
@@ -416,7 +492,8 @@ namespace rti1516eLv
         wstring wFedExecName = chararray2wstring(federationExecutionName);
     
         try{
-            rtiHandle->destroyFederationExecution(wFedExecName);
+            oLvFederate->destroyFederationExecution(wFedExecName);
+            //rtiHandle->destroyFederationExecution(wFedExecName);
         } catch (FederatesCurrentlyJoined &ignored) {}
     }  
 

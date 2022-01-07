@@ -29,7 +29,7 @@ using namespace rti1516eLv;
 int main()
 {
     RTIambassador *rtiHandle;
-    const char *connectionString = "172.30.157.155:8990";
+    const char *connectionString = "192.168.118.250:8990";
     const char *fomModule = "/home/admin/git_repo/OpenRTI/build/bin/Chat-evolved.xml";
     const char *mimModule = "/home/admin/git_repo/OpenRTI/share/rti1516e/HLAstandardMIM.xml";
       

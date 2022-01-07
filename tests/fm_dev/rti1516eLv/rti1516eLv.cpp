@@ -212,7 +212,7 @@ namespace rti1516eLv
             _rtiAmbassador->reserveObjectInstanceName(theObjectInstanceName);
         }
 
-        ObjectInstanceHandle registerObjectInstance (
+        ObjectInstanceHandle registerObjectInstanceLv (
          ObjectClassHandle theClass,
          std::wstring const & theObjectInstanceName)
         {
@@ -222,6 +222,20 @@ namespace rti1516eLv
                 return participantHdl;
             } catch (RTIinternalError &e){
             wcout << "registerObjectInstance: error -> " << e.what() << "returned.\n" << endl;
+            } 
+        }
+
+        // FOM management
+
+        InteractionClassHandle getInteractionClassHandleLv (
+         std::wstring const & theName)
+        {
+            InteractionClassHandle interactionClassHandle;
+            try {
+                interactionClassHandle = _rtiAmbassador->getInteractionClassHandle(theName);
+                return interactionClassHandle;
+            } catch (RTIinternalError &e){
+            wcout << "getInteractionClassHandle: error -> " << e.what() << "returned.\n" << endl;
             } 
         }
 
@@ -370,16 +384,17 @@ namespace rti1516eLv
             FOMmoduleUrls
         );
         // TODO return federate handle if needed by lv code
-        return 0;
+        return sizeof(federateHandle);
     }
 
     EXTERNC int getInteractionClassHandleLvEx(
         RTIambassador *rtiHandle,
-        const char federateType[],
-        const char federationExecutionName[],
-        const char additionalFomModules[])
+        const char theName[],
+        InteractionClassHandle *intClassHandle)
     {
         // implementation
+        wstring wTheName = chararray2wstring(theName);
+        intClassHandle = &(oLvFederate->getInteractionClassHandleLv(wTheName));
     }   
 
     EXTERNC int getParameterHandleLvEx(

@@ -57,6 +57,17 @@ namespace rti1516eLv
         const char federationExecutionName[],
         const char additionalFomModules[]);
 
+    EXTERNC int getInteractionClassHandleLvEx(
+        RTIambassador *rtiHandle,
+        const char theName[],
+        InteractionClassHandle *intClassHandle);
+
+    EXTERNC int getParameterHandleLvEx(
+        RTIambassador *rtiHandle,
+        InteractionClassHandle whichClass,
+        const char theName[],
+        ParameterHandle *paramHandle);
+
     EXTERNC int resignFederationExecutionLvEx(
         RTIambassador *rtiHandle,
         ResignAction resignAction);

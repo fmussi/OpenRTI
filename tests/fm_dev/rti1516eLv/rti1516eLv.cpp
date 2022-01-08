@@ -69,6 +69,11 @@ namespace rti1516eLv
 
         ~LvFederate() throw() {}
 
+        auto_ptr<RTIambassador> getRTIambassador()
+        {
+            return _rtiAmbassador;
+        }
+
         void createRTIambassadorLv()
         {
             try {
@@ -124,7 +129,8 @@ namespace rti1516eLv
             pthread_mutex_unlock(&_mutex);
         }
  
-        void connectLv(wstring host)
+        void connectLv(
+            wstring host)
         {
             try {
                 wstring localSettingsDesignator(L"rti://" + host);
@@ -176,7 +182,8 @@ namespace rti1516eLv
             }
         }
 
-        void destroyFederationExecutionLv(wstring const & federationExecutionName)
+        void destroyFederationExecutionLv(
+            wstring const & federationExecutionName)
         {
             try {
                 _rtiAmbassador->destroyFederationExecution(federationExecutionName);
@@ -230,14 +237,81 @@ namespace rti1516eLv
         InteractionClassHandle getInteractionClassHandleLv (
          std::wstring const & theName)
         {
-            InteractionClassHandle interactionClassHandle;
+            //InteractionClassHandle interactionClassHandle;
             try {
-                interactionClassHandle = _rtiAmbassador->getInteractionClassHandle(theName);
-                return interactionClassHandle;
+                return _rtiAmbassador->getInteractionClassHandle(theName);
             } catch (RTIinternalError &e){
             wcout << "getInteractionClassHandle: error -> " << e.what() << "returned.\n" << endl;
             } 
         }
+
+        ParameterHandle getParameterHandleLv (
+         InteractionClassHandle whichClass,
+         std::wstring const & theName)
+        {
+            ParameterHandle parameterHande;
+            try {
+                return _rtiAmbassador->getParameterHandle(whichClass,theName);
+            } catch (RTIinternalError &e){
+            wcout << "getParameterHandle: error -> " << e.what() << "returned.\n" << endl;
+            } 
+        }
+
+        ObjectClassHandle getObjectClassHandleLv (
+         std::wstring const & theName)
+        {
+            //ParameterHandle parameterHande;
+            try {
+                return _rtiAmbassador->getObjectClassHandle(theName);
+            } catch (RTIinternalError &e){
+            wcout << "getObjectClassHandle: error -> " << e.what() << "returned.\n" << endl;
+            } 
+        }
+
+        AttributeHandle getAttributeHandleLv (
+         ObjectClassHandle whichClass,
+         std::wstring const & theAttributeName)
+        {
+            try {
+                return _rtiAmbassador->getAttributeHandle(whichClass,theAttributeName);
+            } catch (RTIinternalError &e){
+            wcout << "getAttributeHandle: error -> " << e.what() << "returned.\n" << endl;
+            }  
+        }
+
+        void subscribeInteractionClassLv (
+         InteractionClassHandle theClass,
+         bool active = true)
+        {
+            try {
+                return _rtiAmbassador->subscribeInteractionClass(theClass);
+            } catch (RTIinternalError &e){
+            wcout << "subscribeInteractionClass: error -> " << e.what() << "returned.\n" << endl;
+            }  
+        }
+
+        void publishInteractionClassLv (
+         InteractionClassHandle theInteraction)
+        {
+
+        }
+
+        void subscribeObjectClassAttributes (
+         ObjectClassHandle theClass,
+         AttributeHandleSet const & attributeList,
+         bool active = true,
+         std::wstring const & updateRateDesignator = L"")
+
+         {
+
+         }
+
+        void publishObjectClassAttributes (
+         ObjectClassHandle theClass,
+         AttributeHandleSet const & attributeList)
+         {
+
+         }       
 
         // Append new lvFederate members right abov
         // Generic guideline: members implement try and catch     
@@ -378,6 +452,11 @@ namespace rti1516eLv
 
         FOMmoduleUrls.push_back(OpenRTI::localeToUcs(additionalFomModules));
 
+        // FederateHandle federateHandle = oLvFederate->getRTIambassador()->joinFederationExecution(
+        //     wFedType,
+        //     wFedExecName,
+        //     FOMmoduleUrls
+        // );
         FederateHandle federateHandle = oLvFederate->joinFederationExecutionLv(
             wFedType,
             wFedExecName,
@@ -394,15 +473,20 @@ namespace rti1516eLv
     {
         // implementation
         wstring wTheName = chararray2wstring(theName);
-        intClassHandle = &(oLvFederate->getInteractionClassHandleLv(wTheName));
+        *intClassHandle = oLvFederate->getInteractionClassHandleLv(wTheName);
+        return 0;
     }   
 
     EXTERNC int getParameterHandleLvEx(
         RTIambassador *rtiHandle,
         InteractionClassHandle whichClass,
-        const char theName[])
+        const char theName[],
+        ParameterHandle *paramHandle)
     {
         // implementation
+        wstring wTheName = chararray2wstring(theName);
+        *paramHandle = oLvFederate->getParameterHandleLv(whichClass,wTheName);
+        return 0;
     } 
 
     EXTERNC int getObjectClassHandleLvEx(

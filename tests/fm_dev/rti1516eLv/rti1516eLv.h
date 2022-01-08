@@ -26,19 +26,24 @@ namespace rti1516eLv
 {
     // Test or debug functions
     EXTERNC int testFunc();
-    EXTERNC MgErr testFireEvent(int value);
-    EXTERNC int regObjInstNameResSuccEvent(LVUserEventRef *eventRef);
+    EXTERNC MgErr testFireEvent(
+        int value);
+    EXTERNC int regObjInstNameResSuccEvent(
+        LVUserEventRef *eventRef);
 
     EXTERNC int regLvUserEvents(
         LVUserEventRef *objInstNameResSucc,
         LVUserEventRef *objInstNameResFail);
     // LV wrapper functions to OpenRTI
 
-    EXTERNC int createRTIambassadorLvEx(RTIambassador **rtiHandle);
+    EXTERNC int createRTIambassadorLvEx(
+        RTIambassador **rtiHandle);
 
     // LV specific wrappers to control callback processing
-    EXTERNC int startRTIambassadorLvEx(RTIambassador *rtiHandle);
-    EXTERNC int stopRTIambassadorLvEx(RTIambassador *rtiHandle);
+    EXTERNC int startRTIambassadorLvEx(
+        RTIambassador *rtiHandle);
+    EXTERNC int stopRTIambassadorLvEx(
+        RTIambassador *rtiHandle);
 
     EXTERNC int connectLvEx(
         RTIambassador *rtiHandle, 
@@ -64,9 +69,63 @@ namespace rti1516eLv
 
     EXTERNC int getParameterHandleLvEx(
         RTIambassador *rtiHandle,
-        InteractionClassHandle whichClass,
+        InteractionClassHandle *whichClass,
         const char theName[],
         ParameterHandle *paramHandle);
+
+    EXTERNC int getObjectClassHandleLvEx(
+        RTIambassador *rtiHandle,
+        const char theName[],
+        ObjectClassHandle *objectClassHandle);
+    
+    EXTERNC int getAttributeHandleLvEx(
+        RTIambassador *rtiHandle,
+        ObjectClassHandle *whichClass,
+        const char theName[],
+        AttributeHandle *attributeHandle);
+
+    EXTERNC int reserveObjectInstanceNameLvEx(
+        RTIambassador *rtiHandle,
+        const char theObjectInstanceName[]);
+
+    EXTERNC int registerObjectInstanceLvEx(
+        RTIambassador *rtiHandle,
+        ObjectClassHandle *theClass,
+        const char theObjectInstanceName[],
+        ObjectInstanceHandle *objectInstanceHandle);
+
+    EXTERNC int updateAttributeValuesLvEx(
+        RTIambassador *rtiHandle,
+        ObjectInstanceHandle *theObject,
+        AttributeHandleValueMap const & theAttributeValues,
+        VariableLengthData const & theUserSuppliedTag);
+
+    EXTERNC int sendInteractionLvEx(
+        RTIambassador *rtiHandle,
+        InteractionClassHandle *theInteraction,
+        ParameterHandleValueMap const & theParameterValues,
+        VariableLengthData const & theUserSuppliedTag);
+
+    EXTERNC int subscribeInteractionClassLvEx(
+        RTIambassador *rtiHandle,
+        InteractionClassHandle *theClass,
+        bool active);
+    
+    EXTERNC int publishInteractionClassLvEx(
+        RTIambassador *rtiHandle,
+        InteractionClassHandle *theInteraction);
+
+    EXTERNC int subscribeObjectClassAttributesLvEx(
+        RTIambassador *rtiHandle,
+        ObjectClassHandle *theClass,
+        AttributeHandleSet const & attributeList,
+        bool active,
+        const char updateRateDesignator[]);
+
+    EXTERNC int publishObjectClassAttributesLvEx(
+        RTIambassador *rtiHandle,
+        ObjectClassHandle *theClass,
+        AttributeHandleSet const & attributeList);
 
     EXTERNC int resignFederationExecutionLvEx(
         RTIambassador *rtiHandle,
@@ -76,8 +135,11 @@ namespace rti1516eLv
         RTIambassador *rtiHandle,
         const char federationExecutionName[]);
 
-    EXTERNC int disconnectLvEx(RTIambassador *rtiHandle);
-    EXTERNC int destroyRTIambassadorLvEx(RTIambassador *rtiHandle);
+    EXTERNC int disconnectLvEx(
+        RTIambassador *rtiHandle);
+
+    EXTERNC int destroyRTIambassadorLvEx(
+        RTIambassador *rtiHandle);
 }
 
 #endif

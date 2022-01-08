@@ -48,7 +48,7 @@ int main()
 
     getInteractionClassHandleLvEx(rtiHandle,"Communication",&iMessageId);
 
-    getParameterHandleLvEx(rtiHandle,iMessageId,"Message",&pTextId);
+    getParameterHandleLvEx(rtiHandle,&iMessageId,"Message",&pTextId);
 
     startRTIambassadorLvEx(rtiHandle);
 

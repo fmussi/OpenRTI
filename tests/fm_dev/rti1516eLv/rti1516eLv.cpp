@@ -279,6 +279,8 @@ namespace rti1516eLv
             }  
         }
 
+        // Pub Sub
+
         void subscribeInteractionClassLv (
          InteractionClassHandle theClass,
          bool active = true)
@@ -293,26 +295,63 @@ namespace rti1516eLv
         void publishInteractionClassLv (
          InteractionClassHandle theInteraction)
         {
-
+            try {
+                return _rtiAmbassador->subscribeInteractionClass(theInteraction);
+            } catch (RTIinternalError &e){
+            wcout << "subscribeInteractionClass: error -> " << e.what() << "returned.\n" << endl;
+            }  
         }
 
-        void subscribeObjectClassAttributes (
+        void subscribeObjectClassAttributesLv (
          ObjectClassHandle theClass,
          AttributeHandleSet const & attributeList,
          bool active = true,
          std::wstring const & updateRateDesignator = L"")
 
-         {
+        {
+            try {
+                return _rtiAmbassador->subscribeObjectClassAttributes(theClass,attributeList,active,updateRateDesignator);
+            } catch (RTIinternalError &e){
+            wcout << "subscribeObjectClassAttributes: error -> " << e.what() << "returned.\n" << endl;
+            }  
+        }
 
-         }
-
-        void publishObjectClassAttributes (
+        void publishObjectClassAttributesLv (
          ObjectClassHandle theClass,
          AttributeHandleSet const & attributeList)
-         {
+        {
+            try {
+                return _rtiAmbassador->publishObjectClassAttributes(theClass,attributeList);
+            } catch (RTIinternalError &e){
+            wcout << "publishObjectClassAttributes: error -> " << e.what() << "returned.\n" << endl;
+            }  
+        }      
 
-         }       
+        // data update
 
+        void updateAttributeValuesLv (
+            ObjectInstanceHandle theObject,
+            AttributeHandleValueMap const & theAttributeValues,
+            VariableLengthData const & theUserSuppliedTag)
+        {
+            try {
+                _rtiAmbassador->updateAttributeValues(theObject,theAttributeValues,theUserSuppliedTag);
+            } catch (RTIinternalError &e){
+            wcout << "publishObjectClassAttributes: error -> " << e.what() << "returned.\n" << endl;
+            }  
+        }
+
+        virtual void sendInteractionLv (
+            InteractionClassHandle theInteraction,
+            ParameterHandleValueMap const & theParameterValues,
+            VariableLengthData const & theUserSuppliedTag)
+        {
+            try {
+                _rtiAmbassador->sendInteraction(theInteraction,theParameterValues,theUserSuppliedTag);
+            } catch (RTIinternalError &e){
+            wcout << "sendInteraction: error -> " << e.what() << "returned.\n" << endl;
+            }  
+        }
         // Append new lvFederate members right abov
         // Generic guideline: members implement try and catch     
 
@@ -367,7 +406,8 @@ namespace rti1516eLv
         return 0;
     }  
 
-    EXTERNC int createRTIambassadorLvEx(RTIambassador **rtiHandle)
+    EXTERNC int createRTIambassadorLvEx(
+        RTIambassador **rtiHandle)
     {
         // previous implmentation
         // auto_ptr<RTIambassador> _rtiAmbassador;
@@ -389,7 +429,8 @@ namespace rti1516eLv
         return _rtiCount;
     }
 
-    EXTERNC int startRTIambassadorLvEx(RTIambassador *rtiHandle)
+    EXTERNC int startRTIambassadorLvEx(
+        RTIambassador *rtiHandle)
     {
         // dummy set _processCB to true;
         bool previous = false;
@@ -398,7 +439,8 @@ namespace rti1516eLv
         return previous;
     }
 
-    EXTERNC int stopRTIambassadorLvEx(RTIambassador *rtiHandle)
+    EXTERNC int stopRTIambassadorLvEx(
+        RTIambassador *rtiHandle)
     {
         // dummy set _processCB to false;
         bool previous = false;
@@ -422,7 +464,6 @@ namespace rti1516eLv
         const char mimModule[],
         const char logicalTimeImplementationName[])
     {
-        // implementation
         vector<wstring> FOMmoduleUrls;
         wstring mimModuleUrl;
         wstring wFedExecName = chararray2wstring(federationExecutionName);
@@ -445,7 +486,6 @@ namespace rti1516eLv
         const char federationExecutionName[],
         const char additionalFomModules[])
     {
-        // implementation
         vector<wstring> FOMmoduleUrls;
         wstring wFedType = chararray2wstring(federateType);
         wstring wFedExecName = chararray2wstring(federationExecutionName);
@@ -471,7 +511,6 @@ namespace rti1516eLv
         const char theName[],
         InteractionClassHandle *intClassHandle)
     {
-        // implementation
         wstring wTheName = chararray2wstring(theName);
         *intClassHandle = oLvFederate->getInteractionClassHandleLv(wTheName);
         return 0;
@@ -479,36 +518,41 @@ namespace rti1516eLv
 
     EXTERNC int getParameterHandleLvEx(
         RTIambassador *rtiHandle,
-        InteractionClassHandle whichClass,
+        InteractionClassHandle *whichClass,
         const char theName[],
         ParameterHandle *paramHandle)
     {
-        // implementation
         wstring wTheName = chararray2wstring(theName);
-        *paramHandle = oLvFederate->getParameterHandleLv(whichClass,wTheName);
+        *paramHandle = oLvFederate->getParameterHandleLv(*whichClass,wTheName);
         return 0;
     } 
 
     EXTERNC int getObjectClassHandleLvEx(
         RTIambassador *rtiHandle,
-        const char theName[])
+        const char theName[],
+        ObjectClassHandle *objectClassHandle)
     {
-        // implementation
+        wstring wTheName = chararray2wstring(theName);
+
+        *objectClassHandle = oLvFederate->getObjectClassHandleLv(wTheName);
+        return 0;
     }
 
     EXTERNC int getAttributeHandleLvEx(
         RTIambassador *rtiHandle,
-        InteractionClassHandle whichClass,
-        const char theName[])
+        ObjectClassHandle *whichClass,
+        const char theName[],
+        AttributeHandle *attributeHandle)
     {
-        // implementation
+        wstring wTheName = chararray2wstring(theName);
+        *attributeHandle = oLvFederate->getAttributeHandleLv(*whichClass,wTheName);
+        return 0;
     } 
 
     EXTERNC int reserveObjectInstanceNameLvEx(
         RTIambassador *rtiHandle,
         const char theObjectInstanceName[])
     {
-        // implementation
         // string sObjInstName(theObjectInstanceName);
         // wstring wObjInstName;
         // wObjInstName.assign(sObjInstName.begin(),sObjInstName.end());
@@ -521,76 +565,69 @@ namespace rti1516eLv
 
     EXTERNC int registerObjectInstanceLvEx(
         RTIambassador *rtiHandle,
-        ObjectClassHandle theClass,
-        const char theObjectInstanceName[])
+        ObjectClassHandle *theClass,
+        const char theObjectInstanceName[],
+        ObjectInstanceHandle *objectInstanceHandle)
     {
-        // implementation
+        wstring wObjInstName = chararray2wstring(theObjectInstanceName);
+        *objectInstanceHandle = oLvFederate->registerObjectInstanceLv(*theClass,wObjInstName);
     }  
 
     EXTERNC int updateAttributeValuesLvEx(
         RTIambassador *rtiHandle,
-        ObjectInstanceHandle theObject,
+        ObjectInstanceHandle *theObject,
         AttributeHandleValueMap const & theAttributeValues,
         VariableLengthData const & theUserSuppliedTag)
     {
-        // implementation
+        oLvFederate->updateAttributeValuesLv(*theObject,theAttributeValues,VariableLengthData());
     }  
 
     EXTERNC int sendInteractionLvEx(
         RTIambassador *rtiHandle,
-        InteractionClassHandle theInteraction,
+        InteractionClassHandle *theInteraction,
         ParameterHandleValueMap const & theParameterValues,
         VariableLengthData const & theUserSuppliedTag)
     {
-        // implementation
+        oLvFederate->sendInteractionLv(*theInteraction,theParameterValues,VariableLengthData());
     }  
 
     EXTERNC int subscribeInteractionClassLvEx(
         RTIambassador *rtiHandle,
-        InteractionClassHandle theClass,
-        bool active = true)
+        InteractionClassHandle *theClass,
+        bool active)
     {
-        // implementation
+        oLvFederate->subscribeInteractionClassLv(*theClass,active);
     }
 
     EXTERNC int publishInteractionClassLvEx(
         RTIambassador *rtiHandle,
-        InteractionClassHandle theInteraction)
+        InteractionClassHandle *theInteraction)
     {
-        // implementation
+        oLvFederate->publishInteractionClassLv(*theInteraction);
     }
 
     EXTERNC int subscribeObjectClassAttributesLvEx(
         RTIambassador *rtiHandle,
-        ObjectClassHandle theClass,
+        ObjectClassHandle *theClass,
         AttributeHandleSet const & attributeList,
         bool active,
         const char updateRateDesignator[])
     {
-        // implementation
+        oLvFederate->subscribeObjectClassAttributesLv(*theClass,attributeList);
     }
 
     EXTERNC int publishObjectClassAttributesLvEx(
         RTIambassador *rtiHandle,
-        ObjectClassHandle theClass,
+        ObjectClassHandle *theClass,
         AttributeHandleSet const & attributeList)
     {
-        // implementation
-    }
-
-    EXTERNC int evokeMultipleCallbacksLvEx(
-        RTIambassador *rtiHandle,
-        double approximateMinimumTimeInSeconds,
-        double approximateMaximumTimeInSeconds)
-    {
-        // implementation
+        oLvFederate->publishObjectClassAttributesLv(*theClass,attributeList);
     }
 
     EXTERNC int resignFederationExecutionLvEx(
         RTIambassador *rtiHandle,
         ResignAction resignAction)
     {
-        // implementation
         oLvFederate->resignFederationExecutionLv(resignAction);
     }
 
@@ -598,7 +635,6 @@ namespace rti1516eLv
         RTIambassador *rtiHandle,
         const char federationExecutionName[])
     {
-        // implementation
         // string sFedExecName(federationExecutionName);
         // wstring wFedExecName;
         // wFedExecName.assign(sFedExecName.begin(),sFedExecName.end());
@@ -610,15 +646,16 @@ namespace rti1516eLv
         } catch (FederatesCurrentlyJoined &ignored) {}
     }  
 
-    EXTERNC int disconnectLvEx(RTIambassador *rtiHandle)
+    EXTERNC int disconnectLvEx(
+        RTIambassador *rtiHandle)
     {
-
         // //RTIambassador *_rtiAmbassador = static_cast<RTIambassador*>(_rtiAmbassadorIn);
         oLvFederate->disconnectLv();
         return 0;
     }
 
-    EXTERNC int destroyRTIambassadorLvEx(RTIambassador *rtiHandle)
+    EXTERNC int destroyRTIambassadorLvEx(
+        RTIambassador *rtiHandle)
     {
         delete rtiHandle;
     }

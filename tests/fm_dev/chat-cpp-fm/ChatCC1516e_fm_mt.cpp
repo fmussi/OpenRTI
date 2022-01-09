@@ -396,6 +396,7 @@ public:
          AttributeHandleValueMap attributeValues;
          attributeValues[_aNameId] = unicodeUserName.encode();
          _rtiAmbassador->updateAttributeValues(_iParticipantHdl, attributeValues, VariableLengthData());
+         wcout << L"[got attribute value update]"<<endl;
       }
    }
 };

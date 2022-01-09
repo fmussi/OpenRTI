@@ -29,7 +29,7 @@ using namespace rti1516eLv;
 int main()
 {
     RTIambassador *rtiHandle;
-    const char *connectionString = "172.26.104.77:8990";
+    const char *connectionString = "172.29.110.172:8990";
     const char *fomModule = "/home/admin/git_repo/OpenRTI/build/bin/Chat-evolved.xml";
     const char *mimModule = "/home/admin/git_repo/OpenRTI/share/rti1516e/HLAstandardMIM.xml";
     InteractionClassHandle iMessageId;
@@ -46,9 +46,9 @@ int main()
 
     joinFederationExecutionLvEx(rtiHandle,"Chat","ChatRoom",fomModule);
 
-    getInteractionClassHandleLvEx(rtiHandle,"Communication",&iMessageId);
+    getInteractionClassHandleLvEx(rtiHandle,"Communication",iMessageId);
 
-    getParameterHandleLvEx(rtiHandle,&iMessageId,"Message",&pTextId);
+    getParameterHandleLvEx(rtiHandle,iMessageId,"Message",pTextId);
 
     startRTIambassadorLvEx(rtiHandle);
 

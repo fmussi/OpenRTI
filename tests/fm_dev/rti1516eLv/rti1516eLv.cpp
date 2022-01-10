@@ -399,78 +399,77 @@ namespace rti1516eLv
 
     // helpers 
 
-    EXTERNC  int attrHandleValueMapCreate(
-        AttributeHandleValueMap **attrHandleValueMap)
+    EXTERNC  int attrHandleValueMapCreate(AttributeHandleValueMap *attrHandleValueMap)
     {
-        *attrHandleValueMap = new AttributeHandleValueMap();
+        attrHandleValueMap = new AttributeHandleValueMap();
         return 0;
     }
 
     EXTERNC int attrHandleValueMapAddElementString(
-        AttributeHandleValueMap & attrHandleValueMap,
-        AttributeHandle & attributeHandle,
+        AttributeHandleValueMap * attrHandleValueMap,
+        AttributeHandle * attributeHandle,
         const char sElem[])
     {
         wstring wElem = chararray2wstring(sElem);
         HLAunicodeString uElem(wElem);
-        attrHandleValueMap[attributeHandle] = uElem.encode();
+        (*attrHandleValueMap)[(*attributeHandle)] = uElem.encode();
+        
     }
 
     EXTERNC int attrHandleValueMapDestroy(
-        AttributeHandleValueMap & attrHandleValueMap)
+        AttributeHandleValueMap * attrHandleValueMap)
     {
-        delete (&attrHandleValueMap);
+        delete attrHandleValueMap;
 
         return 0;
     }
 
-    EXTERNC int parHandleValueMapCreate(
-        ParameterHandleValueMap **parHandleValueMap)
+    EXTERNC int parHandleValueMapCreate(ParameterHandleValueMap *parHandleValueMap)
     {
-        *parHandleValueMap = new ParameterHandleValueMap();
+        parHandleValueMap = new ParameterHandleValueMap();
         return 0;
     }
 
     EXTERNC int parHandleValueMapAddElementString(
-        ParameterHandleValueMap & parHandleValueMap,
-        ParameterHandle & parameterHandle,
+        ParameterHandleValueMap * parHandleValueMap,
+        ParameterHandle * parameterHandle,
         const char sElem[])
     {
         wstring wElem = chararray2wstring(sElem);
         HLAunicodeString uElem(wElem);
-        parHandleValueMap[parameterHandle] = uElem.encode();
+        (*parHandleValueMap)[(*parameterHandle)] = uElem.encode();
     }
 
     EXTERNC int parHandleValueMapDestroy(
-        ParameterHandleValueMap & parHandleValueMap)
+        ParameterHandleValueMap * parHandleValueMap)
     {
-        delete (&parHandleValueMap);
+        delete parHandleValueMap;
 
         return 0;
     } 
 
-    EXTERNC int attrHandleSetCreate(
-        AttributeHandleSet **attrHandleSet)
+    EXTERNC int attrHandleSetCreate(AttributeHandleSet * attrHandleSet)
     {
-        *attrHandleSet = new AttributeHandleSet();
+        attrHandleSet = new AttributeHandleSet();
         return 0;
     }
 
     EXTERNC int attrHandleSetInsert(
-        AttributeHandleSet & attrHandleSet,
-        AttributeHandle & attrHandle
+        AttributeHandleSet * attrHandleSet,
+        AttributeHandle * attrHandle
     )
     {
         //AttributeHandle attrHandleVar;
-        attrHandleSet.insert(attrHandle);
+        //attrHandleSet->insert(*attrHandle);
+        (*attrHandleSet).insert(*attrHandle);
         return 0;
     }
 
     EXTERNC int attrHandleSetDestroy(
-        AttributeHandleSet & attrHandleSet
+        AttributeHandleSet * attrHandleSet
     )
     {
-        delete (&attrHandleSet);
+        delete attrHandleSet;
         return 0;
     }
 
@@ -589,43 +588,43 @@ namespace rti1516eLv
     EXTERNC int getInteractionClassHandleLvEx(
         RTIambassador *rtiHandle,
         const char theName[],
-        InteractionClassHandle & intClassHandle)
+        InteractionClassHandle * intClassHandle)
     {
         wstring wTheName = chararray2wstring(theName);
-        intClassHandle = oLvFederate->getInteractionClassHandleLv(wTheName);
+        (*intClassHandle) = oLvFederate->getInteractionClassHandleLv(wTheName);
         return 0;
     }   
 
     EXTERNC int getParameterHandleLvEx(
         RTIambassador *rtiHandle,
-        InteractionClassHandle & whichClass,
+        InteractionClassHandle * whichClass,
         const char theName[],
-        ParameterHandle & paramHandle)
+        ParameterHandle *paramHandle)
     {
         wstring wTheName = chararray2wstring(theName);
-        paramHandle = oLvFederate->getParameterHandleLv(whichClass,wTheName);
+        (*paramHandle) = oLvFederate->getParameterHandleLv((*whichClass),wTheName);
         return 0;
     } 
 
     EXTERNC int getObjectClassHandleLvEx(
         RTIambassador *rtiHandle,
         const char theName[],
-        ObjectClassHandle & objectClassHandle)
+        ObjectClassHandle *objectClassHandle)
     {
         wstring wTheName = chararray2wstring(theName);
 
-        objectClassHandle = oLvFederate->getObjectClassHandleLv(wTheName);
+        (*objectClassHandle) = oLvFederate->getObjectClassHandleLv(wTheName);
         return 0;
     }
 
     EXTERNC int getAttributeHandleLvEx(
         RTIambassador *rtiHandle,
-        ObjectClassHandle & whichClass,
+        ObjectClassHandle *whichClass,
         const char theName[],
-        AttributeHandle & attributeHandle)
+        AttributeHandle * attributeHandle)
     {
         wstring wTheName = chararray2wstring(theName);
-        attributeHandle = oLvFederate->getAttributeHandleLv(whichClass,wTheName);
+        (*attributeHandle) = oLvFederate->getAttributeHandleLv(*whichClass,wTheName);
         return 0;
     } 
 
@@ -647,10 +646,10 @@ namespace rti1516eLv
         RTIambassador *rtiHandle,
         ObjectClassHandle & theClass,
         const char theObjectInstanceName[],
-        ObjectInstanceHandle  & objectInstanceHandle)
+        ObjectInstanceHandle  *objectInstanceHandle)
     {
         wstring wObjInstName = chararray2wstring(theObjectInstanceName);
-        objectInstanceHandle = oLvFederate->registerObjectInstanceLv(theClass,wObjInstName);
+        (*objectInstanceHandle) = oLvFederate->registerObjectInstanceLv(theClass,wObjInstName);
     }  
 
     EXTERNC int updateAttributeValuesLvEx(
@@ -663,43 +662,43 @@ namespace rti1516eLv
 
     EXTERNC int sendInteractionLvEx(
         RTIambassador *rtiHandle,
-        InteractionClassHandle & theInteraction,
+        InteractionClassHandle * theInteraction,
         ParameterHandleValueMap const & theParameterValues)
     {
-        oLvFederate->sendInteractionLv(theInteraction,theParameterValues,VariableLengthData());
+        oLvFederate->sendInteractionLv(*theInteraction,theParameterValues,VariableLengthData());
     }  
 
     EXTERNC int subscribeInteractionClassLvEx(
         RTIambassador *rtiHandle,
-        InteractionClassHandle & theClass,
+        InteractionClassHandle *theClass,
         bool active)
     {
-        oLvFederate->subscribeInteractionClassLv(theClass,active);
+        oLvFederate->subscribeInteractionClassLv(*theClass,active);
     }
 
     EXTERNC int publishInteractionClassLvEx(
         RTIambassador *rtiHandle,
-        InteractionClassHandle & theInteraction)
+        InteractionClassHandle *theInteraction)
     {
-        oLvFederate->publishInteractionClassLv(theInteraction);
+        oLvFederate->publishInteractionClassLv(*theInteraction);
     }
 
     EXTERNC int subscribeObjectClassAttributesLvEx(
         RTIambassador *rtiHandle,
-        ObjectClassHandle & theClass,
+        ObjectClassHandle *theClass,
         AttributeHandleSet const & attributeList,
         bool active,
         const char updateRateDesignator[])
     {
-        oLvFederate->subscribeObjectClassAttributesLv(theClass,attributeList);
+        oLvFederate->subscribeObjectClassAttributesLv(*theClass,attributeList);
     }
 
     EXTERNC int publishObjectClassAttributesLvEx(
         RTIambassador *rtiHandle,
-        ObjectClassHandle & theClass,
+        ObjectClassHandle *theClass,
         AttributeHandleSet const & attributeList)
     {
-        oLvFederate->publishObjectClassAttributesLv(theClass,attributeList);
+        oLvFederate->publishObjectClassAttributesLv(*theClass,attributeList);
     }
 
     EXTERNC int resignFederationExecutionLvEx(

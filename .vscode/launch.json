@@ -5,6 +5,7 @@
     // Program paths:
     // /home/admin/git_repo/OpenRTI/build/lib64/librti1516elv.so
     // /home/admin/git_repo/OpenRTI/build/bin/ChatCC1516e_fm_mt
+    // /home/admin/git_repo/OpenRTI/build/bin/testapp
     "version": "0.2.0",
     "configurations": [
         {

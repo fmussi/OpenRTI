@@ -26,32 +26,36 @@ namespace rti1516eLv
 {
     // Helper functions
 
-    EXTERNC  int attrHandleValueMapCreate(
-        AttributeHandleValueMap **attrHandleValueMap);
+    // EXTERNC  int attrHandleValueMapCreate(
+    //     AttributeHandleValueMap **attrHandleValueMap);
+    EXTERNC  int attrHandleValueMapCreate(AttributeHandleValueMap *attrHandleValueMap);   
     EXTERNC int attrHandleValueMapDestroy(
-        AttributeHandleValueMap & attrHandleValueMap);
+        AttributeHandleValueMap * attrHandleValueMap);
     EXTERNC int attrHandleValueMapAddElementString(
-        AttributeHandleValueMap & attrHandleValueMap,
-        AttributeHandle & attributeHandle,
+        AttributeHandleValueMap * attrHandleValueMap,
+        AttributeHandle * attributeHandle,
         const char sElem[]);
 
-    EXTERNC int parHandleValueMapCreate(
-        ParameterHandleValueMap **parHandleValueMap);
+    // EXTERNC int parHandleValueMapCreate(
+    //     ParameterHandleValueMap **parHandleValueMap);
+    EXTERNC int parHandleValueMapCreate(ParameterHandleValueMap *parHandleValueMap);
     EXTERNC int attrHandleValueMapDestroy(
-        AttributeHandleValueMap & attrHandleValueMap);
+        AttributeHandleValueMap * attrHandleValueMap);
     EXTERNC int parHandleValueMapAddElementString(
-        ParameterHandleValueMap & parHandleValueMap,
-        ParameterHandle & parameterHandle,
+        ParameterHandleValueMap * parHandleValueMap,
+        ParameterHandle * parameterHandle,
         const char sElem[]);
 
-    EXTERNC int attrHandleSetCreate(
-        AttributeHandleSet **attrHandleSet);
+    // EXTERNC int attrHandleSetCreate(
+    //     AttributeHandleSet **attrHandleSet);
+    EXTERNC int attrHandleSetCreate(AttributeHandleSet * attrHandleSet);
+
     EXTERNC int attrHandleSetInsert(
-        AttributeHandleSet & attrHandleSet,
-        AttributeHandle & attrHandle
+        AttributeHandleSet * attrHandleSet,
+        AttributeHandle * attrHandle
     );
     EXTERNC int attrHandleSetDestroy(
-        AttributeHandleSet & attrHandleSet
+        AttributeHandleSet * attrHandleSet
     );
 
 

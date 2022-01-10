@@ -67,24 +67,24 @@ namespace rti1516eLv
     EXTERNC int getInteractionClassHandleLvEx(
         RTIambassador *rtiHandle,
         const char theName[],
-        InteractionClassHandle & intClassHandle);
+        InteractionClassHandle * intClassHandle);
 
     EXTERNC int getParameterHandleLvEx(
         RTIambassador *rtiHandle,
-        InteractionClassHandle & whichClass,
+        InteractionClassHandle *whichClass,
         const char theName[],
-        ParameterHandle & paramHandle);
+        ParameterHandle *paramHandle);
 
     EXTERNC int getObjectClassHandleLvEx(
         RTIambassador *rtiHandle,
         const char theName[],
-        ObjectClassHandle & objectClassHandle);
+        ObjectClassHandle *objectClassHandle);
     
     EXTERNC int getAttributeHandleLvEx(
         RTIambassador *rtiHandle,
-        ObjectClassHandle & whichClass,
+        ObjectClassHandle *whichClass,
         const char theName[],
-        AttributeHandle & attributeHandle);
+        AttributeHandle * attributeHandle);
 
     EXTERNC int reserveObjectInstanceNameLvEx(
         RTIambassador *rtiHandle,
@@ -94,7 +94,7 @@ namespace rti1516eLv
         RTIambassador *rtiHandle,
         ObjectClassHandle & theClass,
         const char theObjectInstanceName[],
-        ObjectInstanceHandle & objectInstanceHandle);
+        ObjectInstanceHandle *objectInstanceHandle);
 
     EXTERNC int updateAttributeValuesLvEx(
         RTIambassador *rtiHandle,
@@ -103,28 +103,28 @@ namespace rti1516eLv
 
     EXTERNC int sendInteractionLvEx(
         RTIambassador *rtiHandle,
-        InteractionClassHandle & theInteraction,
+        InteractionClassHandle * theInteraction,
         ParameterHandleValueMap const & theParameterValues);
 
     EXTERNC int subscribeInteractionClassLvEx(
         RTIambassador *rtiHandle,
-        InteractionClassHandle & theClass,
+        InteractionClassHandle *theClass,
         bool active);
     
     EXTERNC int publishInteractionClassLvEx(
         RTIambassador *rtiHandle,
-        InteractionClassHandle & theInteraction);
+        InteractionClassHandle *theInteraction);
 
     EXTERNC int subscribeObjectClassAttributesLvEx(
         RTIambassador *rtiHandle,
-        ObjectClassHandle & theClass,
+        ObjectClassHandle *theClass,
         AttributeHandleSet const & attributeList,
         bool active,
         const char updateRateDesignator[]);
 
     EXTERNC int publishObjectClassAttributesLvEx(
         RTIambassador *rtiHandle,
-        ObjectClassHandle & theClass,
+        ObjectClassHandle *theClass,
         AttributeHandleSet const & attributeList);
 
     EXTERNC int resignFederationExecutionLvEx(

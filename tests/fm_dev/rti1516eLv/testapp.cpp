@@ -29,11 +29,20 @@ using namespace rti1516eLv;
 int main()
 {
     RTIambassador *rtiHandle;
-    const char *connectionString = "172.29.110.172:8990";
+    const char *connectionString = "192.168.0.8:8990";
     const char *fomModule = "/home/admin/git_repo/OpenRTI/build/bin/Chat-evolved.xml";
     const char *mimModule = "/home/admin/git_repo/OpenRTI/share/rti1516e/HLAstandardMIM.xml";
-    InteractionClassHandle iMessageId;
-    ParameterHandle pTextId;
+    
+    
+   InteractionClassHandle _iMessageId;
+   ParameterHandle _pTextId;
+   ParameterHandle _pSenderId;
+   ObjectClassHandle _oParticipantId;
+   ObjectInstanceHandle _iParticipantHdl;
+   AttributeHandle _aNameId;
+   AttributeHandleSet _aHandleSet;
+   ParameterHandleValueMap _pHandleValueMap;
+   AttributeHandleValueMap _aHandleValueMap;
 
     //create RTIambassador
     createRTIambassadorLvEx(&rtiHandle);
@@ -41,18 +50,54 @@ int main()
     //connect
     connectLvEx(rtiHandle,connectionString);
 
+    //destroyFederationExecutionLvEx(rtiHandle,"ChatRoom");
+
     createFederationExecutionWithMIMLvEx(rtiHandle,"ChatRoom",fomModule,mimModule,"");
     //wait for a certain amoung 
 
     joinFederationExecutionLvEx(rtiHandle,"Chat","ChatRoom",fomModule);
 
-    getInteractionClassHandleLvEx(rtiHandle,"Communication",iMessageId);
+    getInteractionClassHandleLvEx(rtiHandle,"Communication",&_iMessageId);
+    
+    getParameterHandleLvEx(rtiHandle,&_iMessageId,"Message",&_pTextId);
 
-    getParameterHandleLvEx(rtiHandle,iMessageId,"Message",pTextId);
+    getParameterHandleLvEx(rtiHandle,&_iMessageId,"Sender",&_pSenderId);
+
+    getObjectClassHandleLvEx(rtiHandle,"Participant",&_oParticipantId);
+
+    getAttributeHandleLvEx(rtiHandle,&_oParticipantId,"Name",&_aNameId);
+
+    attrHandleSetCreate(&_aHandleSet);
+
+    attrHandleSetInsert(&_aHandleSet,&_aNameId);
+
+    attrHandleValueMapCreate(&_aHandleValueMap);
+    parHandleValueMapCreate(&_pHandleValueMap);
 
     startRTIambassadorLvEx(rtiHandle);
+    
+    subscribeInteractionClassLvEx(rtiHandle,&_iMessageId,true);
+    publishInteractionClassLvEx(rtiHandle,&_iMessageId);
+    subscribeObjectClassAttributesLvEx(rtiHandle,&_oParticipantId,_aHandleSet,true,"");
+    publishObjectClassAttributesLvEx(rtiHandle,&_oParticipantId,_aHandleSet);
 
     this_thread::sleep_for(chrono::seconds(5));
+
+    reserveObjectInstanceNameLvEx(rtiHandle,"ciccione1");
+
+    this_thread::sleep_for(chrono::seconds(5));
+
+    registerObjectInstanceLvEx(rtiHandle,_oParticipantId,"ciccione1",&_iParticipantHdl);
+
+    attrHandleValueMapAddElementString(&_aHandleValueMap,&_aNameId,"ciccione1");
+
+    updateAttributeValuesLvEx(rtiHandle,_iParticipantHdl,_aHandleValueMap);
+
+    parHandleValueMapAddElementString(&_pHandleValueMap,&_pTextId,"Ciao a tutti");
+
+    parHandleValueMapAddElementString(&_pHandleValueMap,&_pSenderId,"ciccione1");
+
+    sendInteractionLvEx(rtiHandle,&_iMessageId,_pHandleValueMap);
 
     stopRTIambassadorLvEx(rtiHandle);
     this_thread::sleep_for(chrono::seconds(2));

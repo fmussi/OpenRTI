@@ -720,7 +720,11 @@ namespace rti1516eLv
         try{
             oLvFederate->destroyFederationExecutionLv(wFedExecName);
             //rtiHandle->destroyFederationExecution(wFedExecName);
-        } catch (FederatesCurrentlyJoined &ignored) {}
+        } catch (FederatesCurrentlyJoined &ignored) {
+        } catch (FederationExecutionDoesNotExist ignored) {
+        } catch (RTIinternalError ignored) {
+        } catch (NotConnected ignored) {
+        } 
     }  
 
     EXTERNC int disconnectLvEx(

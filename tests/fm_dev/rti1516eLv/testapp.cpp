@@ -50,7 +50,7 @@ int main()
     //connect
     connectLvEx(rtiHandle,connectionString);
 
-    //destroyFederationExecutionLvEx(rtiHandle,"ChatRoom");
+    destroyFederationExecutionLvEx(rtiHandle,"ChatRoom");
 
     createFederationExecutionWithMIMLvEx(rtiHandle,"ChatRoom",fomModule,mimModule,"");
     //wait for a certain amoung 

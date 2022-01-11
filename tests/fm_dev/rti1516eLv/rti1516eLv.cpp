@@ -355,6 +355,55 @@ namespace rti1516eLv
         // Append new lvFederate members right abov
         // Generic guideline: members implement try and catch     
 
+        virtual
+        void
+        receiveInteraction (
+            InteractionClassHandle theInteraction,
+            ParameterHandleValueMap const & theParameterValues,
+            VariableLengthData const & theUserSuppliedTag,
+            OrderType sentOrder,
+            TransportationType theType,
+            SupplementalReceiveInfo theReceiveInfo)
+            throw (FederateInternalError)
+        {
+            if (theInteraction == _iMessageId) {
+                HLAunicodeString message;
+                HLAunicodeString sender;
+                for (ParameterHandleValueMap::const_iterator i = theParameterValues.begin(); i != theParameterValues.end(); ++i) {
+                    ParameterHandle const & handle = i->first;
+                    VariableLengthData const & value = i->second;
+                    if (handle == _pTextId) {
+                    message.decode(value);
+                    } else if (handle == _pSenderId) {
+                    sender.decode(value);
+                    }
+                }
+                wcout << wstring(sender) << L": " << wstring(message) << endl;
+            }
+        }
+
+        virtual
+        void
+        reflectAttributeValues (
+            ObjectInstanceHandle theObject,
+            AttributeHandleValueMap const & theAttributeValues,
+            VariableLengthData const & theUserSuppliedTag,
+            OrderType sentOrder,
+            TransportationType theType,
+            SupplementalReflectInfo theReflectInfo)
+            throw (FederateInternalError)
+        {
+            HLAunicodeString name;
+            name.decode(theAttributeValues.find(_aNameId)->second);
+
+            // if (_knownObjects.count(theObject) == 0) {
+            //     Participant member((wstring)name);
+            //     wcout << L"[ " << member.toString() << L" has joined the chat ]" << endl;
+            //     wcout << L"> ";
+            //     _knownObjects[theObject] = member;		
+            // }
+        }
+
         virtual void objectInstanceNameReservationSucceeded(
             wstring const & theObjectInstanceName)
             throw (FederateInternalError)
@@ -371,6 +420,23 @@ namespace rti1516eLv
             double eventData = 54321.0;
             // send LV event
             PostLVUserEvent(lueObjInsNameResFailed,&eventData);
+        }
+        virtual
+        void
+        removeObjectInstance(
+            ObjectInstanceHandle const & theObject,
+            VariableLengthData const & theUserSuppliedTag,
+            OrderType const & sentOrder)
+            throw (FederateInternalError)
+        {
+            // if (_knownObjects.count(theObject)) {
+            //     map<ObjectInstanceHandle,Participant>::iterator iter;
+            //     iter = _knownObjects.find(theObject);
+            //     Participant member(iter->second);
+            //     _knownObjects.erase(theObject);
+            //     wcout << L"[ " << member.toString() << L" has left the chat ]" << endl;
+            //     wcout << L"> ";
+            // }
         }
 
     };
@@ -670,35 +736,35 @@ namespace rti1516eLv
 
     EXTERNC int subscribeInteractionClassLvEx(
         RTIambassador *rtiHandle,
-        InteractionClassHandle *theClass,
+        InteractionClassHandle theClass,
         bool active)
     {
-        oLvFederate->subscribeInteractionClassLv(*theClass,active);
+        oLvFederate->subscribeInteractionClassLv(theClass,active);
     }
 
     EXTERNC int publishInteractionClassLvEx(
         RTIambassador *rtiHandle,
-        InteractionClassHandle *theInteraction)
+        InteractionClassHandle theInteraction)
     {
-        oLvFederate->publishInteractionClassLv(*theInteraction);
+        oLvFederate->publishInteractionClassLv(theInteraction);
     }
 
     EXTERNC int subscribeObjectClassAttributesLvEx(
         RTIambassador *rtiHandle,
-        ObjectClassHandle *theClass,
+        ObjectClassHandle theClass,
         AttributeHandleSet const & attributeList,
         bool active,
         const char updateRateDesignator[])
     {
-        oLvFederate->subscribeObjectClassAttributesLv(*theClass,attributeList);
+        oLvFederate->subscribeObjectClassAttributesLv(theClass,attributeList);
     }
 
     EXTERNC int publishObjectClassAttributesLvEx(
         RTIambassador *rtiHandle,
-        ObjectClassHandle *theClass,
+        ObjectClassHandle theClass,
         AttributeHandleSet const & attributeList)
     {
-        oLvFederate->publishObjectClassAttributesLv(*theClass,attributeList);
+        oLvFederate->publishObjectClassAttributesLv(theClass,attributeList);
     }
 
     EXTERNC int resignFederationExecutionLvEx(

@@ -108,23 +108,23 @@ namespace rti1516eLv
 
     EXTERNC int subscribeInteractionClassLvEx(
         RTIambassador *rtiHandle,
-        InteractionClassHandle *theClass,
+        InteractionClassHandle theClass,
         bool active);
     
     EXTERNC int publishInteractionClassLvEx(
         RTIambassador *rtiHandle,
-        InteractionClassHandle *theInteraction);
+        InteractionClassHandle theInteraction);
 
     EXTERNC int subscribeObjectClassAttributesLvEx(
         RTIambassador *rtiHandle,
-        ObjectClassHandle *theClass,
+        ObjectClassHandle theClass,
         AttributeHandleSet const & attributeList,
         bool active,
         const char updateRateDesignator[]);
 
     EXTERNC int publishObjectClassAttributesLvEx(
         RTIambassador *rtiHandle,
-        ObjectClassHandle *theClass,
+        ObjectClassHandle theClass,
         AttributeHandleSet const & attributeList);
 
     EXTERNC int resignFederationExecutionLvEx(

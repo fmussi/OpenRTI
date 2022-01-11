@@ -296,7 +296,7 @@ namespace rti1516eLv
          InteractionClassHandle theInteraction)
         {
             try {
-                return _rtiAmbassador->subscribeInteractionClass(theInteraction);
+                return _rtiAmbassador->publishInteractionClass(theInteraction);
             } catch (RTIinternalError &e){
             wcout << "subscribeInteractionClass: error -> " << e.what() << "returned.\n" << endl;
             }  
@@ -654,7 +654,7 @@ namespace rti1516eLv
     EXTERNC int getInteractionClassHandleLvEx(
         RTIambassador *rtiHandle,
         const char theName[],
-        InteractionClassHandle * intClassHandle)
+        InteractionClassHandle *intClassHandle)
     {
         wstring wTheName = chararray2wstring(theName);
         (*intClassHandle) = oLvFederate->getInteractionClassHandleLv(wTheName);
@@ -736,35 +736,35 @@ namespace rti1516eLv
 
     EXTERNC int subscribeInteractionClassLvEx(
         RTIambassador *rtiHandle,
-        InteractionClassHandle theClass,
+        InteractionClassHandle *theClass,
         bool active)
     {
-        oLvFederate->subscribeInteractionClassLv(theClass,active);
+        oLvFederate->subscribeInteractionClassLv(*theClass,active);
     }
 
     EXTERNC int publishInteractionClassLvEx(
         RTIambassador *rtiHandle,
-        InteractionClassHandle theInteraction)
+        InteractionClassHandle *theInteraction)
     {
-        oLvFederate->publishInteractionClassLv(theInteraction);
+        oLvFederate->publishInteractionClassLv(*theInteraction);
     }
 
     EXTERNC int subscribeObjectClassAttributesLvEx(
         RTIambassador *rtiHandle,
-        ObjectClassHandle theClass,
+        ObjectClassHandle *theClass,
         AttributeHandleSet const & attributeList,
         bool active,
         const char updateRateDesignator[])
     {
-        oLvFederate->subscribeObjectClassAttributesLv(theClass,attributeList);
+        oLvFederate->subscribeObjectClassAttributesLv(*theClass,attributeList);
     }
 
     EXTERNC int publishObjectClassAttributesLvEx(
         RTIambassador *rtiHandle,
-        ObjectClassHandle theClass,
+        ObjectClassHandle *theClass,
         AttributeHandleSet const & attributeList)
     {
-        oLvFederate->publishObjectClassAttributesLv(theClass,attributeList);
+        oLvFederate->publishObjectClassAttributesLv(*theClass,attributeList);
     }
 
     EXTERNC int resignFederationExecutionLvEx(

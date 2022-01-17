@@ -148,7 +148,14 @@ namespace rti1516eLv
                 pthread_mutex_unlock(&_mutex);
                 thCbProc.detach();
 
-            } catch (RTIinternalError ignored) {}
+            } catch (exception &e1) {
+                wcerr << "got error connecting" << e1.what() << endl;
+                wcerr.flush();
+            } catch (Exception &e2) {
+                wcout << "got ERROR connecting" << e2.what() << endl;
+                wcout.flush();
+                throw;
+            }
         }
 
         void disconnectLv()
@@ -465,15 +472,15 @@ namespace rti1516eLv
 
     // helpers 
 
-    EXTERNC  int attrHandleValueMapCreate(AttributeHandleValueMap *attrHandleValueMap)
+    EXTERNC  int attrHandleValueMapCreate(AttributeHandleValueMap **attrHandleValueMap)
     {
-        attrHandleValueMap = new AttributeHandleValueMap();
+        *attrHandleValueMap = new AttributeHandleValueMap();
         return 0;
     }
 
     EXTERNC int attrHandleValueMapAddElementString(
         AttributeHandleValueMap * attrHandleValueMap,
-        AttributeHandle * attributeHandle,
+        AttributeHandle *attributeHandle,
         const char sElem[])
     {
         wstring wElem = chararray2wstring(sElem);
@@ -490,9 +497,9 @@ namespace rti1516eLv
         return 0;
     }
 
-    EXTERNC int parHandleValueMapCreate(ParameterHandleValueMap *parHandleValueMap)
+    EXTERNC int parHandleValueMapCreate(ParameterHandleValueMap **parHandleValueMap)
     {
-        parHandleValueMap = new ParameterHandleValueMap();
+        *parHandleValueMap = new ParameterHandleValueMap();
         return 0;
     }
 
@@ -514,18 +521,19 @@ namespace rti1516eLv
         return 0;
     } 
 
-    EXTERNC int attrHandleSetCreate(AttributeHandleSet * attrHandleSet)
+    EXTERNC int attrHandleSetCreate(AttributeHandleSet **attrHandleSet)
     {
-        attrHandleSet = new AttributeHandleSet();
+        *attrHandleSet = new AttributeHandleSet();
         return 0;
     }
 
     EXTERNC int attrHandleSetInsert(
-        AttributeHandleSet * attrHandleSet,
-        AttributeHandle * attrHandle
+        AttributeHandleSet *attrHandleSet,
+        AttributeHandle *attrHandle
     )
     {
         //AttributeHandle attrHandleVar;
+        //attrHandleSet->insert(attrHandleVar);
         //attrHandleSet->insert(*attrHandle);
         (*attrHandleSet).insert(*attrHandle);
         return 0;
@@ -599,7 +607,12 @@ namespace rti1516eLv
         const char address[])
     {
         wstring host = chararray2wstring(address);
-        oLvFederate->connectLv(host);
+        try {
+            oLvFederate->connectLv(host);
+        } catch (Exception &e) {
+                wcerr << "got ERROR ONE LAYER ABOVE connecting" << e.what() << endl;
+                wcerr.flush();
+        }
     }
 
     EXTERNC int createFederationExecutionWithMIMLvEx(

@@ -21,6 +21,7 @@
 #include "cintools/extcode.h"
 
 #include "rti1516eLv_helpers.h"
+#include "rti1516eLv_errors.h"
 
 using namespace rti1516e;
 

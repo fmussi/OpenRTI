@@ -28,17 +28,17 @@ namespace rti1516eLv
 
     // EXTERNC  int attrHandleValueMapCreate(
     //     AttributeHandleValueMap **attrHandleValueMap);
-    EXTERNC  int attrHandleValueMapCreate(AttributeHandleValueMap *attrHandleValueMap);   
+    EXTERNC  int attrHandleValueMapCreate(AttributeHandleValueMap **attrHandleValueMap);   
     EXTERNC int attrHandleValueMapDestroy(
-        AttributeHandleValueMap * attrHandleValueMap);
+        AttributeHandleValueMap *attrHandleValueMap);
     EXTERNC int attrHandleValueMapAddElementString(
-        AttributeHandleValueMap * attrHandleValueMap,
-        AttributeHandle * attributeHandle,
+        AttributeHandleValueMap *attrHandleValueMap,
+        AttributeHandle *attributeHandle,
         const char sElem[]);
 
     // EXTERNC int parHandleValueMapCreate(
     //     ParameterHandleValueMap **parHandleValueMap);
-    EXTERNC int parHandleValueMapCreate(ParameterHandleValueMap *parHandleValueMap);
+    EXTERNC int parHandleValueMapCreate(ParameterHandleValueMap **parHandleValueMap);
     EXTERNC int attrHandleValueMapDestroy(
         AttributeHandleValueMap * attrHandleValueMap);
     EXTERNC int parHandleValueMapAddElementString(
@@ -48,7 +48,7 @@ namespace rti1516eLv
 
     // EXTERNC int attrHandleSetCreate(
     //     AttributeHandleSet **attrHandleSet);
-    EXTERNC int attrHandleSetCreate(AttributeHandleSet * attrHandleSet);
+    EXTERNC int attrHandleSetCreate(AttributeHandleSet **attrHandleSet);
 
     EXTERNC int attrHandleSetInsert(
         AttributeHandleSet * attrHandleSet,

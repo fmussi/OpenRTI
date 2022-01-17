@@ -29,7 +29,7 @@ using namespace rti1516eLv;
 int main()
 {
     RTIambassador *rtiHandle;
-    const char *connectionString = "192.168.0.8:8990";
+    const char *connectionString = "192.168.96.170:8990";
     const char *fomModule = "/home/admin/git_repo/OpenRTI/build/bin/Chat-evolved.xml";
     const char *mimModule = "/home/admin/git_repo/OpenRTI/share/rti1516e/HLAstandardMIM.xml";
     
@@ -40,9 +40,9 @@ int main()
    ObjectClassHandle _oParticipantId;
    ObjectInstanceHandle _iParticipantHdl;
    AttributeHandle _aNameId;
-   AttributeHandleSet _aHandleSet;
-   ParameterHandleValueMap _pHandleValueMap;
-   AttributeHandleValueMap _aHandleValueMap;
+   AttributeHandleSet *_aHandleSet;
+   ParameterHandleValueMap *_pHandleValueMap;
+   AttributeHandleValueMap *_aHandleValueMap;
 
     //create RTIambassador
     createRTIambassadorLvEx(&rtiHandle);
@@ -68,7 +68,7 @@ int main()
     getAttributeHandleLvEx(rtiHandle,&_oParticipantId,"Name",&_aNameId);
 
     attrHandleSetCreate(&_aHandleSet);
-    attrHandleSetInsert(&_aHandleSet,&_aNameId);
+    attrHandleSetInsert(_aHandleSet,&_aNameId);
     // _aHandleSet.insert(_aNameId);
 
     attrHandleValueMapCreate(&_aHandleValueMap);
@@ -78,8 +78,8 @@ int main()
     
     subscribeInteractionClassLvEx(rtiHandle,&_iMessageId,true);
     publishInteractionClassLvEx(rtiHandle,&_iMessageId);
-    subscribeObjectClassAttributesLvEx(rtiHandle,&_oParticipantId,_aHandleSet,true,"");
-    publishObjectClassAttributesLvEx(rtiHandle,&_oParticipantId,_aHandleSet);
+    subscribeObjectClassAttributesLvEx(rtiHandle,&_oParticipantId,*_aHandleSet,true,"");
+    publishObjectClassAttributesLvEx(rtiHandle,&_oParticipantId,*_aHandleSet);
 
     this_thread::sleep_for(chrono::seconds(5));
 
@@ -89,21 +89,21 @@ int main()
 
     registerObjectInstanceLvEx(rtiHandle,_oParticipantId,"ciccione1",&_iParticipantHdl);
 
-    attrHandleValueMapAddElementString(&_aHandleValueMap,&_aNameId,"ciccione1");
+    attrHandleValueMapAddElementString(_aHandleValueMap,&_aNameId,"ciccione1");
     // HLAunicodeString unicodeUserName(L"ciccione1");
     // _aHandleValueMap[_aNameId]= unicodeUserName.encode();
 
-    updateAttributeValuesLvEx(rtiHandle,_iParticipantHdl,_aHandleValueMap);
+    updateAttributeValuesLvEx(rtiHandle,_iParticipantHdl,*_aHandleValueMap);
 
-    parHandleValueMapAddElementString(&_pHandleValueMap,&_pTextId,"Ciao a tutti");
-    parHandleValueMapAddElementString(&_pHandleValueMap,&_pSenderId,"ciccione1");
+    parHandleValueMapAddElementString(_pHandleValueMap,&_pTextId,"Ciao a tutti");
+    parHandleValueMapAddElementString(_pHandleValueMap,&_pSenderId,"ciccione1");
     // HLAunicodeString unicodeMessage(L"ciaoMerde");
   
 
     // _pHandleValueMap[_pTextId] = unicodeMessage.encode();
     // _pHandleValueMap[_pSenderId] = unicodeUserName.encode();    
 
-    sendInteractionLvEx(rtiHandle,&_iMessageId,_pHandleValueMap);
+    sendInteractionLvEx(rtiHandle,&_iMessageId,*_pHandleValueMap);
 
     stopRTIambassadorLvEx(rtiHandle);
     this_thread::sleep_for(chrono::seconds(2));

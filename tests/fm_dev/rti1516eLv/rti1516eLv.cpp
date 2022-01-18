@@ -147,15 +147,36 @@ namespace rti1516eLv
                 }
                 pthread_mutex_unlock(&_mutex);
                 thCbProc.detach();
-
-            } catch (exception &e1) {
-                wcerr << "got error connecting" << e1.what() << endl;
+            } catch (Exception &e) {
+                wcerr << "RTI1516e thrown " << e.what() << endl;
                 wcerr.flush();
-            } catch (Exception &e2) {
-                wcout << "got ERROR connecting" << e2.what() << endl;
-                wcout.flush();
                 throw;
             }
+            // } catch (ConnectionFailed &e) {
+            //     wcerr << "ConnectionFailed" << e.what() << endl;
+            //     wcerr.flush();
+            //     throw;
+            // } catch (InvalidLocalSettingsDesignator &e) {
+            //     wcout << "InvalidLocalSettingsDesignator" << e.what() << endl;
+            //     wcout.flush();
+            //     throw;
+            // } catch (UnsupportedCallbackModel &e) {
+            //     wcout << "UnsupportedCallbackModel" << e.what() << endl;
+            //     wcout.flush();
+            //     throw;
+            // } catch (AlreadyConnected &e) {
+            //     wcout << "AlreadyConnected" << e.what() << endl;
+            //     wcout.flush();
+            //     throw;
+            // } catch (CallNotAllowedFromWithinCallback &e) {
+            //     wcout << "CallNotAllowedFromWithinCallback" << e.what() << endl;
+            //     wcout.flush();
+            //     throw;
+            // } catch (RTIinternalError &e) {
+            //     wcout << "RTIinternalError" << e.what() << endl;
+            //     wcout.flush();
+            //     throw;
+            // }
         }
 
         void disconnectLv()
@@ -609,9 +630,22 @@ namespace rti1516eLv
         wstring host = chararray2wstring(address);
         try {
             oLvFederate->connectLv(host);
-        } catch (Exception &e) {
-                wcerr << "got ERROR ONE LAYER ABOVE connecting" << e.what() << endl;
-                wcerr.flush();
+        } catch (ConnectionFailed &e) {
+            wcerr << "Error code " << LV_ERROR_CONNECTION_FAILED << endl;
+            wcerr.flush();
+            return LV_ERROR_CONNECTION_FAILED;
+        } catch (InvalidLocalSettingsDesignator &e) {
+            wcerr << "Error code " << LV_ERROR_INVALID_LOCAL_SETTINGS_DESIGNATOR << endl;
+            wcerr.flush();
+            return LV_ERROR_INVALID_LOCAL_SETTINGS_DESIGNATOR;
+        } catch (UnsupportedCallbackModel &e) {
+            return LV_ERROR_UNSUPPORTED_CALLBACK_MODEL;
+        } catch (AlreadyConnected &e) {
+            return LV_ERROR_ALREADY_CONNECTED;
+        } catch (CallNotAllowedFromWithinCallback &e) {
+            return LV_ERROR_CALL_NOT_ALLOWED_FROM_WITHIN_CALLBACK;
+        } catch (RTIinternalError &e) {
+            return LV_ERROR_RTI_INTERNAL_ERROR;
         }
     }
 

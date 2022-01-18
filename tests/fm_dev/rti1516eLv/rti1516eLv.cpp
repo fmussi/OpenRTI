@@ -79,10 +79,8 @@ namespace rti1516eLv
             try {
                 auto_ptr<RTIambassadorFactory> rtiAmbassadorFactory(new RTIambassadorFactory());
                 _rtiAmbassador = rtiAmbassadorFactory->createRTIambassador();
-            }
-            catch (RTIinternalError) {
-             wcout << endl << L"Unable to create RTI ambassador" << endl;
-            return;
+            } catch (Exception &e) { 
+                throw;
             }
         }
 
@@ -113,8 +111,14 @@ namespace rti1516eLv
         {
             while(!_stopped)  {
                 if (_processCB) {
-                    wcout << "Processing callbacks." << endl;
-                    _rtiAmbassador->evokeMultipleCallbacks(1.0,2.0);
+                    // TODO: pass parameters function members
+                    // wcout << "Processing callbacks." << endl;
+                    // TODO: manage exception better
+                    try {
+                        _rtiAmbassador->evokeMultipleCallbacks(1.0,2.0);
+                    } catch (Exception &e) { 
+                        throw;
+                    }   
                 }
                 else 
                 {
@@ -148,35 +152,10 @@ namespace rti1516eLv
                 pthread_mutex_unlock(&_mutex);
                 thCbProc.detach();
             } catch (Exception &e) {
-                wcerr << "RTI1516e thrown " << e.what() << endl;
-                wcerr.flush();
+                // wcerr << "RTI1516e thrown " << e.what() << endl;
+                // wcerr.flush();
                 throw;
             }
-            // } catch (ConnectionFailed &e) {
-            //     wcerr << "ConnectionFailed" << e.what() << endl;
-            //     wcerr.flush();
-            //     throw;
-            // } catch (InvalidLocalSettingsDesignator &e) {
-            //     wcout << "InvalidLocalSettingsDesignator" << e.what() << endl;
-            //     wcout.flush();
-            //     throw;
-            // } catch (UnsupportedCallbackModel &e) {
-            //     wcout << "UnsupportedCallbackModel" << e.what() << endl;
-            //     wcout.flush();
-            //     throw;
-            // } catch (AlreadyConnected &e) {
-            //     wcout << "AlreadyConnected" << e.what() << endl;
-            //     wcout.flush();
-            //     throw;
-            // } catch (CallNotAllowedFromWithinCallback &e) {
-            //     wcout << "CallNotAllowedFromWithinCallback" << e.what() << endl;
-            //     wcout.flush();
-            //     throw;
-            // } catch (RTIinternalError &e) {
-            //     wcout << "RTIinternalError" << e.what() << endl;
-            //     wcout.flush();
-            //     throw;
-            // }
         }
 
         void disconnectLv()
@@ -192,7 +171,9 @@ namespace rti1516eLv
                     pthread_mutex_unlock(&_mutex);
                     _rtiAmbassador->disconnect();
 
-                } catch (RTIinternalError ignored) {}
+                }  catch (Exception &e) { 
+                    throw;
+                }
             }
 
         void createFederationExecutionWithMIMLv(
@@ -204,9 +185,8 @@ namespace rti1516eLv
         {
             try {
                 _rtiAmbassador->createFederationExecutionWithMIM(federationExecutionName,fomModules,mimModule);
-            } catch (FederationExecutionAlreadyExists ignored) {
-            } catch (RTIinternalError &e){
-            wcout << "createFederationExecutionWithMIM: error -> " << e.what() << "returned.\n" << endl;
+            }  catch (Exception &e) { 
+                throw;
             }
         }
 
@@ -215,8 +195,8 @@ namespace rti1516eLv
         {
             try {
                 _rtiAmbassador->destroyFederationExecution(federationExecutionName);
-            } catch (RTIinternalError &e){
-            wcout << "destroyFederationExecution: error -> " << e.what() << "returned.\n" << endl;
+            }  catch (Exception &e) { 
+                throw;
             }
         }
 
@@ -228,23 +208,29 @@ namespace rti1516eLv
             FederateHandle federateHandle;
             try {
                 federateHandle = _rtiAmbassador->joinFederationExecution(federateType,federationExecutionName,additionalFomModules);
-            } catch (RTIinternalError &e){
-            wcout << "joinFederationExecutionLv: error -> " << e.what() << "returned.\n" << endl;
-            } 
+            } catch (Exception &e) { 
+                throw;
+            }
         }
 
         void resignFederationExecutionLv(
             ResignAction resignAction)
         {
-            // TODO try and catch
-            _rtiAmbassador->resignFederationExecution(resignAction);
+            try {
+            _rtiAmbassador->resignFederationExecution(resignAction);               
+            } catch (Exception &e) { 
+                throw;
+            }
         }
 
         void reserveObjectInstanceNameLv(
             std::wstring const & theObjectInstanceName)
         {
-            // TODO try and catch
+            try {
             _rtiAmbassador->reserveObjectInstanceName(theObjectInstanceName);
+            } catch (Exception &e) { 
+                throw;
+            }
         }
 
         ObjectInstanceHandle registerObjectInstanceLv (
@@ -255,9 +241,9 @@ namespace rti1516eLv
             try {
                 participantHdl = _rtiAmbassador->registerObjectInstance(theClass,theObjectInstanceName);
                 return participantHdl;
-            } catch (RTIinternalError &e){
-            wcout << "registerObjectInstance: error -> " << e.what() << "returned.\n" << endl;
-            } 
+            } catch (Exception &e) { 
+                throw;
+            }
         }
 
         // FOM management
@@ -268,8 +254,8 @@ namespace rti1516eLv
             //InteractionClassHandle interactionClassHandle;
             try {
                 return _rtiAmbassador->getInteractionClassHandle(theName);
-            } catch (RTIinternalError &e){
-            wcout << "getInteractionClassHandle: error -> " << e.what() << "returned.\n" << endl;
+            } catch (Exception &e) { 
+                throw;
             } 
         }
 
@@ -280,8 +266,8 @@ namespace rti1516eLv
             ParameterHandle parameterHande;
             try {
                 return _rtiAmbassador->getParameterHandle(whichClass,theName);
-            } catch (RTIinternalError &e){
-            wcout << "getParameterHandle: error -> " << e.what() << "returned.\n" << endl;
+            } catch (Exception &e) { 
+                throw;
             } 
         }
 
@@ -291,8 +277,8 @@ namespace rti1516eLv
             //ParameterHandle parameterHande;
             try {
                 return _rtiAmbassador->getObjectClassHandle(theName);
-            } catch (RTIinternalError &e){
-            wcout << "getObjectClassHandle: error -> " << e.what() << "returned.\n" << endl;
+            } catch (Exception &e) { 
+                throw;
             } 
         }
 
@@ -302,8 +288,8 @@ namespace rti1516eLv
         {
             try {
                 return _rtiAmbassador->getAttributeHandle(whichClass,theAttributeName);
-            } catch (RTIinternalError &e){
-            wcout << "getAttributeHandle: error -> " << e.what() << "returned.\n" << endl;
+            } catch (Exception &e) { 
+                throw;
             }  
         }
 
@@ -315,8 +301,8 @@ namespace rti1516eLv
         {
             try {
                 return _rtiAmbassador->subscribeInteractionClass(theClass);
-            } catch (RTIinternalError &e){
-            wcout << "subscribeInteractionClass: error -> " << e.what() << "returned.\n" << endl;
+            } catch (Exception &e) { 
+                throw;
             }  
         }
 
@@ -325,8 +311,8 @@ namespace rti1516eLv
         {
             try {
                 return _rtiAmbassador->publishInteractionClass(theInteraction);
-            } catch (RTIinternalError &e){
-            wcout << "subscribeInteractionClass: error -> " << e.what() << "returned.\n" << endl;
+            } catch (Exception &e) { 
+                throw;
             }  
         }
 
@@ -339,8 +325,8 @@ namespace rti1516eLv
         {
             try {
                 return _rtiAmbassador->subscribeObjectClassAttributes(theClass,attributeList,active,updateRateDesignator);
-            } catch (RTIinternalError &e){
-            wcout << "subscribeObjectClassAttributes: error -> " << e.what() << "returned.\n" << endl;
+            } catch (Exception &e) { 
+                throw;
             }  
         }
 
@@ -350,8 +336,8 @@ namespace rti1516eLv
         {
             try {
                 return _rtiAmbassador->publishObjectClassAttributes(theClass,attributeList);
-            } catch (RTIinternalError &e){
-            wcout << "publishObjectClassAttributes: error -> " << e.what() << "returned.\n" << endl;
+            } catch (Exception &e) { 
+                throw;
             }  
         }      
 
@@ -364,8 +350,8 @@ namespace rti1516eLv
         {
             try {
                 _rtiAmbassador->updateAttributeValues(theObject,theAttributeValues,theUserSuppliedTag);
-            } catch (RTIinternalError &e){
-            wcout << "publishObjectClassAttributes: error -> " << e.what() << "returned.\n" << endl;
+            } catch (Exception &e) { 
+                throw;
             }  
         }
 
@@ -376,8 +362,8 @@ namespace rti1516eLv
         {
             try {
                 _rtiAmbassador->sendInteraction(theInteraction,theParameterValues,theUserSuppliedTag);
-            } catch (RTIinternalError &e){
-            wcout << "sendInteraction: error -> " << e.what() << "returned.\n" << endl;
+            } catch (Exception &e) { 
+                throw;
             }  
         }
         // Append new lvFederate members right abov
@@ -583,20 +569,7 @@ namespace rti1516eLv
     EXTERNC int createRTIambassadorLvEx(
         RTIambassador **rtiHandle)
     {
-        // previous implmentation
-        // auto_ptr<RTIambassador> _rtiAmbassador;
-
-        // try {
-        //     auto_ptr<RTIambassadorFactory> rtiAmbassadorFactory(new RTIambassadorFactory());
-        //     _rtiAmbassador = rtiAmbassadorFactory->createRTIambassador();
-
-        //     *rtiHandle = _rtiAmbassador.release();
-        //     _rtiCount++;
-        
-        // }
-        // catch (RTIinternalError &e) {
-        //     wcout << "createRTIambassador: error -> " << e.what() << "returned.\n" << endl;
-        // }
+        // create LV Federate object
         oLvFederate = new LvFederate();
         oLvFederate->createRTIambassadorLv();
 

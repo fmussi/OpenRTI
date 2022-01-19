@@ -571,9 +571,12 @@ namespace rti1516eLv
     {
         // create LV Federate object
         oLvFederate = new LvFederate();
+        try {
         oLvFederate->createRTIambassadorLv();
-
-        return _rtiCount;
+        } catch (Exception &e) {
+            return lvErrorCodeFromException(e);
+        }
+        return 0;
     }
 
     EXTERNC int startRTIambassadorLvEx(
@@ -603,23 +606,10 @@ namespace rti1516eLv
         wstring host = chararray2wstring(address);
         try {
             oLvFederate->connectLv(host);
-        } catch (ConnectionFailed &e) {
-            wcerr << "Error code " << LV_ERROR_CONNECTION_FAILED << endl;
-            wcerr.flush();
-            return LV_ERROR_CONNECTION_FAILED;
-        } catch (InvalidLocalSettingsDesignator &e) {
-            wcerr << "Error code " << LV_ERROR_INVALID_LOCAL_SETTINGS_DESIGNATOR << endl;
-            wcerr.flush();
-            return LV_ERROR_INVALID_LOCAL_SETTINGS_DESIGNATOR;
-        } catch (UnsupportedCallbackModel &e) {
-            return LV_ERROR_UNSUPPORTED_CALLBACK_MODEL;
-        } catch (AlreadyConnected &e) {
-            return LV_ERROR_ALREADY_CONNECTED;
-        } catch (CallNotAllowedFromWithinCallback &e) {
-            return LV_ERROR_CALL_NOT_ALLOWED_FROM_WITHIN_CALLBACK;
-        } catch (RTIinternalError &e) {
-            return LV_ERROR_RTI_INTERNAL_ERROR;
+            } catch (Exception &e) {
+            return lvErrorCodeFromException(e);
         }
+        return 0;
     }
 
     EXTERNC int createFederationExecutionWithMIMLvEx(
@@ -638,11 +628,10 @@ namespace rti1516eLv
 
         try {
             oLvFederate->createFederationExecutionWithMIMLv(wFedExecName,FOMmoduleUrls,mimModuleUrl,L"");
-            //rtiHandle->createFederationExecutionWithMIM(wFedExecName,FOMmoduleUrls,mimModuleUrl,L"");
-        } catch (FederationExecutionAlreadyExists ignored) {
-        } catch (RTIinternalError &e){
-            wcout << "createFederationExecutionWithMIM: error -> " << e.what() << "returned.\n" << endl;
+            } catch (Exception &e) {
+            return lvErrorCodeFromException(e);
         }
+        return 0; 
     }
 
     EXTERNC int joinFederationExecutionLvEx(
@@ -656,19 +645,16 @@ namespace rti1516eLv
         wstring wFedExecName = chararray2wstring(federationExecutionName);
 
         FOMmoduleUrls.push_back(OpenRTI::localeToUcs(additionalFomModules));
-
-        // FederateHandle federateHandle = oLvFederate->getRTIambassador()->joinFederationExecution(
-        //     wFedType,
-        //     wFedExecName,
-        //     FOMmoduleUrls
-        // );
-        FederateHandle federateHandle = oLvFederate->joinFederationExecutionLv(
+        try {
+            FederateHandle federateHandle = oLvFederate->joinFederationExecutionLv(
             wFedType,
             wFedExecName,
             FOMmoduleUrls
         );
-        // TODO return federate handle if needed by lv code
-        return sizeof(federateHandle);
+        } catch (Exception &e) {
+            return lvErrorCodeFromException(e);
+        }
+        return 0;
     }
 
     EXTERNC int getInteractionClassHandleLvEx(
@@ -677,7 +663,11 @@ namespace rti1516eLv
         InteractionClassHandle *intClassHandle)
     {
         wstring wTheName = chararray2wstring(theName);
-        (*intClassHandle) = oLvFederate->getInteractionClassHandleLv(wTheName);
+        try {
+            (*intClassHandle) = oLvFederate->getInteractionClassHandleLv(wTheName);        
+        } catch (Exception &e) {
+            return lvErrorCodeFromException(e);
+        }
         return 0;
     }   
 
@@ -688,8 +678,12 @@ namespace rti1516eLv
         ParameterHandle *paramHandle)
     {
         wstring wTheName = chararray2wstring(theName);
-        (*paramHandle) = oLvFederate->getParameterHandleLv((*whichClass),wTheName);
-        return 0;
+        try {
+            (*paramHandle) = oLvFederate->getParameterHandleLv((*whichClass),wTheName);        
+        } catch (Exception &e) {
+            return lvErrorCodeFromException(e);
+        }
+        return 0; 
     } 
 
     EXTERNC int getObjectClassHandleLvEx(
@@ -698,9 +692,13 @@ namespace rti1516eLv
         ObjectClassHandle *objectClassHandle)
     {
         wstring wTheName = chararray2wstring(theName);
-
-        (*objectClassHandle) = oLvFederate->getObjectClassHandleLv(wTheName);
+        try {
+            (*objectClassHandle) = oLvFederate->getObjectClassHandleLv(wTheName);
+        } catch (Exception &e) {
+            return lvErrorCodeFromException(e);
+        }
         return 0;
+        
     }
 
     EXTERNC int getAttributeHandleLvEx(
@@ -710,22 +708,25 @@ namespace rti1516eLv
         AttributeHandle * attributeHandle)
     {
         wstring wTheName = chararray2wstring(theName);
-        (*attributeHandle) = oLvFederate->getAttributeHandleLv(*whichClass,wTheName);
-        return 0;
+        try {
+            (*attributeHandle) = oLvFederate->getAttributeHandleLv(*whichClass,wTheName);
+        } catch (Exception &e) {
+            return lvErrorCodeFromException(e);
+        }
+        return 0;;
     } 
 
     EXTERNC int reserveObjectInstanceNameLvEx(
         RTIambassador *rtiHandle,
         const char theObjectInstanceName[])
     {
-        // string sObjInstName(theObjectInstanceName);
-        // wstring wObjInstName;
-        // wObjInstName.assign(sObjInstName.begin(),sObjInstName.end());
         wstring wObjInstName = chararray2wstring(theObjectInstanceName);
-
-        //rtiHandle->reserveObjectInstanceName(wObjInstName);
-        oLvFederate->reserveObjectInstanceNameLv(wObjInstName);
-
+        try {
+            oLvFederate->reserveObjectInstanceNameLv(wObjInstName);
+        } catch (Exception &e) {
+            return lvErrorCodeFromException(e);
+        }
+        return 0;
     }  
 
     EXTERNC int registerObjectInstanceLvEx(
@@ -735,7 +736,12 @@ namespace rti1516eLv
         ObjectInstanceHandle  *objectInstanceHandle)
     {
         wstring wObjInstName = chararray2wstring(theObjectInstanceName);
-        (*objectInstanceHandle) = oLvFederate->registerObjectInstanceLv(theClass,wObjInstName);
+        try {
+            (*objectInstanceHandle) = oLvFederate->registerObjectInstanceLv(theClass,wObjInstName);
+        } catch (Exception &e) {
+            return lvErrorCodeFromException(e);
+        }
+        return 0;
     }  
 
     EXTERNC int updateAttributeValuesLvEx(
@@ -743,7 +749,12 @@ namespace rti1516eLv
         ObjectInstanceHandle & theObject,
         AttributeHandleValueMap const & theAttributeValues)
     {
-        oLvFederate->updateAttributeValuesLv(theObject,theAttributeValues,VariableLengthData());
+        try {
+            oLvFederate->updateAttributeValuesLv(theObject,theAttributeValues,VariableLengthData());
+        } catch (Exception &e) {
+            return lvErrorCodeFromException(e);
+        }
+        return 0;
     }  
 
     EXTERNC int sendInteractionLvEx(
@@ -751,7 +762,12 @@ namespace rti1516eLv
         InteractionClassHandle * theInteraction,
         ParameterHandleValueMap const & theParameterValues)
     {
-        oLvFederate->sendInteractionLv(*theInteraction,theParameterValues,VariableLengthData());
+        try {
+            oLvFederate->sendInteractionLv(*theInteraction,theParameterValues,VariableLengthData());
+        } catch (Exception &e) {
+            return lvErrorCodeFromException(e);
+        }
+        return 0;  
     }  
 
     EXTERNC int subscribeInteractionClassLvEx(
@@ -759,14 +775,25 @@ namespace rti1516eLv
         InteractionClassHandle *theClass,
         bool active)
     {
-        oLvFederate->subscribeInteractionClassLv(*theClass,active);
+        try {
+            oLvFederate->subscribeInteractionClassLv(*theClass,active);
+        } catch (Exception &e) {
+            return lvErrorCodeFromException(e);
+        }
+        return 0;
     }
 
     EXTERNC int publishInteractionClassLvEx(
         RTIambassador *rtiHandle,
         InteractionClassHandle *theInteraction)
     {
-        oLvFederate->publishInteractionClassLv(*theInteraction);
+        try {
+            oLvFederate->publishInteractionClassLv(*theInteraction);
+        } catch (Exception &e) {
+            return lvErrorCodeFromException(e);
+        }
+        return 0;
+
     }
 
     EXTERNC int subscribeObjectClassAttributesLvEx(
@@ -776,7 +803,12 @@ namespace rti1516eLv
         bool active,
         const char updateRateDesignator[])
     {
-        oLvFederate->subscribeObjectClassAttributesLv(*theClass,attributeList);
+        try {
+            oLvFederate->subscribeObjectClassAttributesLv(*theClass,attributeList);
+        } catch (Exception &e) {
+            return lvErrorCodeFromException(e);
+        }
+        return 0;
     }
 
     EXTERNC int publishObjectClassAttributesLvEx(
@@ -784,40 +816,49 @@ namespace rti1516eLv
         ObjectClassHandle *theClass,
         AttributeHandleSet const & attributeList)
     {
-        oLvFederate->publishObjectClassAttributesLv(*theClass,attributeList);
+        try {
+            oLvFederate->publishObjectClassAttributesLv(*theClass,attributeList);
+        } catch (Exception &e) {
+            return lvErrorCodeFromException(e);
+        }
+        return 0; 
     }
 
     EXTERNC int resignFederationExecutionLvEx(
         RTIambassador *rtiHandle,
         ResignAction resignAction)
     {
-        oLvFederate->resignFederationExecutionLv(resignAction);
+        try {
+            oLvFederate->resignFederationExecutionLv(resignAction);
+        } catch (Exception &e) {
+            return lvErrorCodeFromException(e);
+        }
+        return 0;
     }
 
     EXTERNC int destroyFederationExecutionLvEx(
         RTIambassador *rtiHandle,
         const char federationExecutionName[])
     {
-        // string sFedExecName(federationExecutionName);
-        // wstring wFedExecName;
-        // wFedExecName.assign(sFedExecName.begin(),sFedExecName.end());
         wstring wFedExecName = chararray2wstring(federationExecutionName);
     
         try{
             oLvFederate->destroyFederationExecutionLv(wFedExecName);
             //rtiHandle->destroyFederationExecution(wFedExecName);
-        } catch (FederatesCurrentlyJoined &ignored) {
-        } catch (FederationExecutionDoesNotExist ignored) {
-        } catch (RTIinternalError ignored) {
-        } catch (NotConnected ignored) {
-        } 
+        } catch (Exception &e) {
+            return lvErrorCodeFromException(e);
+        }
+        return 0;
     }  
 
     EXTERNC int disconnectLvEx(
         RTIambassador *rtiHandle)
     {
-        // //RTIambassador *_rtiAmbassador = static_cast<RTIambassador*>(_rtiAmbassadorIn);
-        oLvFederate->disconnectLv();
+        try {
+            oLvFederate->disconnectLv();
+        } catch (Exception &e) {
+            return lvErrorCodeFromException(e);
+        }
         return 0;
     }
 

@@ -27,6 +27,10 @@ using namespace rti1516e;
 
 namespace rti1516eLv
 {
+    // internal functions
+    int lvErrorCodeFromException(Exception &e);
+    //wstring chararray2wstring(const char charArray[]);
+
     // Test or debug functions
     EXTERNC int testFunc();
     EXTERNC MgErr testFireEvent(

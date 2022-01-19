@@ -15,10 +15,15 @@ link_directories(${lvrt})
 option(BUILD_LIBRARY "Build shared library" ON)
 option(BUILD_TEST_APP "Build test application" ON)
 
+# variables for source and headers
+set (LIB_RTI1516ELV_SOURCES
+    rti1516eLvError.cpp
+    rti1516eLv.cpp
+)
 
 if(BUILD_LIBRARY)
     message("configure shared lib")
-    add_library(rti1516elv SHARED rti1516eLv.cpp)
+    add_library(rti1516elv SHARED ${LIB_RTI1516ELV_SOURCES})
     target_include_directories(shlib PUBLIC "${PROJECT_BINARY_DIR}/cintools")
 
     set_target_properties(rti1516elv PROPERTIES VERSION ${PROJECT_VERSION})

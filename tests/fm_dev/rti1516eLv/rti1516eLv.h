@@ -27,6 +27,13 @@ using namespace rti1516e;
 
 namespace rti1516eLv
 {
+    // data types
+    struct testEventData {
+        int count1;
+        int count2;
+    };
+    
+    
     // internal functions
     int lvErrorCodeFromException(Exception &e);
     //wstring chararray2wstring(const char charArray[]);
@@ -34,7 +41,7 @@ namespace rti1516eLv
     // Test or debug functions
     EXTERNC int testFunc();
     EXTERNC MgErr testFireEvent(
-        int value);
+        testEventData *value);
     EXTERNC int regObjInstNameResSuccEvent(
         LVUserEventRef *eventRef);
 

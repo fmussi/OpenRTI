@@ -44,6 +44,27 @@ namespace rti1516eLv
         return wStringOut;
     }
 
+    LStrHandle wstring2LvString(wstring const & theObjectInstanceName)
+    {
+            const wchar_t *input = theObjectInstanceName.c_str();
+            size_t size = (wcslen(input)+1)*sizeof(wchar_t);
+            char *buffer = new char[size];
+            wcstombs(buffer,input,size);
+            // char buffer[] = "Ciao Pirla";
+            const int headerSize = 4;
+            size = strlen(buffer);
+
+	        // Allocate memory for the LV string
+            LStrHandle lSh = (LStrHandle)DSNewHandle(headerSize+size);
+
+            // Write the LV string header
+            (*lSh)->cnt = size;
+            memcpy( (*lSh)->str,buffer,size);
+            
+
+        return lSh;
+    }
+
     class LvFederate : public NullFederateAmbassador {
     private:
         auto_ptr<RTIambassador> _rtiAmbassador;
@@ -422,18 +443,22 @@ namespace rti1516eLv
             wstring const & theObjectInstanceName)
             throw (FederateInternalError)
         {
-            double eventData = 12345.0;
-            // send LV event
-            PostLVUserEvent(lueObjInsNameResSucceeded,&eventData);
+            LStrHandle h = wstring2LvString(theObjectInstanceName);
+
+            PostLVUserEvent(lueObjInsNameResSucceeded,&h);
+
+            DSDisposeHandle(h);
         }
 
         virtual void objectInstanceNameReservationFailed(
             wstring const & theObjectInstanceName)
             throw (FederateInternalError)
         {            
-            double eventData = 54321.0;
-            // send LV event
-            PostLVUserEvent(lueObjInsNameResFailed,&eventData);
+            LStrHandle h = wstring2LvString(theObjectInstanceName);
+
+            PostLVUserEvent(lueObjInsNameResFailed,&h);
+
+            DSDisposeHandle(h);
         }
         virtual
         void
@@ -464,10 +489,11 @@ namespace rti1516eLv
         return 12345;
     }
 
-    EXTERNC MgErr testFireEvent(int value)
+    // using struct to test complex data sharing
+    EXTERNC MgErr testFireEvent(testEventData *value)
     {
         MgErr status;
-        status = PostLVUserEvent(tempUserEvStore,&value);
+        status = PostLVUserEvent(tempUserEvStore,value);
         return status;
     }
 

@@ -125,15 +125,51 @@ namespace rti1516eLv
     }
 
     EXTERNC int parHandleValueMapGetElementString(
-        AttributeHandleValueMap * parHandleValueMap,
-        AttributeHandle *parameterHandle,
+        ParameterHandleValueMap const * parHandleValueMap,
+        ParameterHandle *parameterHandle,
         LStrHandle &lSh)
     {
         HLAunicodeString uElem;
-        uElem.decode((*parHandleValueMap)[(*parameterHandle)]);
-        lSh = wstring2LvString(wstring(uElem));
-        return 0;
+        VariableLengthData item;
+        try {
+            item = (*parHandleValueMap).at(*parameterHandle);
+            // item = (*parHandleValueMap)[(*parameterHandle)];
+            uElem.decode(item);
+            lSh = wstring2LvString(wstring(uElem));
+        } catch (out_of_range &oor) {
+            return -12345; // test oor error
+        }
+        //uElem.decode((parHandleValueMap)[(*parameterHandle)]);
+        //
+        return 23;
     }   
+
+    EXTERNC int parHandleValueMapGetElementByRefString(
+        ParameterHandleValueMap const & parHandleValueMap,
+        ParameterHandle *parameterHandle,
+        LStrHandle &lSh)
+    {
+        HLAunicodeString uElem;
+        VariableLengthData item;
+        try {
+            item = parHandleValueMap.at(*parameterHandle);
+            // item = (*parHandleValueMap)[(*parameterHandle)];
+            uElem.decode(item);
+            lSh = wstring2LvString(wstring(uElem));
+        } catch (out_of_range &oor) {
+            return -12345; // test oor error
+        }
+        //uElem.decode((parHandleValueMap)[(*parameterHandle)]);
+        //
+        return 23;
+    }  
+
+    EXTERNC int parHandleValueMapNumElements(
+        ParameterHandleValueMap const * parHandleValueMap)
+    {
+        size_t sizeOut = (*parHandleValueMap).size();
+        return (int)sizeOut;
+    }
 
     EXTERNC int parHandleValueMapDestroy(
         ParameterHandleValueMap * parHandleValueMap)

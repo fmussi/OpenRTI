@@ -78,13 +78,20 @@ namespace rti1516eLv
         const char sElem[]);
 
     EXTERNC int parHandleValueMapGetElementString(
-        AttributeHandleValueMap * parHandleValueMap,
-        AttributeHandle *parameterHandle,
+        ParameterHandleValueMap const * parHandleValueMap,
+        ParameterHandle *parameterHandle,
         LStrHandle &lSh);
-        
-    // EXTERNC int attrHandleSetCreate(
-    //     AttributeHandleSet **attrHandleSet);
-    EXTERNC int attrHandleSetCreate(AttributeHandleSet **attrHandleSet);
+
+    EXTERNC int parHandleValueMapGetElementByRefString(
+        ParameterHandleValueMap const & parHandleValueMap,
+        ParameterHandle *parameterHandle,
+        LStrHandle &lSh);
+
+    EXTERNC int parHandleValueMapNumElements(
+        ParameterHandleValueMap const * parHandleValueMap);   
+     
+    EXTERNC int attrHandleSetCreate(
+        AttributeHandleSet **attrHandleSet);
 
     EXTERNC int attrHandleSetInsert(
         AttributeHandleSet * attrHandleSet,

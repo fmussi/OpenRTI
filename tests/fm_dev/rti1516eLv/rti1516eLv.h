@@ -28,17 +28,32 @@ using namespace rti1516e;
 namespace rti1516eLv
 {
 
+    // struct receiveInteractionData {
+    //     InteractionClassHandle interactionClassHandle;
+    //     ParameterHandleValueMap const *parHandleValueMap;
+    //     OrderType sentOrder;
+    //     TransportationType theType;
+    //     size_t numOfElements;
+    // };
+
     struct receiveInteractionData {
-        InteractionClassHandle interactionClassHandle;
-        ParameterHandleValueMap parHandleValueMap;
+        size_t numOfElements;
         OrderType sentOrder;
         TransportationType theType;
+        ParameterHandleValueMap *parHandleValueMap;
+        InteractionClassHandle interactionClassHandle;
+    };
+
+    struct reflectAttributeValuesData {
+        OrderType sentOrder;
+        TransportationType theType;       
     };
     
     EXTERNC int regLvUserEvents(
         LVUserEventRef *objInstNameResSucc,
         LVUserEventRef *objInstNameResFail,
-        LVUserEventRef *receiveInteraction
+        LVUserEventRef *receiveInteraction,
+        LVUserEventRef *reflectAttributeValues
         );
     // LV wrapper functions to OpenRTI
 

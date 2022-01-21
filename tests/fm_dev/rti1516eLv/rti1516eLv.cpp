@@ -32,6 +32,7 @@ namespace rti1516eLv
     LVUserEventRef lueObjInsNameResSucceeded;
     LVUserEventRef lueObjInsNameResFailed;
     LVUserEventRef lueReceiveInteraction;
+    LVUserEventRef lueReflectAttributeValues;
 
     class LvFederate : public NullFederateAmbassador {
     private:
@@ -370,12 +371,15 @@ namespace rti1516eLv
             throw (FederateInternalError)
         {
             receiveInteractionData dataToSend;
+            ParameterHandleValueMap mapToSend = theParameterValues;
 
             dataToSend.interactionClassHandle = theInteraction;
-            dataToSend.parHandleValueMap = theParameterValues;
+            //dataToSend.parHandleValueMap = addressof(theParameterValues);
+            dataToSend.parHandleValueMap = &mapToSend;
             dataToSend.sentOrder = sentOrder;
             dataToSend.theType = theType;
-            
+            dataToSend.numOfElements = theParameterValues.size();
+            //dataToSend.numOfElements = sizeof(dataToSend);
             
             PostLVUserEvent(lueReceiveInteraction,&dataToSend);
 
@@ -406,8 +410,15 @@ namespace rti1516eLv
             SupplementalReflectInfo theReflectInfo)
             throw (FederateInternalError)
         {
-            HLAunicodeString name;
-            name.decode(theAttributeValues.find(_aNameId)->second);
+            reflectAttributeValuesData dataToSend;
+
+            dataToSend.sentOrder = sentOrder;
+            dataToSend.theType = theType;
+
+            PostLVUserEvent(lueReflectAttributeValues,&dataToSend);
+
+            // HLAunicodeString name;
+            // name.decode(theAttributeValues.find(_aNameId)->second);
 
             // if (_knownObjects.count(theObject) == 0) {
             //     Participant member((wstring)name);
@@ -465,12 +476,14 @@ namespace rti1516eLv
     EXTERNC int regLvUserEvents(
         LVUserEventRef *objInstNameResSucc,
         LVUserEventRef *objInstNameResFail,
-        LVUserEventRef *receiveInteraction
+        LVUserEventRef *receiveInteraction,
+        LVUserEventRef *reflectAttributeValues
         )
     {
         lueObjInsNameResSucceeded = *objInstNameResSucc;
         lueObjInsNameResFailed = *objInstNameResFail;
         lueReceiveInteraction  = *receiveInteraction;
+        lueReflectAttributeValues = *reflectAttributeValues;
 
         return 0;
     }  

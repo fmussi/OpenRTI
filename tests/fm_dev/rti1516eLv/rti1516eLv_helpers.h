@@ -20,32 +20,68 @@
 
 #include "cintools/extcode.h"
 
+using namespace std;
 using namespace rti1516e;
 
 namespace rti1516eLv
 {
+        // data types
+    struct testEventData {
+        int count1;
+        int count2;
+    };
+    
+    // internal functions
+    int lvErrorCodeFromException(Exception &e);
+    //wstring chararray2wstring(const char charArray[]);
+
+    // Test or debug functions
+    EXTERNC int testFunc();
+    EXTERNC MgErr testFireEvent(
+        testEventData *value);
+    EXTERNC int regObjInstNameResSuccEvent(
+        LVUserEventRef *eventRef);
+    
+    
     // Helper functions
+    wstring chararray2wstring(const char charArray[]);
+
+    LStrHandle wstring2LvString(wstring const & theObjectInstanceName);
 
     // EXTERNC  int attrHandleValueMapCreate(
     //     AttributeHandleValueMap **attrHandleValueMap);
     EXTERNC  int attrHandleValueMapCreate(AttributeHandleValueMap **attrHandleValueMap);   
+    
     EXTERNC int attrHandleValueMapDestroy(
         AttributeHandleValueMap *attrHandleValueMap);
+
     EXTERNC int attrHandleValueMapAddElementString(
         AttributeHandleValueMap *attrHandleValueMap,
         AttributeHandle *attributeHandle,
         const char sElem[]);
+    
+    EXTERNC int attrHandleValueMapGetElementString(
+        AttributeHandleValueMap * attrHandleValueMap,
+        AttributeHandle *attributeHandle,
+        LStrHandle &lSh);
 
     // EXTERNC int parHandleValueMapCreate(
     //     ParameterHandleValueMap **parHandleValueMap);
     EXTERNC int parHandleValueMapCreate(ParameterHandleValueMap **parHandleValueMap);
+    
     EXTERNC int attrHandleValueMapDestroy(
         AttributeHandleValueMap * attrHandleValueMap);
+    
     EXTERNC int parHandleValueMapAddElementString(
         ParameterHandleValueMap * parHandleValueMap,
         ParameterHandle * parameterHandle,
         const char sElem[]);
 
+    EXTERNC int parHandleValueMapGetElementString(
+        AttributeHandleValueMap * parHandleValueMap,
+        AttributeHandle *parameterHandle,
+        LStrHandle &lSh);
+        
     // EXTERNC int attrHandleSetCreate(
     //     AttributeHandleSet **attrHandleSet);
     EXTERNC int attrHandleSetCreate(AttributeHandleSet **attrHandleSet);

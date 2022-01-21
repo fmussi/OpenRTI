@@ -18,6 +18,7 @@ option(BUILD_TEST_APP "Build test application" ON)
 # variables for source and headers
 set (LIB_RTI1516ELV_SOURCES
     rti1516eLvError.cpp
+    rti1516eLvHelpers.cpp
     rti1516eLv.cpp
 )
 

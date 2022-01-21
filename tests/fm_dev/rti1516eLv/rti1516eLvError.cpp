@@ -69,7 +69,7 @@ namespace rti1516eLv
         else if (typeid(e) == typeid(FederateServiceInvocationsAreBeingReportedViaMOM))  return LV_ERROR_FEDERATESERVICEINVOCATIONSAREBEINGREPORTEDVIAMOM;
         else if (typeid(e) == typeid(FederateUnableToUseTime))  return LV_ERROR_FEDERATEUNABLETOUSETIME;
         else if (typeid(e) == typeid(FederatesCurrentlyJoined))  return LV_ERROR_FEDERATESCURRENTLYJOINED;
-        else if (typeid(e) == typeid(FederationExecutionAlreadyExists))  return LV_ERROR_FEDERATIONEXECUTIONALREADYEXISTS;
+        else if (typeid(e) == typeid(FederationExecutionAlreadyExists))  return LV_WARNING_FEDERATIONEXECUTIONALREADYEXISTS;
         else if (typeid(e) == typeid(FederationExecutionDoesNotExist))  return LV_ERROR_FEDERATIONEXECUTIONDOESNOTEXIST;
         else if (typeid(e) == typeid(IllegalName))  return LV_ERROR_ILLEGALNAME;
         else if (typeid(e) == typeid(IllegalTimeArithmetic))  return LV_ERROR_ILLEGALTIMEARITHMETIC;

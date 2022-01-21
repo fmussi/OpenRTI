@@ -32,7 +32,11 @@ namespace rti1516eLv
         int count1;
         int count2;
     };
-    
+
+    struct receiveInteractionData {
+        OrderType sentOrder;
+        TransportationType theType;
+    };
     
     // internal functions
     int lvErrorCodeFromException(Exception &e);
@@ -47,7 +51,9 @@ namespace rti1516eLv
 
     EXTERNC int regLvUserEvents(
         LVUserEventRef *objInstNameResSucc,
-        LVUserEventRef *objInstNameResFail);
+        LVUserEventRef *objInstNameResFail,
+        LVUserEventRef *receiveInteraction
+        );
     // LV wrapper functions to OpenRTI
 
     EXTERNC int createRTIambassadorLvEx(

@@ -33,6 +33,7 @@ namespace rti1516eLv
     LVUserEventRef tempUserEvStore;
     LVUserEventRef lueObjInsNameResSucceeded;
     LVUserEventRef lueObjInsNameResFailed;
+    LVUserEventRef lueReceiveInteraction;
 
     wstring chararray2wstring(const char charArray[])
     {
@@ -401,6 +402,11 @@ namespace rti1516eLv
             SupplementalReceiveInfo theReceiveInfo)
             throw (FederateInternalError)
         {
+            receiveInteractionData dataToSend;
+            dataToSend.sentOrder = sentOrder;
+            dataToSend.theType = theType;
+            PostLVUserEvent(lueReceiveInteraction,&dataToSend);
+            
             if (theInteraction == _iMessageId) {
                 HLAunicodeString message;
                 HLAunicodeString sender;
@@ -584,10 +590,13 @@ namespace rti1516eLv
 
     EXTERNC int regLvUserEvents(
         LVUserEventRef *objInstNameResSucc,
-        LVUserEventRef *objInstNameResFail)
+        LVUserEventRef *objInstNameResFail,
+        LVUserEventRef *receiveInteraction
+        )
     {
         lueObjInsNameResSucceeded = *objInstNameResSucc;
         lueObjInsNameResFailed = *objInstNameResFail;
+        lueReceiveInteraction  = *receiveInteraction;
 
         return 0;
     }  

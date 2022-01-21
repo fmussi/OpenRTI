@@ -130,7 +130,6 @@ public:
       _iParticipantHdl = _rtiAmbassador->registerObjectInstance(_oParticipantId, _username);
       _aHandleValueMap[_aNameId] = unicodeUserName.encode();
       _rtiAmbassador->updateAttributeValues(_iParticipantHdl, _aHandleValueMap, VariableLengthData());
-      
       wcout << L"Type messages you want to send. To exit, type . <ENTER>" << endl;
       while (true) {
          wchar_t msg[256];

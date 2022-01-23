@@ -82,10 +82,10 @@ namespace rti1516eLv
         ParameterHandle *parameterHandle,
         LStrHandle &lSh);
 
-    EXTERNC int parHandleValueMapGetElementByRefString(
+    EXTERNC int parHandleValueMapGetElementValue_vld(
         ParameterHandleValueMap const * parHandleValueMap,
         ParameterHandle *parameterHandle,
-        LStrHandle &lSh);
+        VariableLengthData &vld);
 
     EXTERNC int parHandleValueMapNumElements(
         ParameterHandleValueMap * parHandleValueMap);   
@@ -100,7 +100,12 @@ namespace rti1516eLv
     EXTERNC int attrHandleSetDestroy(
         AttributeHandleSet * attrHandleSet
     );
+// Variable Data helpers
+    EXTERNC int getVariableLenghtDataSize(
+        VariableLengthData *dataIn);
 
+    EXTERNC int destroyVariableLenghtDataRef(
+        VariableLengthData *dataIn); 
 
 }
 

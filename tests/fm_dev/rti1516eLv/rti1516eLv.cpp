@@ -372,15 +372,21 @@ namespace rti1516eLv
         {
             
             receiveInteractionData dataToSend;
+            ParameterHandleValueMap *dsParam;
+            
             const int headerSize = 4;
 
-            UPtr dsParam = DSNewPtr(sizeof(theParameterValues)+headerSize);
-            //memcpy(dsParam,&theParameterValues,sizeof(theParameterValues));
-            MoveBlock(&theParameterValues,dsParam,sizeof(theParameterValues));
-
+            // UPtr dsParam = DSNewPtr(sizeof(theParameterValues));
+            dsParam = (ParameterHandleValueMap *)DSNewPtr(sizeof(theParameterValues));
+            *dsParam = theParameterValues;
+            // memcpy(dsParam,&theParameterValues,sizeof(theParameterValues));
+            // ParameterHandleValueMap **phvmh = (ParameterHandleValueMap **)DSNewHandle(sizeof(theParameterValues));
+            // memcpy((*phvmh),&theParameterValues,sizeof(theParameterValues));
+           
             dataToSend.interactionClassHandle = theInteraction;;
             //dataToSend.parHandleValueMap = &theParameterValues;
             dataToSend.parHandleValueMap = dsParam;
+            //dataToSend.parHandleValueMap = phvmh;
             dataToSend.sentOrder = sentOrder;
             dataToSend.theType = theType;
             dataToSend.numOfElements = theParameterValues.size();

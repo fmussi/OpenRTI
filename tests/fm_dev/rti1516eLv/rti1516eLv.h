@@ -36,15 +36,26 @@ namespace rti1516eLv
     //     size_t numOfElements;
     // };
 
+
 #pragma pack(1)
 
+    // variant with Uptr
+    // struct receiveInteractionData {
+    //     size_t numOfElements;
+    //     OrderType sentOrder;
+    //     TransportationType theType;
+    //     UPtr parHandleValueMap;
+    //     InteractionClassHandle interactionClassHandle;
+    // };
+    // variant with handle
     struct receiveInteractionData {
         size_t numOfElements;
         OrderType sentOrder;
         TransportationType theType;
-        UPtr parHandleValueMap;
+        ParameterHandleValueMap *parHandleValueMap;
         InteractionClassHandle interactionClassHandle;
     };
+
 #pragma pack()
 
 #pragma pack(1)

@@ -151,24 +151,20 @@ namespace rti1516eLv
         return 23;
     }   
 
-    EXTERNC int parHandleValueMapGetElementByRefString(
+    EXTERNC int parHandleValueMapGetElementValue_vld(
         ParameterHandleValueMap const * parHandleValueMap,
         ParameterHandle *parameterHandle,
-        LStrHandle &lSh)
+        VariableLengthData &vld)
     {
         size_t itemSize;
         try {
             HLAunicodeString uElem;
             VariableLengthData const & item = (*parHandleValueMap).at((*parameterHandle));
             itemSize = item.size();
-            try {
-                uElem.decode(item);
-            } catch (EncoderException &e) { return 123;}
-            
+            vld = item;            
         } catch (out_of_range &oor) {
             return 12345;
         }
-        lSh = wstring2LvString(L"Ciao Zio");
        
         //uElem.decode((parHandleValueMap)[(*parameterHandle)]);
         return (int)(sizeof(itemSize));
@@ -185,8 +181,9 @@ namespace rti1516eLv
     EXTERNC int parHandleValueMapDestroy(
         ParameterHandleValueMap * parHandleValueMap)
     {
-        delete parHandleValueMap;
-
+        //delete parHandleValueMap;
+        DSDisposePtr(parHandleValueMap);
+        
         return 0;
     } 
 
@@ -215,5 +212,19 @@ namespace rti1516eLv
         delete attrHandleSet;
         return 0;
     }
+
+// Variable Data helpers
+    EXTERNC int getVariableLenghtDataSize(
+        VariableLengthData *dataIn)
+    {
+        return (*dataIn).size();
+    }
+
+    EXTERNC int destroyVariableLenghtDataRef(
+        VariableLengthData *dataIn)
+    {
+        delete dataIn;
+        return 0;
+    }    
 
 } // namespace rti1516eLv

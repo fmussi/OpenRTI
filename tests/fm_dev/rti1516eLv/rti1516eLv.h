@@ -36,19 +36,29 @@ namespace rti1516eLv
     //     size_t numOfElements;
     // };
 
+#pragma pack(1)
+
     struct receiveInteractionData {
         size_t numOfElements;
         OrderType sentOrder;
         TransportationType theType;
-        ParameterHandleValueMap *parHandleValueMap;
+        UPtr parHandleValueMap;
         InteractionClassHandle interactionClassHandle;
     };
+#pragma pack()
+
+#pragma pack(1)
 
     struct reflectAttributeValuesData {
+        size_t numOfElements;
         OrderType sentOrder;
-        TransportationType theType;       
+        TransportationType theType;
+        AttributeHandleValueMap const *theAttributeValues;
+        ObjectInstanceHandle objectClassHandle;
     };
-    
+
+#pragma pack()
+
     EXTERNC int regLvUserEvents(
         LVUserEventRef *objInstNameResSucc,
         LVUserEventRef *objInstNameResFail,

@@ -83,12 +83,12 @@ namespace rti1516eLv
         LStrHandle &lSh);
 
     EXTERNC int parHandleValueMapGetElementByRefString(
-        ParameterHandleValueMap const & parHandleValueMap,
+        ParameterHandleValueMap const * parHandleValueMap,
         ParameterHandle *parameterHandle,
         LStrHandle &lSh);
 
     EXTERNC int parHandleValueMapNumElements(
-        ParameterHandleValueMap const * parHandleValueMap);   
+        ParameterHandleValueMap * parHandleValueMap);   
      
     EXTERNC int attrHandleSetCreate(
         AttributeHandleSet **attrHandleSet);

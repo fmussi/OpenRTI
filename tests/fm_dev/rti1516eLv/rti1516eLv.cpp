@@ -370,33 +370,39 @@ namespace rti1516eLv
             SupplementalReceiveInfo theReceiveInfo)
             throw (FederateInternalError)
         {
+            
             receiveInteractionData dataToSend;
-            ParameterHandleValueMap mapToSend = theParameterValues;
+            const int headerSize = 4;
 
-            dataToSend.interactionClassHandle = theInteraction;
-            //dataToSend.parHandleValueMap = addressof(theParameterValues);
-            dataToSend.parHandleValueMap = &mapToSend;
+            UPtr dsParam = DSNewPtr(sizeof(theParameterValues)+headerSize);
+            //memcpy(dsParam,&theParameterValues,sizeof(theParameterValues));
+            MoveBlock(&theParameterValues,dsParam,sizeof(theParameterValues));
+
+            dataToSend.interactionClassHandle = theInteraction;;
+            //dataToSend.parHandleValueMap = &theParameterValues;
+            dataToSend.parHandleValueMap = dsParam;
             dataToSend.sentOrder = sentOrder;
             dataToSend.theType = theType;
             dataToSend.numOfElements = theParameterValues.size();
             //dataToSend.numOfElements = sizeof(dataToSend);
             
+            //PostLVUserEvent(lueReceiveInteraction,&dataToSend);
             PostLVUserEvent(lueReceiveInteraction,&dataToSend);
 
-            if (theInteraction == _iMessageId) {
-                HLAunicodeString message;
-                HLAunicodeString sender;
-                for (ParameterHandleValueMap::const_iterator i = theParameterValues.begin(); i != theParameterValues.end(); ++i) {
-                    ParameterHandle const & handle = i->first;
-                    VariableLengthData const & value = i->second;
-                    if (handle == _pTextId) {
-                    message.decode(value);
-                    } else if (handle == _pSenderId) {
-                    sender.decode(value);
-                    }
-                }
-                wcout << wstring(sender) << L": " << wstring(message) << endl;
-            }
+            // if (theInteraction == _iMessageId) {
+            //     HLAunicodeString message;
+            //     HLAunicodeString sender;
+            //     for (ParameterHandleValueMap::const_iterator i = theParameterValues.begin(); i != theParameterValues.end(); ++i) {
+            //         ParameterHandle const & handle = i->first;
+            //         VariableLengthData const & value = i->second;
+            //         if (handle == _pTextId) {
+            //         message.decode(value);
+            //         } else if (handle == _pSenderId) {
+            //         sender.decode(value);
+            //         }
+            //     }
+            //     wcout << wstring(sender) << L": " << wstring(message) << endl;
+            // }
         }
 
         virtual
@@ -412,8 +418,11 @@ namespace rti1516eLv
         {
             reflectAttributeValuesData dataToSend;
 
+            dataToSend.numOfElements = theAttributeValues.size();
             dataToSend.sentOrder = sentOrder;
             dataToSend.theType = theType;
+            dataToSend.objectClassHandle = theObject;
+            dataToSend.theAttributeValues = &theAttributeValues;
 
             PostLVUserEvent(lueReflectAttributeValues,&dataToSend);
 

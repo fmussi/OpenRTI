@@ -370,45 +370,23 @@ namespace rti1516eLv
             SupplementalReceiveInfo theReceiveInfo)
             throw (FederateInternalError)
         {
-            
+            // Declare variables and initialize
             receiveInteractionData dataToSend;
             ParameterHandleValueMap *dsParam;
             
-            const int headerSize = 4;
-
             // UPtr dsParam = DSNewPtr(sizeof(theParameterValues));
             dsParam = (ParameterHandleValueMap *)DSNewPtr(sizeof(theParameterValues));
             *dsParam = theParameterValues;
             // memcpy(dsParam,&theParameterValues,sizeof(theParameterValues));
-            // ParameterHandleValueMap **phvmh = (ParameterHandleValueMap **)DSNewHandle(sizeof(theParameterValues));
-            // memcpy((*phvmh),&theParameterValues,sizeof(theParameterValues));
            
+            // initialize event data
             dataToSend.interactionClassHandle = theInteraction;;
-            //dataToSend.parHandleValueMap = &theParameterValues;
             dataToSend.parHandleValueMap = dsParam;
-            //dataToSend.parHandleValueMap = phvmh;
             dataToSend.sentOrder = sentOrder;
             dataToSend.theType = theType;
             dataToSend.numOfElements = theParameterValues.size();
-            //dataToSend.numOfElements = sizeof(dataToSend);
             
-            //PostLVUserEvent(lueReceiveInteraction,&dataToSend);
             PostLVUserEvent(lueReceiveInteraction,&dataToSend);
-
-            // if (theInteraction == _iMessageId) {
-            //     HLAunicodeString message;
-            //     HLAunicodeString sender;
-            //     for (ParameterHandleValueMap::const_iterator i = theParameterValues.begin(); i != theParameterValues.end(); ++i) {
-            //         ParameterHandle const & handle = i->first;
-            //         VariableLengthData const & value = i->second;
-            //         if (handle == _pTextId) {
-            //         message.decode(value);
-            //         } else if (handle == _pSenderId) {
-            //         sender.decode(value);
-            //         }
-            //     }
-            //     wcout << wstring(sender) << L": " << wstring(message) << endl;
-            // }
         }
 
         virtual

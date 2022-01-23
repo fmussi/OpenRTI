@@ -140,36 +140,14 @@ namespace rti1516eLv
         VariableLengthData item;
         try {
             item = (*parHandleValueMap).at(*parameterHandle);
-            // item = (*parHandleValueMap)[(*parameterHandle)];
             uElem.decode(item);
             lSh = wstring2LvString(wstring(uElem));
         } catch (out_of_range &oor) {
-            return -12345; // test oor error
+            return LV_ERROR_MAPOUTOFRANGE; // test oor error
         }
-        //uElem.decode((parHandleValueMap)[(*parameterHandle)]);
-        //
-        return 23;
-    }   
 
-    EXTERNC int parHandleValueMapGetElementValue_vld(
-        ParameterHandleValueMap const * parHandleValueMap,
-        ParameterHandle *parameterHandle,
-        VariableLengthData &vld)
-    {
-        size_t itemSize;
-        try {
-            HLAunicodeString uElem;
-            VariableLengthData const & item = (*parHandleValueMap).at((*parameterHandle));
-            itemSize = item.size();
-            vld = item;            
-        } catch (out_of_range &oor) {
-            return 12345;
-        }
-       
-        //uElem.decode((parHandleValueMap)[(*parameterHandle)]);
-        return (int)(sizeof(itemSize));
-        //return (int)((*parHandleValueMap).count((*parameterHandle)));
-    }  
+        return (*lSh)->cnt;
+    }   
 
     EXTERNC int parHandleValueMapNumElements(
         ParameterHandleValueMap * parHandleValueMap)
@@ -183,7 +161,7 @@ namespace rti1516eLv
     {
         //delete parHandleValueMap;
         DSDisposePtr(parHandleValueMap);
-        
+
         return 0;
     } 
 
@@ -211,20 +189,6 @@ namespace rti1516eLv
     {
         delete attrHandleSet;
         return 0;
-    }
-
-// Variable Data helpers
-    EXTERNC int getVariableLenghtDataSize(
-        VariableLengthData *dataIn)
-    {
-        return (*dataIn).size();
-    }
-
-    EXTERNC int destroyVariableLenghtDataRef(
-        VariableLengthData *dataIn)
-    {
-        delete dataIn;
-        return 0;
-    }    
+    }  
 
 } // namespace rti1516eLv

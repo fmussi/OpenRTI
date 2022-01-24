@@ -65,6 +65,9 @@ namespace rti1516eLv
         AttributeHandle *attributeHandle,
         LStrHandle &lSh);
 
+    EXTERNC int attrHandleValueMapNumElements(
+        AttributeHandleValueMap * parHandleValueMap); 
+
     // EXTERNC int parHandleValueMapCreate(
     //     ParameterHandleValueMap **parHandleValueMap);
     EXTERNC int parHandleValueMapCreate(ParameterHandleValueMap **parHandleValueMap);
@@ -85,6 +88,8 @@ namespace rti1516eLv
     EXTERNC int parHandleValueMapNumElements(
         ParameterHandleValueMap * parHandleValueMap);   
      
+    // atrribute handle set
+    
     EXTERNC int attrHandleSetCreate(
         AttributeHandleSet **attrHandleSet);
 

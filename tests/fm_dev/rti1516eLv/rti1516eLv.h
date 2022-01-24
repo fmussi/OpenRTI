@@ -20,57 +20,16 @@
 
 #include "cintools/extcode.h"
 
+#include "rti1516eLv_defines.h"
 #include "rti1516eLv_helpers.h"
 #include "rti1516eLv_errors.h"
+#include "rti1516eLv_Federate.h"
 
 using namespace rti1516e;
 
 namespace rti1516eLv
 {
-
-    // struct receiveInteractionData {
-    //     InteractionClassHandle interactionClassHandle;
-    //     ParameterHandleValueMap const *parHandleValueMap;
-    //     OrderType sentOrder;
-    //     TransportationType theType;
-    //     size_t numOfElements;
-    // };
-
-
-#pragma pack(1)
-
-    // variant with Uptr
-    // struct receiveInteractionData {
-    //     size_t numOfElements;
-    //     OrderType sentOrder;
-    //     TransportationType theType;
-    //     UPtr parHandleValueMap;
-    //     InteractionClassHandle interactionClassHandle;
-    // };
-    // variant with handle
-    struct receiveInteractionData {
-        size_t numOfElements;
-        OrderType sentOrder;
-        TransportationType theType;
-        ParameterHandleValueMap *parHandleValueMap;
-        InteractionClassHandle interactionClassHandle;
-    };
-
-#pragma pack()
-
-#pragma pack(1)
-
-    struct reflectAttributeValuesData {
-        size_t numOfElements;
-        OrderType sentOrder;
-        TransportationType theType;
-        AttributeHandleValueMap const *theAttributeValues;
-        ObjectInstanceHandle objectClassHandle;
-    };
-
-#pragma pack()
-
-    EXTERNC int regLvUserEvents(
+    EXTERNC int regUserEventsLvEx(
         LVUserEventRef *objInstNameResSucc,
         LVUserEventRef *objInstNameResFail,
         LVUserEventRef *receiveInteraction,

@@ -78,6 +78,14 @@ namespace rti1516eLv
         return 0;
     }
 
+    EXTERNC int attrHandleValueMapDestroy(
+        AttributeHandleValueMap * attrHandleValueMap)
+    {
+        delete attrHandleValueMap;
+
+        return 0;
+    }
+
     EXTERNC int attrHandleValueMapAddElementString(
         AttributeHandleValueMap * attrHandleValueMap,
         AttributeHandle *attributeHandle,
@@ -95,10 +103,17 @@ namespace rti1516eLv
         LStrHandle &lSh)
     {
         HLAunicodeString uElem;
-        uElem.decode((*attrHandleValueMap)[(*attributeHandle)]);
-        lSh = wstring2LvString(wstring(uElem));
-        return 0;
-    }   
+        VariableLengthData item;
+        try {
+            item = (*attrHandleValueMap).at(*attributeHandle);
+            uElem.decode(item);
+            lSh = wstring2LvString(wstring(uElem));
+        } catch (out_of_range &oor) {
+            return LV_ERROR_MAPOUTOFRANGE; // test oor error
+        }
+
+        return (*lSh)->cnt;
+    }    
 
     EXTERNC int attrHandleValueMapNumElements(
         AttributeHandleValueMap * attrHandleValueMap)
@@ -107,17 +122,17 @@ namespace rti1516eLv
         return (int)sizeOut;
     }
 
-    EXTERNC int attrHandleValueMapDestroy(
-        AttributeHandleValueMap * attrHandleValueMap)
-    {
-        delete attrHandleValueMap;
-
-        return 0;
-    }
-
     EXTERNC int parHandleValueMapCreate(ParameterHandleValueMap **parHandleValueMap)
     {
         *parHandleValueMap = new ParameterHandleValueMap();
+        return 0;
+    }
+
+    EXTERNC int parHandleValueMapDestroy(
+        ParameterHandleValueMap * parHandleValueMap)
+    {
+        delete parHandleValueMap;
+
         return 0;
     }
 
@@ -155,15 +170,6 @@ namespace rti1516eLv
         size_t sizeOut = (*parHandleValueMap).size();
         return (int)sizeOut;
     }
-
-    EXTERNC int parHandleValueMapDestroy(
-        ParameterHandleValueMap * parHandleValueMap)
-    {
-        //delete parHandleValueMap;
-        DSDisposePtr(parHandleValueMap);
-
-        return 0;
-    } 
 
     EXTERNC int attrHandleSetCreate(AttributeHandleSet **attrHandleSet)
     {

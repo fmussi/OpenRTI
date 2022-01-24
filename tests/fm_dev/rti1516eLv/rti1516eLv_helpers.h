@@ -70,10 +70,11 @@ namespace rti1516eLv
 
     // EXTERNC int parHandleValueMapCreate(
     //     ParameterHandleValueMap **parHandleValueMap);
-    EXTERNC int parHandleValueMapCreate(ParameterHandleValueMap **parHandleValueMap);
+    EXTERNC int parHandleValueMapCreate(
+        ParameterHandleValueMap **parHandleValueMap);
     
-    EXTERNC int attrHandleValueMapDestroy(
-        AttributeHandleValueMap * attrHandleValueMap);
+    EXTERNC int parrHandleValueMapDestroy(
+        ParameterHandleValueMap * parHandleValueMap);
     
     EXTERNC int parHandleValueMapAddElementString(
         ParameterHandleValueMap * parHandleValueMap,

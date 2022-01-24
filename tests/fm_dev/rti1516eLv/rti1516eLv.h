@@ -95,16 +95,6 @@ namespace rti1516eLv
         const char theObjectInstanceName[],
         ObjectInstanceHandle *objectInstanceHandle);
 
-    EXTERNC int updateAttributeValuesLvEx(
-        RTIambassador *rtiHandle,
-        ObjectInstanceHandle & theObject,
-        AttributeHandleValueMap const & theAttributeValues);
-
-    EXTERNC int sendInteractionLvEx(
-        RTIambassador *rtiHandle,
-        InteractionClassHandle *theInteraction,
-        ParameterHandleValueMap const & theParameterValues);
-
     EXTERNC int subscribeInteractionClassLvEx(
         RTIambassador *rtiHandle,
         InteractionClassHandle *theClass,
@@ -125,6 +115,16 @@ namespace rti1516eLv
         RTIambassador *rtiHandle,
         ObjectClassHandle *theClass,
         AttributeHandleSet const & attributeList);
+
+    EXTERNC int updateAttributeValuesLvEx(
+        RTIambassador *rtiHandle,
+        ObjectInstanceHandle & theObject,
+        AttributeHandleValueMap const & theAttributeValues);
+
+    EXTERNC int sendInteractionLvEx(
+        RTIambassador *rtiHandle,
+        InteractionClassHandle *theInteraction,
+        ParameterHandleValueMap const & theParameterValues);
 
     EXTERNC int resignFederationExecutionLvEx(
         RTIambassador *rtiHandle,

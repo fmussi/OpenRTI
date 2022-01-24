@@ -127,6 +127,8 @@ namespace rti1516eLv
         return 0;
     }
 
+    // FOM handling 
+    
     EXTERNC int getInteractionClassHandleLvEx(
         RTIambassador *rtiHandle,
         const char theName[],

@@ -52,6 +52,7 @@
         "queue": "cpp",
         "string": "cpp",
         "random": "cpp",
-        "typeindex": "cpp"
+        "typeindex": "cpp",
+        "extcode.h": "c"
     }
 }

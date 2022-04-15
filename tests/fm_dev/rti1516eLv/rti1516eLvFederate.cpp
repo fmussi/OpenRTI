@@ -4,11 +4,19 @@
 #include <assert.h>
 #include <exception>
 #include <map>
-//#include <pthread.h>
-#include <semaphore.h>
 #include <string.h>
 #include <thread>
 #include <chrono>
+
+#ifdef _WIN32
+#include <mutex>
+#include <condition_variable>
+#include <io.h>
+#include <fcntl.h>
+#else
+#include <pthread.h>
+#include <semaphore.h>
+#endif
 
 // shared lib header
 #include "rti1516eLv.h"
@@ -19,11 +27,14 @@ using namespace rti1516e;
 
 namespace rti1516eLv
 {   
-    
     // thread signaling variables
-    // TODO
+#ifdef _WIN32
+    mutex _mutex;
+    condition_variable _threshold_cv;
+#else
     pthread_mutex_t _mutex = PTHREAD_MUTEX_INITIALIZER;
     pthread_cond_t _threshold_cv = PTHREAD_COND_INITIALIZER;
+#endif
     bool _connected = false;
     bool _stopped = false;
     bool _disconnected = false;
@@ -93,20 +104,41 @@ namespace rti1516eLv
         LvFederate *lvFedInstance = static_cast<LvFederate *>(data);
         _stopped = false;
         // set connected flag
+#ifdef _WIN32
+        unique_lock<mutex> lk(_mutex);
+#else     
         pthread_mutex_lock(&_mutex);
+#endif
         _disconnected = false;
         _connected = true;
-        pthread_cond_signal(&_threshold_cv);
-        pthread_mutex_unlock(&_mutex);
+#ifdef _WIN32
+        _threshold_cv.notify_one();
+        lk.unlock();
+#else  
+      pthread_cond_signal(&_threshold_cv);
+      pthread_mutex_unlock(&_mutex);
+#endif
         // start callback event processing
         _processCB = false;
         lvFedInstance->cb_consumer();
-        // send disconnect
+
+#ifdef _WIN32
+        lk.lock();
+        //unique_lock<mutex> lk(_mutex);
+#else     
         pthread_mutex_lock(&_mutex);
+#endif
+        // send disconnect
         _connected = false;
         _disconnected = true;
+
+#ifdef _WIN32
+        _threshold_cv.notify_one();
+        lk.unlock();
+#else  
         pthread_cond_signal(&_threshold_cv);
         pthread_mutex_unlock(&_mutex);
+#endif
 
     }
 
@@ -130,10 +162,19 @@ namespace rti1516eLv
             }
         }
         wcout << "RTIdeamon completed." << endl;
+#ifdef _WIN32
+        unique_lock<mutex> lk(_mutex);
+#else     
         pthread_mutex_lock(&_mutex);
+#endif
         _disconnected = true;
+#ifdef _WIN32
+        _threshold_cv.notify_one();
+        lk.unlock();
+#else  
         pthread_cond_signal(&_threshold_cv);
-        pthread_mutex_unlock(&_mutex);
+         pthread_mutex_unlock(&_mutex);
+#endif
     }
 
     void LvFederate::connectLv(
@@ -149,11 +190,19 @@ namespace rti1516eLv
             // spawn thread
             thread thCbProc(th_cb_consumer,this);
             // wait for thread to be launched
+#ifdef _WIN32
+            unique_lock<mutex> lk(_mutex);
+            while (!_connected) {
+                _threshold_cv.wait(lk);
+            }
+            lk.unlock();
+#else
             pthread_mutex_lock(&_mutex);
             while (!_connected) {
                 pthread_cond_wait(&_threshold_cv, &_mutex);
             }
             pthread_mutex_unlock(&_mutex);
+#endif
             thCbProc.detach();
         } catch (Exception &e) {
             // wcerr << "RTI1516e thrown " << e.what() << endl;
@@ -168,11 +217,19 @@ namespace rti1516eLv
                 _disconnected = false;
                 // set stop flag for cb_consumer
                 _stopped = true;
+#ifdef _WIN32
+                unique_lock<mutex> lk(_mutex);
+                while (!_disconnected) {
+                    _threshold_cv.wait(lk);
+                }
+                lk.unlock();
+#else
                     pthread_mutex_lock(&_mutex);
                 while (!_disconnected) {
                     pthread_cond_wait(&_threshold_cv, &_mutex);
                 }
                 pthread_mutex_unlock(&_mutex);
+#endif
                 _rtiAmbassador->disconnect();
 
             }  catch (Exception &e) { 

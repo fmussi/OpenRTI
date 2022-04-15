@@ -7,8 +7,6 @@
 #include <assert.h>
 #include <exception>
 #include <map>
-#include <pthread.h>
-#include <semaphore.h>
 #include <string.h>
 
 // RTI specific headers
@@ -23,11 +21,27 @@
 #include <Options.h>
 #include <StringUtils.h>
 
+#ifdef _WIN32
+#include <mutex>
+#include <condition_variable>
+#include <io.h>
+#include <fcntl.h>
+#else
+#include <pthread.h>
+#include <semaphore.h>
+#endif
+
 using namespace std;
 using namespace rti1516e;
 
+
+#ifdef _WIN32
+mutex _mutex;
+condition_variable _threshold_cv;
+#else
 pthread_mutex_t _mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t _threshold_cv = PTHREAD_COND_INITIALIZER;
+#endif
 
 void string2wstring(wstring &dest, const string &src);
 
@@ -88,9 +102,13 @@ public:
       vector<wstring> FOMmoduleUrls;
       std::wstring mimModule;
 
+#ifdef _WIN32
+      FOMmoduleUrls.push_back(OpenRTI::localeToUcs("C:\\Users\\Administrator\\Desktop\\Azdo\\emea-ni-adg-hla-lv\\OpenRTI\\tests\\fm_dev\\chat-cpp-fm\\Chat-evolved.xml"));
+      mimModule = OpenRTI::localeToUcs("C:\\Users\\Administrator\\Desktop\\Azdo\\emea-ni-adg-hla-lv\\OpenRTI\\share\\rti1516e\\HLAstandardMIM.xml");
+#else
       FOMmoduleUrls.push_back(OpenRTI::localeToUcs("/home/admin/git_repo/OpenRTI/build/bin/Chat-evolved.xml"));
       mimModule = OpenRTI::localeToUcs("/home/admin/git_repo/OpenRTI/share/rti1516e/HLAstandardMIM.xml");
-      
+#endif      
       try {
          if (argc > 1) {
             string2wstring(host, argv[1]);
@@ -186,11 +204,19 @@ public:
             try {
                _reservationComplete = false;
                _rtiAmbassador->reserveObjectInstanceName(_username);
+#ifdef _WIN32
+               unique_lock<mutex> lk(_mutex);
+               while (!_reservationComplete) {
+                  _threshold_cv.wait(lk);
+               }
+               lk.unlock();
+#else
                pthread_mutex_lock(&_mutex);
                while (!_reservationComplete) {
                   pthread_cond_wait(&_threshold_cv, &_mutex);
                } 
                pthread_mutex_unlock(&_mutex);
+#endif
                if (!_reservationSucceeded) {
                   wcout << L"Name already taken, try again.\n";
                }
@@ -305,11 +331,20 @@ public:
       theObjectInstanceName)
       throw (FederateInternalError)
    {
+#ifdef _WIN32
+       unique_lock<mutex> lk(_mutex);
+#else     
       pthread_mutex_lock(&_mutex);
+#endif
       _reservationComplete = true;
       _reservationSucceeded = true;
+#ifdef _WIN32
+      _threshold_cv.notify_one();
+      lk.unlock();
+#else  
       pthread_cond_signal(&_threshold_cv);
       pthread_mutex_unlock(&_mutex);
+#endif
    }
 
    virtual
@@ -319,11 +354,20 @@ public:
       theObjectInstanceName)
       throw (FederateInternalError)
    {
+#ifdef _WIN32
+       unique_lock<mutex> lk(_mutex);
+#else  
       pthread_mutex_lock(&_mutex);
+#endif
       _reservationComplete = true;
       _reservationSucceeded = false;
+#ifdef _WIN32
+      _threshold_cv.notify_one();
+      lk.unlock();
+#else  
       pthread_cond_signal(&_threshold_cv);
       pthread_mutex_unlock(&_mutex);
+#endif
    }
 
    virtual

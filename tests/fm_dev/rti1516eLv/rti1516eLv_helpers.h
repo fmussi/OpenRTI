@@ -18,7 +18,12 @@
 #include <RTI/time/HLAinteger64Interval.h>
 #include <RTI/encoding/BasicDataElements.h>
 
-#include "cintools/extcode.h"
+/* Platform specific LabView includes and lib */
+#ifdef _WIN32
+	#include "extcode.h"
+#else
+	#include "cintools/extcode.h"
+#endif
 
 using namespace std;
 using namespace rti1516e;

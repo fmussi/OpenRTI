@@ -6,13 +6,14 @@
     // /home/admin/git_repo/OpenRTI/build/lib64/librti1516elv.so
     // /home/admin/git_repo/OpenRTI/build/bin/ChatCC1516e_fm_mt
     // /home/admin/git_repo/OpenRTI/build/bin/testapp
+    // removed             "preLaunchTask": "cl.exe build active file"
     "version": "0.2.0",
     "configurations": [
         {
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "/home/admin/git_repo/OpenRTI/build/bin/testapp",
+            "program": "${workspaceFolder}/build/bin/ChatCC1516e_fm_mt",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
@@ -26,6 +27,18 @@
                     "ignoreFailures": true
                 }
             ]
-        }
+        },
+        {
+            "name": "cl.exe build and debug active file",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/bin/Debug/ChatCC1516e_fm_mt.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "console": "integratedTerminal",
+            //"preLaunchTask": "cl.exe build active file"
+          }
     ]
 }

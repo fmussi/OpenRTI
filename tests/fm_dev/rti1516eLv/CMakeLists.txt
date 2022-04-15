@@ -54,22 +54,22 @@ if(BUILD_LIBRARY)
     endif()
 endif()
 
-if(BUILD_TEST_APP)
-    message("configure test app for shared lib")
-    # add executable
-    add_executable(testapp testapp.cpp)
-    if(WIN32)
-        target_link_libraries(testapp rti1516elv rti1516e fedtime1516e OpenRTI labview.lib)
-        # for Visual Studio, set SAFEESH to no
-        target_link_options(rti1516elv PUBLIC "$<$<C_COMPILER_ID:MSVC>:-SAFESEH:NO>")
-    endif()
-    if (UNIX AND NOT APPLE)
-        target_link_libraries(testapp rti1516elv rti1516e fedtime1516e OpenRTI pthread lvrt)
-    endif()
-    #add path to search for header files
-    #target_include_directories(hlalvapp PUBLIC "${PROJECT_BINARY_DIR}")
+# if(BUILD_TEST_APP)
+#     message("configure test app for shared lib")
+#     # add executable
+#     add_executable(testapp testapp.cpp)
+#     if(WIN32)
+#         target_link_libraries(testapp rti1516elv rti1516e fedtime1516e OpenRTI labview.lib)
+#         # for Visual Studio, set SAFEESH to no
+#         target_link_options(rti1516elv PUBLIC "$<$<C_COMPILER_ID:MSVC>:-SAFESEH:NO>")
+#     endif()
+#     if (UNIX AND NOT APPLE)
+#         target_link_libraries(testapp rti1516elv rti1516e fedtime1516e OpenRTI pthread lvrt)
+#     endif()
+#     #add path to search for header files
+#     #target_include_directories(hlalvapp PUBLIC "${PROJECT_BINARY_DIR}")
     
-endif()
+# endif()
 
 
 

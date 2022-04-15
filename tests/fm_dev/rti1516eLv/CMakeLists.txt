@@ -2,23 +2,29 @@ cmake_minimum_required(VERSION 3.10)
 
 #Set project name
 project(rti1516e_lv_proj VERSION 1.0)
-# If on Windows, specify the right architecture
-if(WIN32)
-    set(CMAKE_VS_PLATFORM_NAME Win32)
-endif()
+# Commented below. Specify architecture with the generator from command line, for example: cmake -G "Visual Studio 16 2019" -A Win32 ..
+# if(WIN32)
+#     set(CMAKE_VS_PLATFORM_NAME Win32)
+# endif()
 # specify the C++ standard
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 if(WIN32)
-    set(lvrt "C:\\Program Files (x86)\\National Instruments\\LabVIEW 2020\\cintools")
-    message("Windows specific setting - link lvrt")
-    link_directories(${lvrt})
+    if("${CMAKE_GENERATOR_PLATFORM}" STREQUAL "x64")
+        set(lvrt "C:\\Program Files (x86)\\National Instruments\\LabVIEW 2020\\cintools")
+        message("Adding paths to LabVIEW 2020 cintools and runtime - Windows - x64")
+    endif()
+
+    if("${CMAKE_GENERATOR_PLATFORM}" STREQUAL "Win32")
+        set(lvrt "C:\\Program Files (x86)\\National Instruments\\LabVIEW 2020\\cintools")
+        message("Adding paths to LabVIEW 2020 cintools and runtime - Windows - x86")
+    endif()
 endif()
 if(UNIX AND NOT APPLE)
     set(lvrt "/usr/local/natinst/labview/")
-    message("linux specific setting - link lvrt")
-    link_directories(${lvrt})
+    message("Adding paths to LabVIEW runtime - NI Linux RT - x64")
 endif()
+link_directories(${lvrt})
 
 # control where the static and shared libraries are built so that on windows
 # we don't need to tinker with the path to run the executable
@@ -54,22 +60,22 @@ if(BUILD_LIBRARY)
     endif()
 endif()
 
-# if(BUILD_TEST_APP)
-#     message("configure test app for shared lib")
-#     # add executable
-#     add_executable(testapp testapp.cpp)
-#     if(WIN32)
-#         target_link_libraries(testapp rti1516elv rti1516e fedtime1516e OpenRTI labview.lib)
-#         # for Visual Studio, set SAFEESH to no
-#         target_link_options(rti1516elv PUBLIC "$<$<C_COMPILER_ID:MSVC>:-SAFESEH:NO>")
-#     endif()
-#     if (UNIX AND NOT APPLE)
-#         target_link_libraries(testapp rti1516elv rti1516e fedtime1516e OpenRTI pthread lvrt)
-#     endif()
-#     #add path to search for header files
-#     #target_include_directories(hlalvapp PUBLIC "${PROJECT_BINARY_DIR}")
+if(BUILD_TEST_APP)
+    message("configure test app for shared lib")
+    # add executable
+    add_executable(testapp testapp.cpp)
+    if(WIN32)
+        target_link_libraries(testapp rti1516elv rti1516e fedtime1516e OpenRTI labview.lib)
+        # for Visual Studio, set SAFEESH to no
+        target_link_options(rti1516elv PUBLIC "$<$<C_COMPILER_ID:MSVC>:-SAFESEH:NO>")
+    endif()
+    if (UNIX AND NOT APPLE)
+        target_link_libraries(testapp rti1516elv rti1516e fedtime1516e OpenRTI pthread lvrt)
+    endif()
+    #add path to search for header files
+    #target_include_directories(hlalvapp PUBLIC "${PROJECT_BINARY_DIR}")
     
-# endif()
+endif()
 
 
 

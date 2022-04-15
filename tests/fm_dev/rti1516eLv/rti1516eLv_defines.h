@@ -5,7 +5,7 @@
 // extern "C" {
 // #endif
 
-//#include "rti1516eLv_EXPORTS.h"
+#include "rti1516eLv_EXPORTS.h"
 #include <Options.h>
 #include <StringUtils.h>
 

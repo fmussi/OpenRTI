@@ -21,8 +21,10 @@
 /* Platform specific LabView includes and lib */
 #ifdef _WIN32
 	#include "extcode.h"
+    #define DLLEXPORT __declspec(dllexport)
 #else
-	#include "cintools/extcode.h"
+	#define DLLEXPORT 
+    #include "cintools/extcode.h"
 #endif
 
 #include "rti1516eLv_defines.h"
@@ -42,107 +44,107 @@ namespace rti1516eLv
         );
     // LV wrapper functions to OpenRTI
 
-    EXTERNC int createRTIambassadorLvEx(
+    EXTERNC DLLEXPORT int createRTIambassadorLvEx(
         RTIambassador **rtiHandle);
 
     // LV specific wrappers to control callback processing
-    EXTERNC int startRTIambassadorLvEx(
+    EXTERNC DLLEXPORT int startRTIambassadorLvEx(
         RTIambassador *rtiHandle);
-    EXTERNC int stopRTIambassadorLvEx(
+    EXTERNC DLLEXPORT int stopRTIambassadorLvEx(
         RTIambassador *rtiHandle);
 
-    EXTERNC int connectLvEx(
+    EXTERNC DLLEXPORT int connectLvEx(
         RTIambassador *rtiHandle, 
         const char address[]);
 
-    EXTERNC int createFederationExecutionWithMIMLvEx(
+    EXTERNC DLLEXPORT int createFederationExecutionWithMIMLvEx(
     RTIambassador *rtiHandle, 
     const char federationExecutionName[],
     const char fomModules[],
     const char mimModule[],
     const char logicalTimeImplementationName[]);
 
-    EXTERNC int joinFederationExecutionLvEx(
+    EXTERNC DLLEXPORT int joinFederationExecutionLvEx(
         RTIambassador *rtiHandle,
         const char federateType[],
         const char federationExecutionName[],
         const char additionalFomModules[]);
 
-    EXTERNC int getInteractionClassHandleLvEx(
+    EXTERNC DLLEXPORT int getInteractionClassHandleLvEx(
         RTIambassador *rtiHandle,
         const char theName[],
         InteractionClassHandle *intClassHandle);
 
-    EXTERNC int getParameterHandleLvEx(
+    EXTERNC DLLEXPORT int getParameterHandleLvEx(
         RTIambassador *rtiHandle,
         InteractionClassHandle *whichClass,
         const char theName[],
         ParameterHandle *paramHandle);
 
-    EXTERNC int getObjectClassHandleLvEx(
+    EXTERNC DLLEXPORT int getObjectClassHandleLvEx(
         RTIambassador *rtiHandle,
         const char theName[],
         ObjectClassHandle *objectClassHandle);
     
-    EXTERNC int getAttributeHandleLvEx(
+    EXTERNC DLLEXPORT int getAttributeHandleLvEx(
         RTIambassador *rtiHandle,
         ObjectClassHandle *whichClass,
         const char theName[],
         AttributeHandle * attributeHandle);
 
-    EXTERNC int reserveObjectInstanceNameLvEx(
+    EXTERNC DLLEXPORT int reserveObjectInstanceNameLvEx(
         RTIambassador *rtiHandle,
         const char theObjectInstanceName[]);
 
-    EXTERNC int registerObjectInstanceLvEx(
+    EXTERNC DLLEXPORT int registerObjectInstanceLvEx(
         RTIambassador *rtiHandle,
         ObjectClassHandle & theClass,
         const char theObjectInstanceName[],
         ObjectInstanceHandle *objectInstanceHandle);
 
-    EXTERNC int subscribeInteractionClassLvEx(
+    EXTERNC DLLEXPORT int subscribeInteractionClassLvEx(
         RTIambassador *rtiHandle,
         InteractionClassHandle *theClass,
         bool active);
     
-    EXTERNC int publishInteractionClassLvEx(
+    EXTERNC DLLEXPORT int publishInteractionClassLvEx(
         RTIambassador *rtiHandle,
         InteractionClassHandle *theInteraction);
 
-    EXTERNC int subscribeObjectClassAttributesLvEx(
+    EXTERNC DLLEXPORT int subscribeObjectClassAttributesLvEx(
         RTIambassador *rtiHandle,
         ObjectClassHandle *theClass,
         AttributeHandleSet const & attributeList,
         bool active,
         const char updateRateDesignator[]);
 
-    EXTERNC int publishObjectClassAttributesLvEx(
+    EXTERNC DLLEXPORT int publishObjectClassAttributesLvEx(
         RTIambassador *rtiHandle,
         ObjectClassHandle *theClass,
         AttributeHandleSet const & attributeList);
 
-    EXTERNC int updateAttributeValuesLvEx(
+    EXTERNC DLLEXPORT int updateAttributeValuesLvEx(
         RTIambassador *rtiHandle,
         ObjectInstanceHandle & theObject,
         AttributeHandleValueMap const & theAttributeValues);
 
-    EXTERNC int sendInteractionLvEx(
+    EXTERNC DLLEXPORT int sendInteractionLvEx(
         RTIambassador *rtiHandle,
         InteractionClassHandle *theInteraction,
         ParameterHandleValueMap const & theParameterValues);
 
-    EXTERNC int resignFederationExecutionLvEx(
+    EXTERNC DLLEXPORT int resignFederationExecutionLvEx(
         RTIambassador *rtiHandle,
         ResignAction resignAction);
 
-    EXTERNC int destroyFederationExecutionLvEx(
+    EXTERNC DLLEXPORT int destroyFederationExecutionLvEx(
         RTIambassador *rtiHandle,
         const char federationExecutionName[]);
 
-    EXTERNC int disconnectLvEx(
+    EXTERNC DLLEXPORT int disconnectLvEx(
         RTIambassador *rtiHandle);
 
-    EXTERNC int destroyRTIambassadorLvEx(
+    EXTERNC DLLEXPORT int destroyRTIambassadorLvEx(
         RTIambassador *rtiHandle);
 }
 

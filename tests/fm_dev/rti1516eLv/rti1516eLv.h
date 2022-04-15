@@ -36,7 +36,7 @@ using namespace rti1516e;
 
 namespace rti1516eLv
 {
-    EXTERNC int regUserEventsLvEx(
+    EXTERNC DLLEXPORT int regUserEventsLvEx(
         LVUserEventRef *objInstNameResSucc,
         LVUserEventRef *objInstNameResFail,
         LVUserEventRef *receiveInteraction,

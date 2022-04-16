@@ -5,7 +5,7 @@
 // extern "C" {
 // #endif
 
-//#include "rti1516eLv_EXPORTS.h"
+#include "rti1516eLv_EXPORTS.h"
 #include <Options.h>
 #include <StringUtils.h>
 
@@ -18,7 +18,12 @@
 #include <RTI/time/HLAinteger64Interval.h>
 #include <RTI/encoding/BasicDataElements.h>
 
-#include "cintools/extcode.h"
+/* Platform specific LabView includes and lib */
+#ifdef _WIN32
+	#include "extcode.h"
+#else
+	#include "cintools/extcode.h"
+#endif
 
 using namespace std;
 using namespace rti1516e;
@@ -36,7 +41,8 @@ namespace rti1516eLv
     //wstring chararray2wstring(const char charArray[]);
 
     // Test or debug functions
-    EXTERNC int testFunc();
+    EXTERNC DLLEXPORT int testFunc();
+    // do not export these function
     EXTERNC MgErr testFireEvent(
         testEventData *value);
     EXTERNC int regObjInstNameResSuccEvent(
@@ -50,55 +56,55 @@ namespace rti1516eLv
 
     // EXTERNC  int attrHandleValueMapCreate(
     //     AttributeHandleValueMap **attrHandleValueMap);
-    EXTERNC  int attrHandleValueMapCreate(AttributeHandleValueMap **attrHandleValueMap);   
+    EXTERNC DLLEXPORT  int attrHandleValueMapCreate(AttributeHandleValueMap **attrHandleValueMap);   
     
-    EXTERNC int attrHandleValueMapDestroy(
+    EXTERNC DLLEXPORT int attrHandleValueMapDestroy(
         AttributeHandleValueMap *attrHandleValueMap);
 
-    EXTERNC int attrHandleValueMapAddElementString(
+    EXTERNC DLLEXPORT int attrHandleValueMapAddElementString(
         AttributeHandleValueMap *attrHandleValueMap,
         AttributeHandle *attributeHandle,
         const char sElem[]);
     
-    EXTERNC int attrHandleValueMapGetElementString(
+    EXTERNC DLLEXPORT int attrHandleValueMapGetElementString(
         AttributeHandleValueMap * attrHandleValueMap,
         AttributeHandle *attributeHandle,
         LStrHandle &lSh);
 
-    EXTERNC int attrHandleValueMapNumElements(
+    EXTERNC DLLEXPORT int attrHandleValueMapNumElements(
         AttributeHandleValueMap * parHandleValueMap); 
 
     // EXTERNC int parHandleValueMapCreate(
     //     ParameterHandleValueMap **parHandleValueMap);
-    EXTERNC int parHandleValueMapCreate(
+    EXTERNC DLLEXPORT int parHandleValueMapCreate(
         ParameterHandleValueMap **parHandleValueMap);
     
-    EXTERNC int parrHandleValueMapDestroy(
+    EXTERNC DLLEXPORT int parrHandleValueMapDestroy(
         ParameterHandleValueMap * parHandleValueMap);
     
-    EXTERNC int parHandleValueMapAddElementString(
+    EXTERNC DLLEXPORT int parHandleValueMapAddElementString(
         ParameterHandleValueMap * parHandleValueMap,
         ParameterHandle * parameterHandle,
         const char sElem[]);
 
-    EXTERNC int parHandleValueMapGetElementString(
+    EXTERNC DLLEXPORT int parHandleValueMapGetElementString(
         ParameterHandleValueMap const * parHandleValueMap,
         ParameterHandle *parameterHandle,
         LStrHandle &lSh);
 
-    EXTERNC int parHandleValueMapNumElements(
+    EXTERNC DLLEXPORT int parHandleValueMapNumElements(
         ParameterHandleValueMap * parHandleValueMap);   
      
     // atrribute handle set
     
-    EXTERNC int attrHandleSetCreate(
+    EXTERNC DLLEXPORT int attrHandleSetCreate(
         AttributeHandleSet **attrHandleSet);
 
-    EXTERNC int attrHandleSetInsert(
+    EXTERNC DLLEXPORT int attrHandleSetInsert(
         AttributeHandleSet * attrHandleSet,
         AttributeHandle * attrHandle
     );
-    EXTERNC int attrHandleSetDestroy(
+    EXTERNC DLLEXPORT int attrHandleSetDestroy(
         AttributeHandleSet * attrHandleSet
     );
 

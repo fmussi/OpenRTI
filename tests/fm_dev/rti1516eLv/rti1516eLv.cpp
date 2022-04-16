@@ -4,8 +4,6 @@
 #include <assert.h>
 #include <exception>
 #include <map>
-//#include <pthread.h>
-#include <semaphore.h>
 #include <string.h>
 #include <thread>
 #include <chrono>
@@ -338,6 +336,7 @@ namespace rti1516eLv
         RTIambassador *rtiHandle)
     {
         delete rtiHandle;
+        return 0;
     }
 
 } // namespace rti1516eLv

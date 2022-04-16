@@ -5,7 +5,7 @@
 // extern "C" {
 // #endif
 
-//#include "rti1516eLv_EXPORTS.h"
+#include "rti1516eLv_EXPORTS.h"
 #include <Options.h>
 #include <StringUtils.h>
 
@@ -18,7 +18,13 @@
 #include <RTI/time/HLAinteger64Interval.h>
 #include <RTI/encoding/BasicDataElements.h>
 
-#include "cintools/extcode.h"
+
+/* Platform specific LabView includes and lib */
+#ifdef _WIN32
+	#include "extcode.h"
+#else
+	#include "cintools/extcode.h"
+#endif
 
 using namespace rti1516e;
 

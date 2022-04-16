@@ -94,7 +94,7 @@ namespace rti1516eLv
         wstring wElem = chararray2wstring(sElem);
         HLAunicodeString uElem(wElem);
         (*attrHandleValueMap)[(*attributeHandle)] = uElem.encode();
-        
+        return 0;
     }
 
     EXTERNC int attrHandleValueMapGetElementString(
@@ -144,6 +144,7 @@ namespace rti1516eLv
         wstring wElem = chararray2wstring(sElem);
         HLAunicodeString uElem(wElem);
         (*parHandleValueMap)[(*parameterHandle)] = uElem.encode();
+        return 0;
     }
 
     EXTERNC int parHandleValueMapGetElementString(

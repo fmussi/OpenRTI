@@ -13,6 +13,9 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # Just for proper recursion
 add_subdirectory(chat-cpp-fm)
-add_subdirectory(multithread)
+#add_subdirectory(multithread)
 add_subdirectory(shlib)
 add_subdirectory(rti1516eLv)
+# Temp subdir for testing
+add_subdirectory(testWinCmake)
+#add_subdirectory(LabView_EventTest)

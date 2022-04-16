@@ -192,7 +192,7 @@ public:
       FOMmoduleUrls.push_back(OpenRTI::localeToUcs("C:\\Users\\Administrator\\Desktop\\Azdo\\emea-ni-adg-hla-lv\\OpenRTI\\tests\\fm_dev\\chat-cpp-fm\\Chat-evolved.xml"));
       mimModule = OpenRTI::localeToUcs("C:\\Users\\Administrator\\Desktop\\Azdo\\emea-ni-adg-hla-lv\\OpenRTI\\share\\rti1516e\\HLAstandardMIM.xml");
 #else
-      FOMmoduleUrls.push_back(OpenRTI::localeToUcs("/home/admin/git_repo/OpenRTI/build/bin/Chat-evolved.xml"));
+      FOMmoduleUrls.push_back(OpenRTI::localeToUcs("/home/admin/git_repo/OpenRTI/tests/fm_dev/chat-cpp-fm/Chat-evolved.xml"));
       mimModule = OpenRTI::localeToUcs("/home/admin/git_repo/OpenRTI/share/rti1516e/HLAstandardMIM.xml");
 #endif 
       

@@ -11,7 +11,7 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 if(WIN32)
     if("${CMAKE_GENERATOR_PLATFORM}" STREQUAL "x64")
-        set(lvrt "C:\\Program Files (x86)\\National Instruments\\LabVIEW 2020\\cintools")
+        set(lvrt "C:\\Program Files\\National Instruments\\LabVIEW 2020\\cintools")
         message("Adding paths to LabVIEW 2020 cintools and runtime - Windows - x64")
     endif()
 

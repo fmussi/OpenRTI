@@ -79,7 +79,7 @@ namespace rti1516eLv
     EXTERNC DLLEXPORT int parHandleValueMapCreate(
         ParameterHandleValueMap **parHandleValueMap);
     
-    EXTERNC DLLEXPORT int parrHandleValueMapDestroy(
+    EXTERNC DLLEXPORT int parHandleValueMapDestroy(
         ParameterHandleValueMap * parHandleValueMap);
     
     EXTERNC DLLEXPORT int parHandleValueMapAddElementString(
@@ -104,6 +104,10 @@ namespace rti1516eLv
         AttributeHandleSet * attrHandleSet,
         AttributeHandle * attrHandle
     );
+
+    EXTERNC DLLEXPORT int attrHandleSetNumElements(
+        AttributeHandleSet * attrHandleSet);
+
     EXTERNC DLLEXPORT int attrHandleSetDestroy(
         AttributeHandleSet * attrHandleSet
     );

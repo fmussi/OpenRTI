@@ -72,7 +72,7 @@ namespace rti1516eLv
         static void th_cb_consumer(void *data);
 
         virtual void cb_consumer();
- 
+        
         virtual void connectLv(
             wstring host)
             RTI_THROW ((Exception));

@@ -53,6 +53,7 @@
         "string": "cpp",
         "random": "cpp",
         "typeindex": "cpp",
-        "extcode.h": "c"
+        "extcode.h": "c",
+        "xtree": "cpp"
     }
 }

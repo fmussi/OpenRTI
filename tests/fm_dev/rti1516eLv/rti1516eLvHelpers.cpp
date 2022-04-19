@@ -190,6 +190,13 @@ namespace rti1516eLv
         return 0;
     }
 
+    EXTERNC DLLEXPORT int attrHandleSetNumElements(
+        AttributeHandleSet * attrHandleSet)
+    {
+        size_t sizeOut = (*attrHandleSet).size();
+        return sizeOut;
+    }
+
     EXTERNC int attrHandleSetDestroy(
         AttributeHandleSet * attrHandleSet
     )

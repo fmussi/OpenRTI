@@ -50,24 +50,38 @@ namespace rti1516eLv
     //     InteractionClassHandle interactionClassHandle;
     // };
     // variant with handle
+    // replaces size_t with uint32_t for multi bitness compatibility
+    // replaced ParameterHandleValueMap and InteractionClassHandle with uint64
     struct receiveInteractionData {
-        size_t numOfElements;
+        uint32_t numOfElements;
         OrderType sentOrder;
         TransportationType theType;
-        ParameterHandleValueMap *parHandleValueMap;
+#ifdef _WIN32
+#ifdef _WIN64
+        ParameterHandleValueMap*parHandleValueMap;
         InteractionClassHandle interactionClassHandle;
+#else
+        // pad with 32bit
+        ParameterHandleValueMap* parHandleValueMap;
+        uint32_t _pad1;
+        InteractionClassHandle interactionClassHandle;
+        uint32_t _pad2;
+#endif
+#endif
     };
 
 #pragma pack()
 
 #pragma pack(1)
 
+// replaces size_t with uint32_t for multi bitness compatibility
+// replaced AttributeHandleValueMap and ObjectInstanceHandle with uint64
     struct reflectAttributeValuesData {
-        size_t numOfElements;
+        uint32_t numOfElements;
         OrderType sentOrder;
         TransportationType theType;
-        AttributeHandleValueMap *attrHandleValueMap;
-        ObjectInstanceHandle objectClassHandle;
+        uInt64 *attrHandleValueMap;
+        uInt64 objectClassHandle;
     };
 
 #pragma pack()

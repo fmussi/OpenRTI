@@ -430,13 +430,13 @@ namespace rti1516eLv
     // Generic guideline: members implement try and catch     
 
     void
-    LvFederate::receiveInteraction (
-        InteractionClassHandle theInteraction,
-        ParameterHandleValueMap const & theParameterValues,
-        VariableLengthData const & theUserSuppliedTag,
-        OrderType sentOrder,
-        TransportationType theType,
-        SupplementalReceiveInfo theReceiveInfo)
+        LvFederate::receiveInteraction(
+            InteractionClassHandle theInteraction,
+            ParameterHandleValueMap const& theParameterValues,
+            VariableLengthData const& theUserSuppliedTag,
+            OrderType sentOrder,
+            TransportationType theType,
+            SupplementalReceiveInfo theReceiveInfo)
         throw (FederateInternalError)
     {
         // Declare variables and initialize
@@ -444,20 +444,19 @@ namespace rti1516eLv
         ParameterHandleValueMap *dsParam;
         
         // Init struct
+        dsParam = new ParameterHandleValueMap();
         memset(&dataToSend, 0, sizeof(dataToSend));
-        // UPtr dsParam = DSNewPtr(sizeof(theParameterValues));
-        dsParam = (ParameterHandleValueMap *)DSNewPtr(sizeof(theParameterValues));
-        //dsParam = (ParameterHandleValueMap *)DSNewPtr(sizeof(ParameterHandleValueMap));
-        //*dsParam = theParameterValues;
-        memcpy(dsParam,&theParameterValues,sizeof(theParameterValues));
+        //dataToSend.parHandleValueMap = (ParameterHandleValueMap*)DSNewPtr(sizeof(theParameterValues));
+        //dsParam = (ParameterHandleValueMap *)DSNewPtr(sizeof(theParameterValues));
+        *dsParam = theParameterValues;
         
         // initialize event data
         dataToSend.interactionClassHandle = theInteraction;
         dataToSend.parHandleValueMap = dsParam;
         dataToSend.sentOrder = sentOrder;
         dataToSend.theType = theType;
-        //dataToSend.numOfElements = (uint32_t)theParameterValues.size();
-        dataToSend.numOfElements = (uint32_t)sizeof(dataToSend);
+        dataToSend.numOfElements = (uint32_t)(*dsParam).size();
+        //dataToSend.numOfElements = (uint32_t)sizeof(theParameterValues);
 
         PostLVUserEvent(lueReceiveInteraction,&dataToSend);
     }
@@ -475,14 +474,17 @@ namespace rti1516eLv
         reflectAttributeValuesData dataToSend;
         AttributeHandleValueMap *dsParam;
 
-        dsParam = (AttributeHandleValueMap *)DSNewPtr(sizeof(theAttributeValues));
+        // Init struct
+        dsParam = new AttributeHandleValueMap();
+        memset(&dataToSend, 0, sizeof(dataToSend));
+        //dsParam = (AttributeHandleValueMap *)DSNewPtr(sizeof(theAttributeValues));
         *dsParam = theAttributeValues;
 
-        //dataToSend.objectClassHandle = theObject;
-        //dataToSend.attrHandleValueMap = dsParam;
+        dataToSend.objectClassHandle = theObject;
+        dataToSend.attrHandleValueMap = dsParam;
         dataToSend.sentOrder = sentOrder;
         dataToSend.theType = theType;
-        dataToSend.numOfElements = (uint32_t)theAttributeValues.size();
+        dataToSend.numOfElements = (uint32_t)(*dsParam).size();
 
         PostLVUserEvent(lueReflectAttributeValues,&dataToSend);
 

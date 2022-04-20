@@ -4,6 +4,7 @@
 #include <assert.h>
 #include <exception>
 #include <typeindex>
+#include <map>
 
 // shared lib header
 #include "rti1516eLv.h"
@@ -148,9 +149,9 @@ namespace rti1516eLv
     }
 
     EXTERNC int parHandleValueMapGetElementString(
-        ParameterHandleValueMap const * parHandleValueMap,
-        ParameterHandle *parameterHandle,
-        LStrHandle &lSh)
+        ParameterHandleValueMap const* parHandleValueMap,
+        ParameterHandle* parameterHandle,
+        LStrHandle& lSh)
     {
         HLAunicodeString uElem;
         VariableLengthData item;
@@ -163,6 +164,7 @@ namespace rti1516eLv
         }
 
         return (*lSh)->cnt;
+
     }   
 
     EXTERNC int parHandleValueMapNumElements(

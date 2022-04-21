@@ -87,7 +87,7 @@ namespace rti1516eLv
         return 0;
     }
 
-    EXTERNC int attrHandleValueMapAddElementString(
+    EXTERNC int attrHandleValueMapSetElementString(
         AttributeHandleValueMap * attrHandleValueMap,
         AttributeHandle *attributeHandle,
         const char sElem[])
@@ -104,10 +104,8 @@ namespace rti1516eLv
         LStrHandle &lSh)
     {
         HLAunicodeString uElem;
-        VariableLengthData item;
         try {
-            item = (*attrHandleValueMap).at(*attributeHandle);
-            uElem.decode(item);
+            uElem.decode((*attrHandleValueMap).at(*attributeHandle));
             lSh = wstring2LvString(wstring(uElem));
         } catch (out_of_range &oor) {
             return LV_ERROR_MAPOUTOFRANGE; // test oor error
@@ -115,6 +113,56 @@ namespace rti1516eLv
 
         return (*lSh)->cnt;
     }    
+
+    EXTERNC int attrHandleValueMapSetElementInt32(
+        AttributeHandleValueMap* attrHandleValueMap,
+        AttributeHandle* attributeHandle,
+        const int iElem)
+    {
+        (*attrHandleValueMap)[(*attributeHandle)] = ((HLAinteger32BE)iElem).encode();
+        return 0;
+    }
+
+    EXTERNC int attrHandleValueMapGetElementInt32(
+        AttributeHandleValueMap* attrHandleValueMap,
+        AttributeHandle* attributeHandle,
+        int & iElem)
+    {
+        HLAinteger32BE hiElem;
+        try {
+            hiElem.decode((*attrHandleValueMap).at(*attributeHandle));
+            iElem = hiElem;
+        }
+        catch (out_of_range& oor) {
+            return LV_ERROR_MAPOUTOFRANGE; // test oor error
+        }
+        return 0;
+    }
+
+    EXTERNC DLLEXPORT int attrHandleValueMapSetElementDouble(
+        AttributeHandleValueMap* attrHandleValueMap,
+        AttributeHandle* attributeHandle,
+        const double dElem)
+    {
+        (*attrHandleValueMap)[(*attributeHandle)] = ((HLAfloat64BE)dElem).encode();
+        return 0;
+    }
+
+    EXTERNC int attrHandleValueMapGetElementDouble(
+        AttributeHandleValueMap* attrHandleValueMap,
+        AttributeHandle* attributeHandle,
+        double& dElem)
+    {
+        HLAfloat64BE hiElem;
+        try {
+            hiElem.decode((*attrHandleValueMap).at(*attributeHandle));
+            dElem = hiElem;
+        }
+        catch (out_of_range& oor) {
+            return LV_ERROR_MAPOUTOFRANGE; // test oor error
+        }
+        return 0;
+    }
 
     EXTERNC int attrHandleValueMapNumElements(
         AttributeHandleValueMap * attrHandleValueMap)
@@ -137,7 +185,7 @@ namespace rti1516eLv
         return 0;
     }
 
-    EXTERNC int parHandleValueMapAddElementString(
+    EXTERNC int parHandleValueMapSetElementString(
         ParameterHandleValueMap * parHandleValueMap,
         ParameterHandle * parameterHandle,
         const char sElem[])
@@ -154,18 +202,66 @@ namespace rti1516eLv
         LStrHandle& lSh)
     {
         HLAunicodeString uElem;
-        VariableLengthData item;
+        //VariableLengthData item;
         try {
-            item = (*parHandleValueMap).at(*parameterHandle);
-            uElem.decode(item);
+            uElem.decode((*parHandleValueMap).at(*parameterHandle));
             lSh = wstring2LvString(wstring(uElem));
         } catch (out_of_range &oor) {
             return LV_ERROR_MAPOUTOFRANGE; // test oor error
         }
 
         return (*lSh)->cnt;
+    }
 
-    }   
+    EXTERNC int parHandleValueMapSetElementInt32(
+        ParameterHandleValueMap* parHandleValueMap,
+        ParameterHandle* parameterHandle,
+        const int iElem)
+    {
+        (*parHandleValueMap)[(*parameterHandle)] = ((HLAinteger32BE)iElem).encode();
+        return 0;
+    }
+
+    EXTERNC int parHandleValueMapGetElementInt32(
+        ParameterHandleValueMap* parHandleValueMap,
+        ParameterHandle* parameterHandle,
+        int& iElem)
+    {
+        HLAinteger32BE hiElem;
+        try {
+            hiElem.decode((*parHandleValueMap).at(*parameterHandle));
+            iElem = hiElem;
+        }
+        catch (out_of_range& oor) {
+            return LV_ERROR_MAPOUTOFRANGE; // test oor error
+        }
+        return 0;
+    }
+
+    EXTERNC int parHandleValueMapSetElementDouble (
+        ParameterHandleValueMap* parHandleValueMap,
+        ParameterHandle* parameterHandle,
+        const double dElem)
+    {
+        (*parHandleValueMap)[(*parameterHandle)] = ((HLAfloat64BE)dElem).encode();
+        return 0;
+    }
+
+    EXTERNC int parHandleValueMapGetElementDouble(
+        ParameterHandleValueMap* parHandleValueMap,
+        ParameterHandle* parameterHandle,
+        double& dElem)
+    {
+        HLAfloat64BE hiElem;
+        try {
+            hiElem.decode((*parHandleValueMap).at(*parameterHandle));
+            dElem = hiElem;
+        }
+        catch (out_of_range& oor) {
+            return LV_ERROR_MAPOUTOFRANGE; // test oor error
+        }
+        return 0;
+    }
 
     EXTERNC int parHandleValueMapNumElements(
         ParameterHandleValueMap * parHandleValueMap)

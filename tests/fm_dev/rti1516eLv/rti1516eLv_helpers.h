@@ -61,7 +61,7 @@ namespace rti1516eLv
     EXTERNC DLLEXPORT int attrHandleValueMapDestroy(
         AttributeHandleValueMap *attrHandleValueMap);
 
-    EXTERNC DLLEXPORT int attrHandleValueMapAddElementString(
+    EXTERNC DLLEXPORT int attrHandleValueMapSetElementString(
         AttributeHandleValueMap *attrHandleValueMap,
         AttributeHandle *attributeHandle,
         const char sElem[]);
@@ -70,6 +70,26 @@ namespace rti1516eLv
         AttributeHandleValueMap * attrHandleValueMap,
         AttributeHandle *attributeHandle,
         LStrHandle &lSh);
+
+    EXTERNC DLLEXPORT int attrHandleValueMapSetElementInt32(
+        AttributeHandleValueMap* attrHandleValueMap,
+        AttributeHandle* attributeHandle,
+        const int iElem);
+
+    EXTERNC DLLEXPORT int attrHandleValueMapGetElementInt32(
+        AttributeHandleValueMap* attrHandleValueMap,
+        AttributeHandle* attributeHandle,
+        int& iElem);
+
+    EXTERNC DLLEXPORT int attrHandleValueMapSetElementDouble(
+        AttributeHandleValueMap* attrHandleValueMap,
+        AttributeHandle* attributeHandle,
+        const double dElem);
+
+    EXTERNC DLLEXPORT int attrHandleValueMapGetElementDouble(
+        AttributeHandleValueMap* attrHandleValueMap,
+        AttributeHandle* attributeHandle,
+        double& dElem);
 
     EXTERNC DLLEXPORT int attrHandleValueMapNumElements(
         AttributeHandleValueMap * parHandleValueMap); 
@@ -82,7 +102,7 @@ namespace rti1516eLv
     EXTERNC DLLEXPORT int parHandleValueMapDestroy(
         ParameterHandleValueMap * parHandleValueMap);
     
-    EXTERNC DLLEXPORT int parHandleValueMapAddElementString(
+    EXTERNC DLLEXPORT int parHandleValueMapSetElementString(
         ParameterHandleValueMap * parHandleValueMap,
         ParameterHandle * parameterHandle,
         const char sElem[]);
@@ -91,6 +111,26 @@ namespace rti1516eLv
         ParameterHandleValueMap const * parHandleValueMap,
         ParameterHandle *parameterHandle,
         LStrHandle &lSh);
+
+    EXTERNC DLLEXPORT int parHandleValueMapSetElementInt32(
+        ParameterHandleValueMap* attrHandleValueMap,
+        ParameterHandle* attributeHandle,
+        const int iElem);
+
+    EXTERNC DLLEXPORT int parHandleValueMapGetElementInt32(
+        ParameterHandleValueMap* attrHandleValueMap,
+        ParameterHandle* attributeHandle,
+        int& iElem);
+
+    EXTERNC DLLEXPORT int parHandleValueMapSetElementDouble(
+        ParameterHandleValueMap* attrHandleValueMap,
+        ParameterHandle* attributeHandle,
+        double const dElem);
+
+    EXTERNC DLLEXPORT int parHandleValueMapGetElementDouble(
+        ParameterHandleValueMap* attrHandleValueMap,
+        ParameterHandle* attributeHandle,
+        double& dElem);
 
     EXTERNC DLLEXPORT int parHandleValueMapNumElements(
         ParameterHandleValueMap * parHandleValueMap);   

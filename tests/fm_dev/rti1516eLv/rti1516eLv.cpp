@@ -139,7 +139,21 @@ namespace rti1516eLv
             return lvErrorCodeFromException(e);
         }
         return 0;
-    }   
+    }
+
+    EXTERNC int getInteractionClassNameLvEx(
+        RTIambassador* rtiHandle,
+        InteractionClassHandle* intClassHandle,
+        LStrHandle& name)
+    {
+        try {
+            name = wstring2LvString(oLvFederate->getInteractionClassNameLv((*intClassHandle)));
+        }
+        catch (Exception& e) {
+            return lvErrorCodeFromException(e);
+        }
+        return 0;
+    }
 
     EXTERNC int getParameterHandleLvEx(
         RTIambassador *rtiHandle,
@@ -156,6 +170,20 @@ namespace rti1516eLv
         return 0; 
     } 
 
+    EXTERNC int getParameterNameLvEx(
+        RTIambassador* rtiHandle,
+        InteractionClassHandle* whichClass,
+        ParameterHandle* theHandle,
+        LStrHandle& name)
+    {
+        try {
+            name = wstring2LvString(oLvFederate->getParameterNameLv((*whichClass), (*theHandle)));
+        } catch (Exception& e) {
+            return lvErrorCodeFromException(e);
+        }
+        return 0;
+    }
+
     EXTERNC int getObjectClassHandleLvEx(
         RTIambassador *rtiHandle,
         const char theName[],
@@ -168,7 +196,20 @@ namespace rti1516eLv
             return lvErrorCodeFromException(e);
         }
         return 0;
-        
+    }
+
+    EXTERNC int getObjectClassNameLvEx(
+        RTIambassador* rtiHandle,
+        ObjectClassHandle* objectClassHandle,
+        LStrHandle& name)
+    {
+        try {
+            name = wstring2LvString(oLvFederate->getObjectClassNameLv((*objectClassHandle)));
+        }
+        catch (Exception& e) {
+            return lvErrorCodeFromException(e);
+        }
+        return 0;
     }
 
     EXTERNC int getAttributeHandleLvEx(
@@ -183,8 +224,24 @@ namespace rti1516eLv
         } catch (Exception &e) {
             return lvErrorCodeFromException(e);
         }
-        return 0;;
-    } 
+        return 0;
+    }
+
+    EXTERNC DLLEXPORT int getAttributeNameLvEx(
+        RTIambassador* rtiHandle,
+        ObjectClassHandle* whichClass,
+        AttributeHandle* theHandle,
+        LStrHandle& name)
+    {
+        try {
+            name = wstring2LvString(oLvFederate->getAttributeNameLv((*whichClass), (*theHandle)));
+        }
+        catch (Exception& e) {
+            return lvErrorCodeFromException(e);
+        }
+        return 0;
+    }
+
 
     EXTERNC int reserveObjectInstanceNameLvEx(
         RTIambassador *rtiHandle,

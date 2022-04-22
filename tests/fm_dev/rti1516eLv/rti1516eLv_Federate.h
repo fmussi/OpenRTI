@@ -116,16 +116,30 @@ namespace rti1516eLv
         virtual InteractionClassHandle getInteractionClassHandleLv (
             std::wstring const & theName);
 
+        virtual std::wstring getInteractionClassNameLv(
+            InteractionClassHandle theHandle);
+
         virtual ParameterHandle getParameterHandleLv (
             InteractionClassHandle whichClass,
             std::wstring const & theName);
 
+        virtual std::wstring getParameterNameLv(
+            InteractionClassHandle whichClass,
+            ParameterHandle theHandle);
+
         virtual ObjectClassHandle getObjectClassHandleLv (
             std::wstring const & theName);
+
+        virtual std::wstring getObjectClassNameLv(
+            ObjectClassHandle theHandle);
 
         virtual AttributeHandle getAttributeHandleLv (
             ObjectClassHandle whichClass,
             std::wstring const & theAttributeName);
+
+        virtual std::wstring getAttributeNameLv(
+            ObjectClassHandle whichClass,
+            AttributeHandle theHandle);
 
         // Pub Sub
 

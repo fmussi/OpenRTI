@@ -319,16 +319,37 @@ namespace rti1516eLv
         } 
     }
 
+    std::wstring LvFederate::getInteractionClassNameLv(
+        InteractionClassHandle theHandle)
+        try {
+        return _rtiAmbassador->getInteractionClassName(theHandle);
+    }
+    catch (Exception& e) {
+        throw;
+    }
+
     ParameterHandle LvFederate::getParameterHandleLv (
         InteractionClassHandle whichClass,
         std::wstring const & theName)
     {
-        ParameterHandle parameterHande;
+        //ParameterHandle parameterHande;
         try {
             return _rtiAmbassador->getParameterHandle(whichClass,theName);
         } catch (Exception &e) { 
             throw;
         } 
+    }
+
+    std::wstring LvFederate::getParameterNameLv(
+        InteractionClassHandle whichClass,
+        ParameterHandle theHandle)
+    {
+        try {
+            return _rtiAmbassador->getParameterName(whichClass, theHandle);
+        }
+        catch (Exception& e) {
+            throw;
+        }
     }
 
     ObjectClassHandle LvFederate::getObjectClassHandleLv (
@@ -342,6 +363,17 @@ namespace rti1516eLv
         } 
     }
 
+    std::wstring LvFederate::getObjectClassNameLv(
+        ObjectClassHandle theHandle)
+    {
+        try {
+            return _rtiAmbassador->getObjectClassName(theHandle);
+        }
+        catch (Exception& e) {
+            throw;
+        }
+    }
+
     AttributeHandle LvFederate::getAttributeHandleLv (
         ObjectClassHandle whichClass,
         std::wstring const & theAttributeName)
@@ -351,6 +383,18 @@ namespace rti1516eLv
         } catch (Exception &e) { 
             throw;
         }  
+    }
+
+    std::wstring LvFederate::getAttributeNameLv(
+        ObjectClassHandle whichClass,
+        AttributeHandle theHandle)
+    {
+        try {
+            return _rtiAmbassador->getAttributeName(whichClass, theHandle);
+        }
+        catch (Exception& e) {
+            throw;
+        }
     }
 
     // Pub Sub

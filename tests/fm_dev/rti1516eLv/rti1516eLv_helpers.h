@@ -30,36 +30,37 @@ using namespace rti1516e;
 
 namespace rti1516eLv
 {
-        // data types
+    /* data types */ 
     struct testEventData {
         int count1;
         int count2;
     };
     
-    // internal functions
-    int lvErrorCodeFromException(Exception &e);
-    //wstring chararray2wstring(const char charArray[]);
-
-    // Test or debug functions
+    /* Test or debug functions */
     EXTERNC DLLEXPORT int testFunc();
     // do not export these function
     EXTERNC MgErr testFireEvent(
         testEventData *value);
     EXTERNC int regObjInstNameResSuccEvent(
         LVUserEventRef *eventRef);
-    
-    
-    // Helper functions
-    wstring chararray2wstring(const char charArray[]);
 
+    /* Exception handling to error code */
+    int lvErrorCodeFromException(Exception& e);
+
+    /* Data manipulation */
+    wstring chararray2wstring(const char charArray[]);
     LStrHandle wstring2LvString(wstring const & theObjectInstanceName);
 
-    // EXTERNC  int attrHandleValueMapCreate(
-    //     AttributeHandleValueMap **attrHandleValueMap);
+    /* Attribute Handle Value Map - Helpers*/
     EXTERNC DLLEXPORT  int attrHandleValueMapCreate(AttributeHandleValueMap **attrHandleValueMap);   
     
     EXTERNC DLLEXPORT int attrHandleValueMapDestroy(
         AttributeHandleValueMap *attrHandleValueMap);
+
+    EXTERNC DLLEXPORT int attrHandleValueMapGetHandleByIndex(
+        AttributeHandleValueMap* attrHandleValueMap,
+        const int index,
+        AttributeHandle* attributeHandleOut);
 
     EXTERNC DLLEXPORT int attrHandleValueMapSetElementString(
         AttributeHandleValueMap *attrHandleValueMap,
@@ -94,14 +95,18 @@ namespace rti1516eLv
     EXTERNC DLLEXPORT int attrHandleValueMapNumElements(
         AttributeHandleValueMap * parHandleValueMap); 
 
-    // EXTERNC int parHandleValueMapCreate(
-    //     ParameterHandleValueMap **parHandleValueMap);
+    /* Parameter Handle Value Map - Helpers*/
     EXTERNC DLLEXPORT int parHandleValueMapCreate(
         ParameterHandleValueMap **parHandleValueMap);
     
     EXTERNC DLLEXPORT int parHandleValueMapDestroy(
         ParameterHandleValueMap * parHandleValueMap);
-    
+
+    EXTERNC DLLEXPORT int parHandleValueMapGetHandleByIndex(
+        ParameterHandleValueMap* parHandleValueMap,
+        const int index,
+        ParameterHandle* parameterHandleOut);
+
     EXTERNC DLLEXPORT int parHandleValueMapSetElementString(
         ParameterHandleValueMap * parHandleValueMap,
         ParameterHandle * parameterHandle,
@@ -134,9 +139,8 @@ namespace rti1516eLv
 
     EXTERNC DLLEXPORT int parHandleValueMapNumElements(
         ParameterHandleValueMap * parHandleValueMap);   
-     
-    // atrribute handle set
     
+    /* Attribute handle set - Helpers*/
     EXTERNC DLLEXPORT int attrHandleSetCreate(
         AttributeHandleSet **attrHandleSet);
 

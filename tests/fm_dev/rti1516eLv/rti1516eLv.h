@@ -75,22 +75,44 @@ namespace rti1516eLv
         const char theName[],
         InteractionClassHandle *intClassHandle);
 
+    EXTERNC DLLEXPORT int getInteractionClassNameLvEx(
+        RTIambassador* rtiHandle,
+        InteractionClassHandle* intClassHandle,
+        LStrHandle& name);
+
     EXTERNC DLLEXPORT int getParameterHandleLvEx(
         RTIambassador *rtiHandle,
         InteractionClassHandle *whichClass,
         const char theName[],
         ParameterHandle *paramHandle);
 
+    EXTERNC DLLEXPORT int getParameterNameLvEx(
+        RTIambassador* rtiHandle,
+        InteractionClassHandle* whichClass,
+        ParameterHandle* theHandle,
+        LStrHandle& name);
+
     EXTERNC DLLEXPORT int getObjectClassHandleLvEx(
         RTIambassador *rtiHandle,
         const char theName[],
         ObjectClassHandle *objectClassHandle);
+
+    EXTERNC DLLEXPORT int getObjectClassNameLvEx(
+        RTIambassador* rtiHandle,
+        ObjectClassHandle* objectClassHandle,
+        LStrHandle& name);
     
     EXTERNC DLLEXPORT int getAttributeHandleLvEx(
         RTIambassador *rtiHandle,
         ObjectClassHandle *whichClass,
         const char theName[],
         AttributeHandle * attributeHandle);
+
+    EXTERNC DLLEXPORT int getAttributeNameLvEx(
+        RTIambassador* rtiHandle,
+        ObjectClassHandle* whichClass,
+        AttributeHandle* theHandle,
+        LStrHandle& name);
 
     EXTERNC DLLEXPORT int reserveObjectInstanceNameLvEx(
         RTIambassador *rtiHandle,

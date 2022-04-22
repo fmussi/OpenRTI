@@ -15,9 +15,32 @@ using namespace rti1516e;
 
 namespace rti1516eLv
 {   
-    // temp LVuser event store
+    /* data types */
     LVUserEventRef tempUserEvStore;
-    
+
+    /* Test or debug functions */
+
+    EXTERNC int testFunc()
+    {
+        return 12345;
+    }
+
+    // using struct to test complex data sharing
+
+    EXTERNC MgErr testFireEvent(testEventData* value)
+    {
+        MgErr status;
+        status = PostLVUserEvent(tempUserEvStore, value);
+        return status;
+    }
+
+    EXTERNC int regObjInstNameResSuccEvent(LVUserEventRef* eventRef)
+    {
+        tempUserEvStore = *eventRef;
+        return 0;
+    }
+
+    /* Data manipulation */
     wstring chararray2wstring(const char charArray[])
     {
         wstring wStringOut;
@@ -49,30 +72,7 @@ namespace rti1516eLv
         return lSh;
     }
 
-   // test export functions
-
-    EXTERNC int testFunc()
-    {
-        return 12345;
-    }
-
-    // using struct to test complex data sharing
-
-    EXTERNC MgErr testFireEvent(testEventData *value)
-    {
-        MgErr status;
-        status = PostLVUserEvent(tempUserEvStore,value);
-        return status;
-    }
-
-    EXTERNC int regObjInstNameResSuccEvent(LVUserEventRef *eventRef)
-    {
-        tempUserEvStore = *eventRef;
-        return 0;
-    }
-
-    // helpers - TODO: move to new cpp file
-
+    /* Attribute Handle Value Map - Helpers*/
     EXTERNC  int attrHandleValueMapCreate(AttributeHandleValueMap **attrHandleValueMap)
     {
         *attrHandleValueMap = new AttributeHandleValueMap();
@@ -85,6 +85,23 @@ namespace rti1516eLv
         delete attrHandleValueMap;
 
         return 0;
+    }
+
+    EXTERNC int attrHandleValueMapGetHandleByIndex(
+        AttributeHandleValueMap* attrHandleValueMap,
+        const int index,
+        AttributeHandle* attributeHandleOut)
+    {
+        if (index >= (*attrHandleValueMap).size())
+            return LV_ERROR_MAPOUTOFRANGE; // index out of range
+        else
+        {
+            auto it = (*attrHandleValueMap).begin();
+            advance(it, index);
+            (*attributeHandleOut) = it->first;
+            return 0;
+        }
+
     }
 
     EXTERNC int attrHandleValueMapSetElementString(
@@ -171,6 +188,7 @@ namespace rti1516eLv
         return (int)sizeOut;
     }
 
+    /* Parameter Handle Value Map - Helpers*/
     EXTERNC int parHandleValueMapCreate(ParameterHandleValueMap **parHandleValueMap)
     {
         *parHandleValueMap = new ParameterHandleValueMap();
@@ -183,6 +201,23 @@ namespace rti1516eLv
         delete parHandleValueMap;
 
         return 0;
+    }
+
+    EXTERNC int parHandleValueMapGetHandleByIndex(
+        ParameterHandleValueMap* parHandleValueMap,
+        const int index,
+        ParameterHandle* parameterHandleOut)
+    {
+        if (index >= (*parHandleValueMap).size())
+            return LV_ERROR_MAPOUTOFRANGE; // index out of range
+        else
+        {
+            auto it = (*parHandleValueMap).begin();
+            advance(it, index);
+            (*parameterHandleOut) = it->first;
+            return 0;
+        }
+
     }
 
     EXTERNC int parHandleValueMapSetElementString(
@@ -270,6 +305,7 @@ namespace rti1516eLv
         return (int)sizeOut;
     }
 
+    /* Attribute handle set - Helpers*/
     EXTERNC int attrHandleSetCreate(AttributeHandleSet **attrHandleSet)
     {
         *attrHandleSet = new AttributeHandleSet();

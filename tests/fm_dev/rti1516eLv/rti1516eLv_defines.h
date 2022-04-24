@@ -109,7 +109,7 @@ namespace rti1516eLv
         // pad with 32bit
         AttributeHandleValueMap* attrHandleValueMap;
         uint32_t _pad1;
-        ObjectInstanceHandle objectClassHandle;
+        ObjectInstanceHandle objectInstanceHandle;
         uint32_t _pad2;
 #endif
 #else

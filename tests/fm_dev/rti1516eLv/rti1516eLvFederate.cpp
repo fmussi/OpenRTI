@@ -524,7 +524,7 @@ namespace rti1516eLv
         //dsParam = (AttributeHandleValueMap *)DSNewPtr(sizeof(theAttributeValues));
         *dsParam = theAttributeValues;
 
-        dataToSend.objectClassHandle = theObject;
+        dataToSend.objectInstanceHandle = theObject;
         dataToSend.attrHandleValueMap = dsParam;
         dataToSend.sentOrder = sentOrder;
         dataToSend.theType = theType;

@@ -62,7 +62,8 @@ namespace rti1516eLv
             LVUserEventRef *objInstNameResSucc,
             LVUserEventRef *objInstNameResFail,
             LVUserEventRef *receiveInteraction,
-            LVUserEventRef *reflectAttributeValues
+            LVUserEventRef *reflectAttributeValues,
+            LVUserEventRef* discoverObjectInstance
         );
 
         virtual auto_ptr<RTIambassador> getRTIambassador();
@@ -214,6 +215,15 @@ namespace rti1516eLv
             VariableLengthData const & theUserSuppliedTag,
             OrderType const & sentOrder)
             throw (FederateInternalError);
+
+        virtual 
+        void 
+        discoverObjectInstance(
+            ObjectInstanceHandle theObject,
+            ObjectClassHandle theObjectClass,
+            std::wstring const& theObjectInstanceName)
+            throw (
+                FederateInternalError);
 
     };
 }

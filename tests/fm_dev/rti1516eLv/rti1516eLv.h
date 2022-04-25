@@ -27,6 +27,7 @@
     #include "cintools/extcode.h"
 #endif
 
+
 #include "rti1516eLv_defines.h"
 #include "rti1516eLv_helpers.h"
 #include "rti1516eLv_errors.h"
@@ -40,7 +41,8 @@ namespace rti1516eLv
         LVUserEventRef *objInstNameResSucc,
         LVUserEventRef *objInstNameResFail,
         LVUserEventRef *receiveInteraction,
-        LVUserEventRef *reflectAttributeValues
+        LVUserEventRef *reflectAttributeValues,
+        LVUserEventRef *discoverObjectInstance
         );
     // LV wrapper functions to OpenRTI
 

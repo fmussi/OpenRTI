@@ -26,6 +26,9 @@
 	#include "cintools/extcode.h"
 #endif
 
+// Max size for strings in LV clusters
+#define MAXSTRLVCLUSTER 128
+
 using namespace rti1516e;
 
 namespace rti1516eLv
@@ -37,7 +40,6 @@ namespace rti1516eLv
     //     TransportationType theType;
     //     size_t numOfElements;
     // };
-
 
 #pragma pack(1)
 
@@ -119,6 +121,30 @@ namespace rti1516eLv
     };
 
 #pragma pack()
+
+    struct discoverObjectInstanceData {
+
+#ifdef _WIN32
+#ifdef _WIN64
+        ObjectClassHandle objectClassHandle;
+        ObjectInstanceHandle objectInstanceHandle;
+#else
+        // pad with 32bit
+        ObjectClassHandle objectClassHandle;
+        uint32_t _pad1;
+        ObjectInstanceHandle objectInstanceHandle;
+        uint32_t _pad2;
+#endif
+#else
+        ObjectClassHandle objectClassHandle;
+        ObjectInstanceHandle objectInstanceHandle;
+#endif
+        char objectInstanceName[MAXSTRLVCLUSTER];
+        uint32_t size;
+    };
+
+#pragma pack()
+    
 
 }
 

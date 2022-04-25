@@ -26,7 +26,8 @@ namespace rti1516eLv
         LVUserEventRef *objInstNameResSucc,
         LVUserEventRef *objInstNameResFail,
         LVUserEventRef *receiveInteraction,
-        LVUserEventRef *reflectAttributeValues
+        LVUserEventRef *reflectAttributeValues,
+        LVUserEventRef *discoverObjectInstance
         )
     {
         
@@ -34,7 +35,8 @@ namespace rti1516eLv
             objInstNameResSucc,
             objInstNameResFail,
             receiveInteraction,
-            reflectAttributeValues
+            reflectAttributeValues,
+            discoverObjectInstance
         );
         return 0;
     }  

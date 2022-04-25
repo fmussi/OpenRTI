@@ -44,6 +44,7 @@ namespace rti1516eLv
     LVUserEventRef lueObjInsNameResFailed;
     LVUserEventRef lueReceiveInteraction;
     LVUserEventRef lueReflectAttributeValues;
+    LVUserEventRef lueDiscoverObjectInstance;
 
     //LvFederate() {}
     LvFederate::LvFederate(){}
@@ -56,13 +57,15 @@ namespace rti1516eLv
         LVUserEventRef *objInstNameResSucc,
         LVUserEventRef *objInstNameResFail,
         LVUserEventRef *receiveInteraction,
-        LVUserEventRef *reflectAttributeValues
+        LVUserEventRef *reflectAttributeValues,
+        LVUserEventRef *discoverObjectInstance
     )
     {
         lueObjInsNameResSucceeded = *objInstNameResSucc;
         lueObjInsNameResFailed = *objInstNameResFail;
         lueReceiveInteraction  = *receiveInteraction;
         lueReflectAttributeValues = *reflectAttributeValues;
+        lueDiscoverObjectInstance = *discoverObjectInstance;
     }
 
     auto_ptr<RTIambassador> LvFederate::getRTIambassador()
@@ -580,6 +583,27 @@ namespace rti1516eLv
         //     wcout << L"[ " << member.toString() << L" has left the chat ]" << endl;
         //     wcout << L"> ";
         // }
+    }
+    void 
+    LvFederate::discoverObjectInstance(
+        ObjectInstanceHandle theObject,
+        ObjectClassHandle theObjectClass,
+        std::wstring const& theObjectInstanceName)
+        throw (
+            FederateInternalError)
+    {
+        // Declare variables and initialize
+        discoverObjectInstanceData dataToSend;
+        const wchar_t* input = theObjectInstanceName.c_str();
+        size_t size = (wcslen(input) + 1) * sizeof(wchar_t);
+        dataToSend.size = (size < (MAXSTRLVCLUSTER + 1) ? size : MAXSTRLVCLUSTER);
+        
+        // initialize event data
+        wcstombs(dataToSend.objectInstanceName, input, dataToSend.size);
+        dataToSend.objectInstanceHandle = theObject;
+        dataToSend.objectClassHandle = theObjectClass; 
+
+        PostLVUserEvent(lueDiscoverObjectInstance, &dataToSend);
     }
     
 } // namespace rti1516eLv

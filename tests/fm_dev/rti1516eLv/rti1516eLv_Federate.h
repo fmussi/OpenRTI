@@ -63,7 +63,8 @@ namespace rti1516eLv
             LVUserEventRef *objInstNameResFail,
             LVUserEventRef *receiveInteraction,
             LVUserEventRef *reflectAttributeValues,
-            LVUserEventRef* discoverObjectInstance
+            LVUserEventRef* discoverObjectInstance,
+            LVUserEventRef *lueRemoveObjectInstance
         );
 
         virtual auto_ptr<RTIambassador> getRTIambassador();

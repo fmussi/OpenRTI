@@ -45,6 +45,7 @@ namespace rti1516eLv
     LVUserEventRef lueReceiveInteraction;
     LVUserEventRef lueReflectAttributeValues;
     LVUserEventRef lueDiscoverObjectInstance;
+    LVUserEventRef lueRemoveObjectInstance;
 
     //LvFederate() {}
     LvFederate::LvFederate(){}
@@ -58,7 +59,8 @@ namespace rti1516eLv
         LVUserEventRef *objInstNameResFail,
         LVUserEventRef *receiveInteraction,
         LVUserEventRef *reflectAttributeValues,
-        LVUserEventRef *discoverObjectInstance
+        LVUserEventRef *discoverObjectInstance,
+        LVUserEventRef *removeObjectInstance
     )
     {
         lueObjInsNameResSucceeded = *objInstNameResSucc;
@@ -66,6 +68,7 @@ namespace rti1516eLv
         lueReceiveInteraction  = *receiveInteraction;
         lueReflectAttributeValues = *reflectAttributeValues;
         lueDiscoverObjectInstance = *discoverObjectInstance;
+        lueRemoveObjectInstance = *removeObjectInstance;
     }
 
     auto_ptr<RTIambassador> LvFederate::getRTIambassador()
@@ -575,15 +578,14 @@ namespace rti1516eLv
         OrderType const & sentOrder)
         throw (FederateInternalError)
     {
-        // if (_knownObjects.count(theObject)) {
-        //     map<ObjectInstanceHandle,Participant>::iterator iter;
-        //     iter = _knownObjects.find(theObject);
-        //     Participant member(iter->second);
-        //     _knownObjects.erase(theObject);
-        //     wcout << L"[ " << member.toString() << L" has left the chat ]" << endl;
-        //     wcout << L"> ";
-        // }
+        removeObjectInstanceData dataToSend;
+
+        dataToSend.objectInstanceHandle = theObject;
+        dataToSend.sentOrder = sentOrder;
+
+        PostLVUserEvent(lueRemoveObjectInstance, &dataToSend);
     }
+    
     void 
     LvFederate::discoverObjectInstance(
         ObjectInstanceHandle theObject,

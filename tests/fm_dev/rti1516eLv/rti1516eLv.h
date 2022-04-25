@@ -42,7 +42,8 @@ namespace rti1516eLv
         LVUserEventRef *objInstNameResFail,
         LVUserEventRef *receiveInteraction,
         LVUserEventRef *reflectAttributeValues,
-        LVUserEventRef *discoverObjectInstance
+        LVUserEventRef *discoverObjectInstance,
+        LVUserEventRef* removeObjectInstance
         );
     // LV wrapper functions to OpenRTI
 

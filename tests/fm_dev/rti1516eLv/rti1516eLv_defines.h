@@ -122,6 +122,7 @@ namespace rti1516eLv
 
 #pragma pack()
 
+#pragma pack(1)
     struct discoverObjectInstanceData {
 
 #ifdef _WIN32
@@ -145,6 +146,24 @@ namespace rti1516eLv
 
 #pragma pack()
     
+#pragma pack(1)
+    struct removeObjectInstanceData {
+
+#ifdef _WIN32
+#ifdef _WIN64
+        ObjectInstanceHandle objectInstanceHandle;
+#else
+        // pad with 32bit
+        ObjectInstanceHandle objectInstanceHandle;
+        uint32_t _pad2;
+#endif
+#else
+        ObjectInstanceHandle objectInstanceHandle;
+#endif
+        OrderType sentOrder;
+    };
+
+#pragma pack()
 
 }
 

@@ -106,7 +106,7 @@ namespace rti1516eLv
 #ifdef _WIN32
 #ifdef _WIN64
         AttributeHandleValueMap* attrHandleValueMap;
-        ObjectInstanceHandle objectClassHandle;
+        ObjectInstanceHandle objectInstanceHandle;
 #else
         // pad with 32bit
         AttributeHandleValueMap* attrHandleValueMap;
@@ -116,7 +116,7 @@ namespace rti1516eLv
 #endif
 #else
         AttributeHandleValueMap* attrHandleValueMap;
-        ObjectInstanceHandle objectClassHandle;
+        ObjectInstanceHandle objectInstanceHandle;
 #endif
     };
 

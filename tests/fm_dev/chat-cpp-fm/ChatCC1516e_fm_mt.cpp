@@ -184,21 +184,42 @@ public:
       wchar_t tmpUsername[128];
       vector<wstring> FOMmoduleUrls;
       std::wstring mimModule;
+      char fomModulePath[128];
+      char mimModulePath[128];
 
       int rc;
-      //pthread_t threadId;
-
+      // get FOM and MIM paths
+      if (argc < 2)  {
 #ifdef _WIN32
-      FOMmoduleUrls.push_back(OpenRTI::localeToUcs("C:\\Users\\Administrator\\Desktop\\Azdo\\emea-ni-adg-hla-lv\\OpenRTI\\tests\\fm_dev\\chat-cpp-fm\\Chat-evolved.xml"));
-      mimModule = OpenRTI::localeToUcs("C:\\Users\\Administrator\\Desktop\\Azdo\\emea-ni-adg-hla-lv\\OpenRTI\\share\\rti1516e\\HLAstandardMIM.xml");
+         strcpy(fomModulePath,"C:\\Users\\Administrator\\Desktop\\Azdo\\emea-ni-adg-hla-lv\\OpenRTI\\tests\\fm_dev\\chat-cpp-fm\\Chat-evolved.xml");
+         strcpy(mimModulePath,"C:\\Users\\Administrator\\Desktop\\Azdo\\emea-ni-adg-hla-lv\\OpenRTI\\share\\rti1516e\\HLAstandardMIM.xml");
 #else
-      FOMmoduleUrls.push_back(OpenRTI::localeToUcs("/home/admin/git_repo/OpenRTI/tests/fm_dev/chat-cpp-fm/Chat-evolved.xml"));
-      mimModule = OpenRTI::localeToUcs("/home/admin/git_repo/OpenRTI/share/rti1516e/HLAstandardMIM.xml");
-#endif 
-      
+         strcpy(fomModulePath,"/home/admin/git_repo/OpenRTI/tests/fm_dev/chat-cpp-fm/Chat-evolved.xml");
+         strcpy(mimModulePath,"/home/admin/git_repo/OpenRTI/share/rti1516e/HLAstandardMIM.xml");
+#endif         
+      }
+      else if (argc < 3)   {
+         // load fom path from command line
+         strcpy(fomModulePath,argv[1]);
+#ifdef _WIN32
+         strcpy(mimModulePath,"C:\\Users\\Administrator\\Desktop\\Azdo\\emea-ni-adg-hla-lv\\OpenRTI\\share\\rti1516e\\HLAstandardMIM.xml");
+#else
+         strcpy(mimModulePath,"/home/admin/git_repo/OpenRTI/share/rti1516e/HLAstandardMIM.xml");
+#endif   
+      }
+      else  {
+         // load fom path from command line
+         strcpy(fomModulePath,argv[1]);
+         strcpy(mimModulePath,argv[2]);
+      }
+
+      printf("%d args provided.\nFOM loaded from %s\nMIM loaded from %s\n",argc,fomModulePath,mimModulePath);
+      FOMmoduleUrls.push_back(OpenRTI::localeToUcs(fomModulePath));
+      mimModule = OpenRTI::localeToUcs(mimModulePath);      
+
       try {
-         if (argc > 1) {
-            string2wstring(host, argv[1]);
+         if (argc > 3) {
+            string2wstring(host, argv[3]);
          } else {
             //wcout << L"Using RTI version " << rtiVersion() << endl << endl; 
             wcout << L"Enter the CRC address, such as" << endl;

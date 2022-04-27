@@ -100,6 +100,8 @@ namespace rti1516eLv
         size_t numOfElements;
         uint32_t _pad0;
 #endif
+#else
+        size_t numOfElements;        
 #endif
         OrderType sentOrder;
         TransportationType theType;

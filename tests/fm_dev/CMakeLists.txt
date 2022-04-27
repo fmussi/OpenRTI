@@ -1,5 +1,7 @@
 # The current standard fdd used for testing
 #set(RTI1516E_FDD_FILE ${CMAKE_SOURCE_DIR}/share/rti1516e/HLAstandardMIM.xml)
+set(OPENRTI_RTI1516ELV_INCLUDE_SUBDIR "rti1516eLv" CACHE PATH "Install the RTI1516ELV include files into \${CMAKE_INSTALL_INCLUDEDIR}/\${OPENRTI_RTI1516ELV_INCLUDE_SUBDIR}.")
+
 
 include_directories(${CMAKE_SOURCE_DIR}/include/rti1516e)
 include_directories(${CMAKE_BINARY_DIR}/src/OpenRTI)

@@ -8,3 +8,6 @@ endif()
 if (UNIX AND NOT APPLE)
     target_link_libraries(ChatCC1516e_fm_mt rti1516e fedtime1516e OpenRTI pthread)
 endif()
+
+install(TARGETS ChatCC1516e_fm_mt
+  RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")

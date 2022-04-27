@@ -32,6 +32,12 @@ option(BUILD_LIBRARY "Build shared library" ON)
 #option(BUILD_TEST_APP "Build test application" OFF)
 
 # variables for source and headers
+set(RTI1516ELV_PUBLIC_HEADERS
+    rti1516eLv.h
+    rti1516eLv_helpers.h
+    rti1516eLv_errors.h
+)
+
 set (LIB_RTI1516ELV_SOURCES
     rti1516eLv.cpp
     rti1516eLvFederate.cpp
@@ -76,6 +82,15 @@ if(BUILD_TEST_APP)
     #target_include_directories(hlalvapp PUBLIC "${PROJECT_BINARY_DIR}")
     
 endif()
+# Installation section
+install(TARGETS rti1516elv
+  RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+  LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+  ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}")
+
+install(FILES ${RTI1516ELV_PUBLIC_HEADERS}
+    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${OPENRTI_RTI1516ELV_INCLUDE_SUBDIR}")
+
 
 
 

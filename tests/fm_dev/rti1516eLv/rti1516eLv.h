@@ -43,7 +43,8 @@ namespace rti1516eLv
         LVUserEventRef *receiveInteraction,
         LVUserEventRef *reflectAttributeValues,
         LVUserEventRef *discoverObjectInstance,
-        LVUserEventRef* removeObjectInstance
+        LVUserEventRef *removeObjectInstance,
+        LVUserEventRef *reportFederationExecutions
         );
     // LV wrapper functions to OpenRTI
 
@@ -66,6 +67,8 @@ namespace rti1516eLv
     const char fomModules[],
     const char mimModule[],
     const char logicalTimeImplementationName[]);
+
+    EXTERNC DLLEXPORT int listFederationExecutionsLvEx(RTIambassador *rtiHandle);
 
     EXTERNC DLLEXPORT int joinFederationExecutionLvEx(
         RTIambassador *rtiHandle,

@@ -46,6 +46,7 @@ namespace rti1516eLv
     LVUserEventRef lueReflectAttributeValues;
     LVUserEventRef lueDiscoverObjectInstance;
     LVUserEventRef lueRemoveObjectInstance;
+    LVUserEventRef lueReportFederationExecutions;
 
     //LvFederate() {}
     LvFederate::LvFederate(){}
@@ -60,7 +61,8 @@ namespace rti1516eLv
         LVUserEventRef *receiveInteraction,
         LVUserEventRef *reflectAttributeValues,
         LVUserEventRef *discoverObjectInstance,
-        LVUserEventRef *removeObjectInstance
+        LVUserEventRef *removeObjectInstance,
+        LVUserEventRef *reportFederationExecutions
     )
     {
         lueObjInsNameResSucceeded = *objInstNameResSucc;
@@ -69,6 +71,7 @@ namespace rti1516eLv
         lueReflectAttributeValues = *reflectAttributeValues;
         lueDiscoverObjectInstance = *discoverObjectInstance;
         lueRemoveObjectInstance = *removeObjectInstance;
+        lueReportFederationExecutions = *reportFederationExecutions;
     }
 
     auto_ptr<RTIambassador> LvFederate::getRTIambassador()
@@ -264,6 +267,15 @@ namespace rti1516eLv
         }  catch (Exception &e) { 
             throw;
         }
+    }
+
+    void LvFederate::listFederationExecutionsLv()
+    {
+        try {
+            _rtiAmbassador->listFederationExecutions();
+        } catch (Exception &e) { 
+            throw;
+        }        
     }
 
     FederateHandle LvFederate::joinFederationExecutionLv(
@@ -607,5 +619,19 @@ namespace rti1516eLv
 
         PostLVUserEvent(lueDiscoverObjectInstance, &dataToSend);
     }
+
+    void
+    LvFederate::reportFederationExecutions (
+         FederationExecutionInformationVector const &
+         theFederationExecutionInformationList)
+         RTI_THROW ((
+            FederateInternalError))
+    {
+        int i;
+        i = rand();
+        PostLVUserEvent(lueReportFederationExecutions,&i);
+
+    }
+
     
 } // namespace rti1516eLv

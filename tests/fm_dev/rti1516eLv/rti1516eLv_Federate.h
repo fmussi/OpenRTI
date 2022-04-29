@@ -64,7 +64,8 @@ namespace rti1516eLv
             LVUserEventRef *receiveInteraction,
             LVUserEventRef *reflectAttributeValues,
             LVUserEventRef* discoverObjectInstance,
-            LVUserEventRef *lueRemoveObjectInstance
+            LVUserEventRef *lueRemoveObjectInstance,
+            LVUserEventRef *reportFederationExecutions
         );
 
         virtual auto_ptr<RTIambassador> getRTIambassador();
@@ -97,6 +98,10 @@ namespace rti1516eLv
         virtual void destroyFederationExecutionLv(
             wstring const & federationExecutionName);
 
+        
+        virtual void listFederationExecutionsLv();
+
+        
         virtual FederateHandle joinFederationExecutionLv(
             std::wstring const & federateType,
                 std::wstring const & federationExecutionName,
@@ -225,6 +230,14 @@ namespace rti1516eLv
             std::wstring const& theObjectInstanceName)
             throw (
                 FederateInternalError);
+
+        virtual 
+        void 
+        reportFederationExecutions (
+         FederationExecutionInformationVector const &
+         theFederationExecutionInformationList)
+         throw (
+            FederateInternalError);
 
     };
 }

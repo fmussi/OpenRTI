@@ -28,7 +28,8 @@ namespace rti1516eLv
         LVUserEventRef *receiveInteraction,
         LVUserEventRef *reflectAttributeValues,
         LVUserEventRef *discoverObjectInstance,
-        LVUserEventRef *removeObjectInstance
+        LVUserEventRef *removeObjectInstance,
+        LVUserEventRef *reportFederationExecutions
         )
     {
         
@@ -38,7 +39,8 @@ namespace rti1516eLv
             receiveInteraction,
             reflectAttributeValues,
             discoverObjectInstance,
-            removeObjectInstance
+            removeObjectInstance,
+            reportFederationExecutions
         );
         return 0;
     }  
@@ -104,6 +106,16 @@ namespace rti1516eLv
             return lvErrorCodeFromException(e);
         }
         return 0; 
+    }
+    
+    EXTERNC int listFederationExecutionsLvEx (RTIambassador *rtiHandle)
+    {
+        try {
+            oLvFederate->listFederationExecutionsLv();
+        } catch (Exception &e) {
+            return lvErrorCodeFromException(e);
+        }
+        return 0;
     }
 
     EXTERNC int joinFederationExecutionLvEx(

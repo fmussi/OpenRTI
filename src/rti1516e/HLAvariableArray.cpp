@@ -26,6 +26,7 @@
 #include <limits>
 #include <cstring>
 #include <vector>
+#include <cstdint>
 
 #include "Encoding.h"
 #include "Export.h"

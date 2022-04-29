@@ -12,4 +12,4 @@ if(OPENRTI_ENABLE_RTI1516E)
   add_subdirectory(rti1516e)
 endif()
 # add fm specific folders
-add_subdirectory(fm_dev)
+# add_subdirectory(fm_dev)

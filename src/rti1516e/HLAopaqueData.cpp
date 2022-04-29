@@ -24,6 +24,7 @@
 
 #include <cstring>
 #include <vector>
+#include <cstdint>
 
 #include "Export.h"
 #include "Encoding.h"

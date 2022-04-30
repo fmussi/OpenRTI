@@ -627,9 +627,18 @@ namespace rti1516eLv
          RTI_THROW ((
             FederateInternalError))
     {
-        int i;
-        i = rand();
-        PostLVUserEvent(lueReportFederationExecutions,&i);
+                
+        LStrHandle h;
+        int i = 0;
+        for (auto it = begin(theFederationExecutionInformationList); it != end(theFederationExecutionInformationList); ++it) {
+            if (!i)
+            {
+                h = wstring2LvString(it->federationExecutionName);
+            }
+            ++i;
+        }
+        PostLVUserEvent(lueReportFederationExecutions,&h);
+        DSDisposeHandle(h);
 
     }
 

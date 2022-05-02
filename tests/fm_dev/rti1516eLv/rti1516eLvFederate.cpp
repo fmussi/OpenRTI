@@ -108,8 +108,6 @@ namespace rti1516eLv
     }
 
     void LvFederate::th_cb_consumer(void *data) {
-        //ChatCCFederate *ccInstance = static_cast<ChatCCFederate *>(data);
-        //ccInstance->ChatUI();
         LvFederate *lvFedInstance = static_cast<LvFederate *>(data);
         _stopped = false;
         // set connected flag
@@ -627,18 +625,22 @@ namespace rti1516eLv
          RTI_THROW ((
             FederateInternalError))
     {
-                
-        LStrHandle h;
+        LStrArrHdl hArr;
+        //LStrHandle h;
         int i = 0;
+
+        hArr = (LStrArr**)DSNewHandle(sizeof(LStrArr));
+        (*hArr)->len = theFederationExecutionInformationList.size();
+
         for (auto it = begin(theFederationExecutionInformationList); it != end(theFederationExecutionInformationList); ++it) {
-            if (!i)
-            {
-                h = wstring2LvString(it->federationExecutionName);
-            }
+            //h = wstring2LvString(it->federationExecutionName);
+            (*hArr)->elm[i] = wstring2LvString(it->federationExecutionName);
             ++i;
         }
-        PostLVUserEvent(lueReportFederationExecutions,&h);
-        DSDisposeHandle(h);
+        //PostLVUserEvent(lueReportFederationExecutions,&h);
+        PostLVUserEvent(lueReportFederationExecutions, &hArr);
+        
+        DSDisposeHandle(hArr);
 
     }
 

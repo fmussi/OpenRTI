@@ -42,6 +42,14 @@ namespace rti1516eLv
     // };
 
 #pragma pack(1)
+    typedef struct {
+        int32 len;
+        LStrHandle elm[];
+    } LStrArr;
+    typedef LStrArr **LStrArrHdl;
+#pragma pack()
+
+#pragma pack(1)
 
     // variant with Uptr
     // struct receiveInteractionData {

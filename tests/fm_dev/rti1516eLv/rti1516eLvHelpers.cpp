@@ -188,12 +188,24 @@ namespace rti1516eLv
         return (int)sizeOut;
     }
 
+    EXTERNC int attrHandleValueMapGetElementVarRec(
+        AttributeHandleValueMap* attrHandleValueMap,
+        AttributeHandle* attributeHandle,
+        double& dElem)
+    {
+        HLAvariantRecord hiElem(reinterpret_cast<HLAvariantRecord*>(&((*attrHandleValueMap).at(*attributeHandle)))->getDiscriminant());
+        hiElem.decode((*attrHandleValueMap).at(*attributeHandle));
+        return hiElem.getEncodedLength();
+    }
+
     /* Parameter Handle Value Map - Helpers*/
     EXTERNC int parHandleValueMapCreate(ParameterHandleValueMap **parHandleValueMap)
     {
         *parHandleValueMap = new ParameterHandleValueMap();
         return 0;
     }
+
+
 
     EXTERNC int parHandleValueMapDestroy(
         ParameterHandleValueMap * parHandleValueMap)

@@ -17,6 +17,7 @@
 #include <RTI/time/HLAinteger64Time.h>
 #include <RTI/time/HLAinteger64Interval.h>
 #include <RTI/encoding/BasicDataElements.h>
+#include <RTI/encoding/HLAvariantRecord.h>
 
 /* Platform specific LabView includes and lib */
 #ifdef _WIN32
@@ -88,6 +89,11 @@ namespace rti1516eLv
         const double dElem);
 
     EXTERNC DLLEXPORT int attrHandleValueMapGetElementDouble(
+        AttributeHandleValueMap* attrHandleValueMap,
+        AttributeHandle* attributeHandle,
+        double& dElem);
+    
+    EXTERNC DLLEXPORT int attrHandleValueMapGetElementVarRec(
         AttributeHandleValueMap* attrHandleValueMap,
         AttributeHandle* attributeHandle,
         double& dElem);

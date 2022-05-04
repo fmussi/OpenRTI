@@ -188,14 +188,17 @@ namespace rti1516eLv
         return (int)sizeOut;
     }
 
-    EXTERNC int attrHandleValueMapGetElementVarRec(
+    EXTERNC int attrHandleValueMapGetElement_Coords(
         AttributeHandleValueMap* attrHandleValueMap,
         AttributeHandle* attributeHandle,
-        double& dElem)
+        CoordsPtr coords)
     {
-        // Specific to CoordinateFixed Record
-        size_t sizeVld, sizeRec;
+        // Specific to CoordinateFixed Record - TODO move to class
+        //size_t sizeVld, sizeRec;
+        int i;
+        HLAfloat64BE hfElem;
         HLAfixedRecord hfr;
+
         // Declare elements
         HLAfloat64BE ILat = HLAfloat64BE();
         HLAfloat64BE ILong = HLAfloat64BE();
@@ -212,7 +215,38 @@ namespace rti1516eLv
         hfr.appendElement(IRoll);
         hfr.appendElement(IHeading);
 
-        //VariableLengthData vld;
+        try {
+            hfr.decode((*attrHandleValueMap).at(*attributeHandle));
+            for (i = 0; i < hfr.size(); i++)
+            {
+                hfElem.decode(hfr.get(i).encode());
+                switch (i)
+                {
+                    case 0: // Lat
+                        coords->Lat = hfElem.get();
+                        break;
+                    case 1: // Long
+                        coords->Lon = hfElem.get();
+                        break; 
+                    case 2: // Alt
+                        coords->Alt = hfElem.get();
+                        break;
+                    case 3: // Pitch
+                        coords->Pitch = hfElem.get();
+                        break;
+                    case 4: // Roll
+                        coords->Roll = hfElem.get();
+                        break;
+                    case 5: // Heading
+                        coords->Heading = hfElem.get();
+                        break; 
+                }
+            }
+        }
+        catch (out_of_range& oor) {
+            return LV_ERROR_MAPOUTOFRANGE; // test oor error
+        }
+        return 0;
         //const Octet* dataBuffer = (Octet*)(((*attrHandleValueMap).at(*attributeHandle)).data());
         //const HLAoctet disc(1);
         //HLAvariantRecord hvr(disc);
@@ -222,7 +256,7 @@ namespace rti1516eLv
         //vld = it->second;
         //sizeVld = vld.size();
         // decode from 
-        hfr.decode((*attrHandleValueMap).at(*attributeHandle));
+
         //sizeRec = hfr.size();
         //HLAfloat64BE eElem;
         //HLAfixedRecord hfr;
@@ -231,8 +265,6 @@ namespace rti1516eLv
         //vector<Octet> vecBuffer(dataBuffer,dataBuffer + size);
         //vecBuffer.size();
         //hfr.decodeFrom(vecBuffer, size);
-        size_t sizeOut = hfr.size();
-        return sizeOut;
         //return ((*attrHandleValueMap).at(*attributeHandle)).size();
     }
 

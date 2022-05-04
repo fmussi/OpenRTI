@@ -94,10 +94,11 @@ namespace rti1516eLv
         AttributeHandle* attributeHandle,
         double& dElem);
     
-    EXTERNC DLLEXPORT int attrHandleValueMapGetElementVarRec(
+    // helpers for complex types
+    EXTERNC DLLEXPORT int attrHandleValueMapGetElement_Coords(
         AttributeHandleValueMap* attrHandleValueMap,
         AttributeHandle* attributeHandle,
-        double& dElem);
+        CoordsPtr coords);
 
     EXTERNC DLLEXPORT int attrHandleValueMapNumElements(
         AttributeHandleValueMap * parHandleValueMap); 

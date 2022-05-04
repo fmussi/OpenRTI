@@ -18,6 +18,7 @@
 #include <RTI/time/HLAinteger64Interval.h>
 #include <RTI/encoding/BasicDataElements.h>
 #include <RTI/encoding/HLAvariantRecord.h>
+#include <RTI/encoding/HLAfixedRecord.h>
 
 /* Platform specific LabView includes and lib */
 #ifdef _WIN32

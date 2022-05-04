@@ -49,6 +49,21 @@ namespace rti1516eLv
     typedef LStrArr **LStrArrHdl;
 #pragma pack()
 
+// SpatialStaticStruct - RPR
+// Coordinates - Define
+#pragma pack(1)
+    typedef struct {
+        float64 Lat;
+        float64 Lon;
+        float64 Alt;
+        float64 Pitch;
+        float64 Roll;
+        float64 Heading;
+    } Coords;
+    typedef Coords* CoordsPtr;
+#pragma pack()
+
+
 #pragma pack(1)
 
     // variant with Uptr

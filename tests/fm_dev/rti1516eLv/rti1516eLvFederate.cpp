@@ -516,9 +516,9 @@ namespace rti1516eLv
         dataToSend.sentOrder = sentOrder;
         dataToSend.theType = theType;
         dataToSend.numOfElements = (uint32_t)(*dsParam).size();
-        //dataToSend.numOfElements = (uint32_t)sizeof(theParameterValues);
 
         PostLVUserEvent(lueReceiveInteraction,&dataToSend);
+
     }
 
     void
@@ -547,16 +547,6 @@ namespace rti1516eLv
         dataToSend.numOfElements = (uint32_t)(*dsParam).size();
 
         PostLVUserEvent(lueReflectAttributeValues,&dataToSend);
-
-        // HLAunicodeString name;
-        // name.decode(theAttributeValues.find(_aNameId)->second);
-
-        // if (_knownObjects.count(theObject) == 0) {
-        //     Participant member((wstring)name);
-        //     wcout << L"[ " << member.toString() << L" has joined the chat ]" << endl;
-        //     wcout << L"> ";
-        //     _knownObjects[theObject] = member;		
-        // }
     }
 
     void LvFederate::objectInstanceNameReservationSucceeded(
@@ -606,6 +596,7 @@ namespace rti1516eLv
     {
         // Declare variables and initialize
         discoverObjectInstanceData dataToSend;
+        memset(&dataToSend, 0, sizeof(dataToSend));
         const wchar_t* input = theObjectInstanceName.c_str();
         size_t size = (wcslen(input) + 1) * sizeof(wchar_t);
         dataToSend.size = (size < (MAXSTRLVCLUSTER + 1) ? size : MAXSTRLVCLUSTER);

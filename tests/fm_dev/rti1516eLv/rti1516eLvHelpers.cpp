@@ -193,9 +193,47 @@ namespace rti1516eLv
         AttributeHandle* attributeHandle,
         double& dElem)
     {
-        HLAvariantRecord hiElem(reinterpret_cast<HLAvariantRecord*>(&((*attrHandleValueMap).at(*attributeHandle)))->getDiscriminant());
-        hiElem.decode((*attrHandleValueMap).at(*attributeHandle));
-        return hiElem.getEncodedLength();
+        // Specific to CoordinateFixed Record
+        size_t sizeVld, sizeRec;
+        HLAfixedRecord hfr;
+        // Declare elements
+        HLAfloat64BE ILat = HLAfloat64BE();
+        HLAfloat64BE ILong = HLAfloat64BE();
+        HLAfloat64BE IAlt = HLAfloat64BE();
+        HLAfloat64BE IPitch = HLAfloat64BE();
+        HLAfloat64BE IRoll = HLAfloat64BE();
+        HLAfloat64BE IHeading = HLAfloat64BE();
+
+        //Update Elements
+        hfr.appendElement(ILat);
+        hfr.appendElement(ILong);
+        hfr.appendElement(IAlt);
+        hfr.appendElement(IPitch);
+        hfr.appendElement(IRoll);
+        hfr.appendElement(IHeading);
+
+        //VariableLengthData vld;
+        //const Octet* dataBuffer = (Octet*)(((*attrHandleValueMap).at(*attributeHandle)).data());
+        //const HLAoctet disc(1);
+        //HLAvariantRecord hvr(disc);
+
+        //AttributeHandleValueMap::const_iterator it((*attrHandleValueMap).begin());
+        //advance(it, 0);
+        //vld = it->second;
+        //sizeVld = vld.size();
+        // decode from 
+        hfr.decode((*attrHandleValueMap).at(*attributeHandle));
+        //sizeRec = hfr.size();
+        //HLAfloat64BE eElem;
+        //HLAfixedRecord hfr;
+        //size_t size = ((*attrHandleValueMap).at(*attributeHandle)).size();
+        //const Octet* dataBuffer = (Octet*)(((*attrHandleValueMap).at(*attributeHandle)).data());
+        //vector<Octet> vecBuffer(dataBuffer,dataBuffer + size);
+        //vecBuffer.size();
+        //hfr.decodeFrom(vecBuffer, size);
+        size_t sizeOut = hfr.size();
+        return sizeOut;
+        //return ((*attrHandleValueMap).at(*attributeHandle)).size();
     }
 
     /* Parameter Handle Value Map - Helpers*/
@@ -204,8 +242,6 @@ namespace rti1516eLv
         *parHandleValueMap = new ParameterHandleValueMap();
         return 0;
     }
-
-
 
     EXTERNC int parHandleValueMapDestroy(
         ParameterHandleValueMap * parHandleValueMap)

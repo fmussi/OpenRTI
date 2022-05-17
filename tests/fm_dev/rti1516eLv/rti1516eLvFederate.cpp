@@ -613,26 +613,23 @@ namespace rti1516eLv
     LvFederate::reportFederationExecutions (
          FederationExecutionInformationVector const &
          theFederationExecutionInformationList)
-         RTI_THROW ((
+        RTI_THROW((
             FederateInternalError))
     {
         LStrArrHdl hArr;
         //LStrHandle h;
         int i = 0;
 
-        hArr = (LStrArr**)DSNewHandle(sizeof(LStrArr));
-        (*hArr)->len = theFederationExecutionInformationList.size();
+        auto arraySize = theFederationExecutionInformationList.size();
+        hArr = arraySize == 0 ? NULL : reinterpret_cast<LStrArr**>(DSNewHClr(sizeof(LStrArr) + sizeof(LStrHandle) * (arraySize - 1)));
+        (*hArr)->len = arraySize == 0 ? 0 : arraySize;
 
         for (auto it = begin(theFederationExecutionInformationList); it != end(theFederationExecutionInformationList); ++it) {
-            //h = wstring2LvString(it->federationExecutionName);
             (*hArr)->elm[i] = wstring2LvString(it->federationExecutionName);
             ++i;
         }
-        //PostLVUserEvent(lueReportFederationExecutions,&h);
         PostLVUserEvent(lueReportFederationExecutions, &hArr);
-        
         DSDisposeHandle(hArr);
-
     }
 
     

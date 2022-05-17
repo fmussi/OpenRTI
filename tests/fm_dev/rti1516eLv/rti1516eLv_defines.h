@@ -44,7 +44,7 @@ namespace rti1516eLv
 #pragma pack(1)
     typedef struct {
         int32 len;
-        LStrHandle elm[];
+        LStrHandle elm[1];
     } LStrArr;
     typedef LStrArr **LStrArrHdl;
 #pragma pack()

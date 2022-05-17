@@ -629,6 +629,8 @@ namespace rti1516eLv
             ++i;
         }
         PostLVUserEvent(lueReportFederationExecutions, &hArr);
+        // dispose array elements
+        for (i =  0; i < arraySize ; i++) DSDisposeHandle((*hArr)->elm[i]);
         DSDisposeHandle(hArr);
     }
 

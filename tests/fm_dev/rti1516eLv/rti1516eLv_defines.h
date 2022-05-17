@@ -40,18 +40,23 @@ namespace rti1516eLv
     //     TransportationType theType;
     //     size_t numOfElements;
     // };
-
+#ifdef _WIN32
 #pragma pack(1)
+#endif
     typedef struct {
         int32 len;
         LStrHandle elm[1];
     } LStrArr;
     typedef LStrArr **LStrArrHdl;
+#ifdef _WIN32
 #pragma pack()
+#endif
 
 // SpatialStaticStruct - RPR
 // Coordinates - Define
+#ifdef _WIN32
 #pragma pack(1)
+#endif
     typedef struct {
         float64 Lat;
         float64 Lon;
@@ -61,22 +66,15 @@ namespace rti1516eLv
         float64 Heading;
     } Coords;
     typedef Coords* CoordsPtr;
+#ifdef _WIN32
 #pragma pack()
+#endif
 
 
+#ifdef _WIN32
 #pragma pack(1)
+#endif
 
-    // variant with Uptr
-    // struct receiveInteractionData {
-    //     size_t numOfElements;
-    //     OrderType sentOrder;
-    //     TransportationType theType;
-    //     UPtr parHandleValueMap;
-    //     InteractionClassHandle interactionClassHandle;
-    // };
-    // variant with handle
-    // replaces size_t with uint32_t for multi bitness compatibility
-    // replaced ParameterHandleValueMap and InteractionClassHandle with uint64
     struct receiveInteractionData {
 #ifdef _WIN32
 #ifdef _WIN64
@@ -108,9 +106,13 @@ namespace rti1516eLv
 #endif
     };
 
+#ifdef _WIN32
 #pragma pack()
+#endif
 
+#ifdef _WIN32
 #pragma pack(1)
+#endif
 
 // replaces size_t with uint32_t for multi bitness compatibility
 // replaced AttributeHandleValueMap and ObjectInstanceHandle with uint64
@@ -145,9 +147,13 @@ namespace rti1516eLv
 #endif
     };
 
+#ifdef _WIN32
 #pragma pack()
+#endif
 
+#ifdef _WIN32
 #pragma pack(1)
+#endif
     struct discoverObjectInstanceData {
 
 #ifdef _WIN32
@@ -169,9 +175,13 @@ namespace rti1516eLv
         uint32_t size;
     };
 
+#ifdef _WIN32
 #pragma pack()
+#endif
     
+#ifdef _WIN32
 #pragma pack(1)
+#endif
     struct removeObjectInstanceData {
 
 #ifdef _WIN32
@@ -188,7 +198,9 @@ namespace rti1516eLv
         OrderType sentOrder;
     };
 
+#ifdef _WIN32
 #pragma pack()
+#endif
 
 }
 

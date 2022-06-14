@@ -185,15 +185,16 @@ namespace rti1516eLv
     }
 
     void LvFederate::connectLv(
-        wstring host)
-        RTI_THROW ((Exception))
+        wstring localSettingsDesignator)
+        throw (Exception)
     {
         try {
-            wstring localSettingsDesignator(L"rti://" + host);
-            wcout << L"connecting to: " << localSettingsDesignator << endl;
+			// Old additional logic for OpenRTI 
+            //wstring localSettingsDesignator(L"rti://" + host);
+            //wcout << L"connecting to: " << localSettingsDesignator << endl;
             //_rtiAmbassador->connect(*this, HLA_IMMEDIATE,localSettingsDesignator);
             _connected = false;
-            _rtiAmbassador->connect(*this, HLA_EVOKED,localSettingsDesignator);
+            _rtiAmbassador->connect(*this, HLA_EVOKED, localSettingsDesignator);
             // spawn thread
             thread thCbProc(th_cb_consumer,this);
             // wait for thread to be launched
@@ -613,8 +614,8 @@ namespace rti1516eLv
     LvFederate::reportFederationExecutions (
          FederationExecutionInformationVector const &
          theFederationExecutionInformationList)
-        RTI_THROW((
-            FederateInternalError))
+        throw (
+            FederateInternalError)
     {
         LStrArrHdl hArr;
         //LStrHandle h;

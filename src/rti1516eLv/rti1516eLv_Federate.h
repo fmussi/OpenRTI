@@ -6,17 +6,19 @@
 // #endif
 
 #include "rti1516eLv_EXPORTS.h"
+#ifdef _OPENRTI
 #include <Options.h>
 #include <StringUtils.h>
+#endif
 
 // RTI specific headers
-#include <RTI/RTIambassadorFactory.h>
-#include <RTI/RTIambassador.h>
-#include <RTI/NullFederateAmbassador.h>
-#include <RTI/time/HLAinteger64TimeFactory.h>
-#include <RTI/time/HLAinteger64Time.h>
-#include <RTI/time/HLAinteger64Interval.h>
-#include <RTI/encoding/BasicDataElements.h>
+// #include <RTI/RTIambassadorFactory.h>
+// #include <RTI/RTIambassador.h>
+// #include <RTI/NullFederateAmbassador.h>
+// #include <RTI/time/HLAinteger64TimeFactory.h>
+// #include <RTI/time/HLAinteger64Time.h>
+// #include <RTI/time/HLAinteger64Interval.h>
+// #include <RTI/encoding/BasicDataElements.h>
 
 /* Platform specific LabView includes and lib */
 #ifdef _WIN32
@@ -77,8 +79,8 @@ namespace rti1516eLv
         virtual void cb_consumer();
         
         virtual void connectLv(
-            wstring host)
-            RTI_THROW ((Exception));
+            wstring localSettingsDesignator)
+            throw (Exception);
 
         virtual void disconnectLv();
 

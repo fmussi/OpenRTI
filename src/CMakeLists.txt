@@ -1,6 +1,7 @@
 # Just for propper recursion
 add_subdirectory(OpenRTI)
 add_subdirectory(rtinode)
+add_subdirectory(rti1516eLv)
 
 if(OPENRTI_ENABLE_RTI13)
   if(NOT WIN32 OR OPENRTI_BUILD_SHARED)

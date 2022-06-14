@@ -17,7 +17,14 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 add_subdirectory(chat-cpp-fm)
 #add_subdirectory(multithread)
 add_subdirectory(shlib)
-add_subdirectory(rti1516eLv)
+# add_subdirectory(rti1516eLv)
 # Temp subdir for testing
 #add_subdirectory(testWinCmake)
 #add_subdirectory(LabView_EventTest)
+#defint src/OpenRTI headers to be exposed
+# The directory containing the OPENRTI headers needed by 1516elv
+# set(OPENRTI_SRC_HEADER_PATH ${CMAKE_SOURCE_DIR}/src/OpenRTI)
+# set(OPENRTI_EXPORTED_HEADERS
+#         ${OPENRTI_SRC_HEADER_PATH}/RTI/Enums.h
+
+# )

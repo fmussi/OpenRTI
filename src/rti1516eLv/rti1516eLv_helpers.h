@@ -6,19 +6,22 @@
 // #endif
 
 #include "rti1516eLv_EXPORTS.h"
+#include <string.h>
+#ifdef _OPENRTI
 #include <Options.h>
 #include <StringUtils.h>
+#endif
 
 // RTI specific headers
-#include <RTI/RTIambassadorFactory.h>
-#include <RTI/RTIambassador.h>
-#include <RTI/NullFederateAmbassador.h>
-#include <RTI/time/HLAinteger64TimeFactory.h>
-#include <RTI/time/HLAinteger64Time.h>
-#include <RTI/time/HLAinteger64Interval.h>
-#include <RTI/encoding/BasicDataElements.h>
-#include <RTI/encoding/HLAvariantRecord.h>
-#include <RTI/encoding/HLAfixedRecord.h>
+// #include <RTI/RTIambassadorFactory.h>
+// #include <RTI/RTIambassador.h>
+// #include <RTI/NullFederateAmbassador.h>
+// #include <RTI/time/HLAinteger64TimeFactory.h>
+// #include <RTI/time/HLAinteger64Time.h>
+// #include <RTI/time/HLAinteger64Interval.h>
+// #include <RTI/encoding/BasicDataElements.h>
+// #include <RTI/encoding/HLAvariantRecord.h>
+// #include <RTI/encoding/HLAfixedRecord.h>
 
 /* Platform specific LabView includes and lib */
 #ifdef _WIN32
@@ -64,16 +67,39 @@ namespace rti1516eLv
         const int index,
         AttributeHandle* attributeHandleOut);
 
-    EXTERNC DLLEXPORT int attrHandleValueMapSetElementString(
+    EXTERNC DLLEXPORT int attrHandleValueMapSetHLAunicodeString(
         AttributeHandleValueMap *attrHandleValueMap,
         AttributeHandle *attributeHandle,
         const char sElem[]);
     
-    EXTERNC DLLEXPORT int attrHandleValueMapGetElementString(
+    EXTERNC DLLEXPORT int attrHandleValueMapGetHLAunicodeString(
         AttributeHandleValueMap * attrHandleValueMap,
         AttributeHandle *attributeHandle,
         LStrHandle &lSh);
 
+    EXTERNC DLLEXPORT int attrHandleValueMapSetHLAASCIIString(
+        AttributeHandleValueMap *attrHandleValueMap,
+        AttributeHandle *attributeHandle,
+        const char sElem[]);
+    
+    EXTERNC DLLEXPORT int attrHandleValueMapGetHLAASCIIString(
+        AttributeHandleValueMap * attrHandleValueMap,
+        AttributeHandle *attributeHandle,
+        LStrHandle &lSh);
+
+    EXTERNC DLLEXPORT int attrHandleValueMapSetRaw(
+        AttributeHandleValueMap* attrHandleValueMap,
+        AttributeHandle* attributeHandle,
+        Octet* data, size_t size);
+
+    EXTERNC DLLEXPORT size_t attrHandleValueMapGetRawSize(
+        AttributeHandleValueMap* attrHandleValueMap,
+        AttributeHandle* attributeHandle);
+
+    EXTERNC DLLEXPORT int attrHandleValueMapGetRaw(
+        AttributeHandleValueMap* attrHandleValueMap,
+        AttributeHandle* attributeHandle,
+        Octet* data);
     EXTERNC DLLEXPORT int attrHandleValueMapSetElementInt32(
         AttributeHandleValueMap* attrHandleValueMap,
         AttributeHandle* attributeHandle,
@@ -115,15 +141,34 @@ namespace rti1516eLv
         const int index,
         ParameterHandle* parameterHandleOut);
 
-    EXTERNC DLLEXPORT int parHandleValueMapSetElementString(
+    EXTERNC DLLEXPORT int parHandleValueMapSetHLAunicodeString(
         ParameterHandleValueMap * parHandleValueMap,
         ParameterHandle * parameterHandle,
         const char sElem[]);
 
-    EXTERNC DLLEXPORT int parHandleValueMapGetElementString(
+    EXTERNC DLLEXPORT int parHandleValueMapGetHLAunicodeString(
         ParameterHandleValueMap const * parHandleValueMap,
         ParameterHandle *parameterHandle,
         LStrHandle &lSh);
+
+    EXTERNC DLLEXPORT int parHandleValueMapSetHLAASCIIString(
+        ParameterHandleValueMap * parHandleValueMap,
+        ParameterHandle * parameterHandle,
+        const char sElem[]);
+
+    EXTERNC DLLEXPORT int parHandleValueMapGetHLAASCIIString(
+        ParameterHandleValueMap* parHandleValueMap,
+        ParameterHandle* parameterHandle,
+        LStrHandle& lSh);
+
+    EXTERNC DLLEXPORT size_t parHandleValueMapGetRawSize(
+        ParameterHandleValueMap const* parHandleValueMap,
+        ParameterHandle* parameterHandle);
+
+    EXTERNC DLLEXPORT int parHandleValueMapGetRaw(
+        ParameterHandleValueMap const * parHandleValueMap,
+        ParameterHandle *parameterHandle,
+        Octet *data);
 
     EXTERNC DLLEXPORT int parHandleValueMapSetElementInt32(
         ParameterHandleValueMap* attrHandleValueMap,

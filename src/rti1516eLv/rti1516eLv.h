@@ -6,17 +6,21 @@
 // #endif
 
 //#include "rti1516eLv_EXPORTS.h"
+#ifdef _OPENRTI
 #include <Options.h>
 #include <StringUtils.h>
+#else
+#include "rtiSimpleStringUtil.h"
+#endif  
 
 // RTI specific headers
-#include <RTI/RTIambassadorFactory.h>
-#include <RTI/RTIambassador.h>
-#include <RTI/NullFederateAmbassador.h>
-#include <RTI/time/HLAinteger64TimeFactory.h>
-#include <RTI/time/HLAinteger64Time.h>
-#include <RTI/time/HLAinteger64Interval.h>
-#include <RTI/encoding/BasicDataElements.h>
+// #include <RTI/RTIambassadorFactory.h>
+// #include <RTI/RTIambassador.h>
+// #include <RTI/NullFederateAmbassador.h>
+// #include <RTI/time/HLAinteger64TimeFactory.h>
+// #include <RTI/time/HLAinteger64Time.h>
+// #include <RTI/time/HLAinteger64Interval.h>
+// #include <RTI/encoding/BasicDataElements.h>
 
 /* Platform specific LabView includes and lib */
 #ifdef _WIN32
@@ -59,7 +63,7 @@ namespace rti1516eLv
 
     EXTERNC DLLEXPORT int connectLvEx(
         RTIambassador *rtiHandle, 
-        const char address[]);
+        const char localSettingsDesignator[]);
 
     EXTERNC DLLEXPORT int createFederationExecutionWithMIMLvEx(
     RTIambassador *rtiHandle, 

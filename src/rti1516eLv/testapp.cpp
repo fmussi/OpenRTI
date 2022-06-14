@@ -89,14 +89,14 @@ int main()
 
     registerObjectInstanceLvEx(rtiHandle,_oParticipantId,"ciccione1",&_iParticipantHdl);
 
-    attrHandleValueMapSetElementString(_aHandleValueMap,&_aNameId,"ciccione1");
+    attrHandleValueMapSetHLAunicodeString(_aHandleValueMap,&_aNameId,"ciccione1");
     // HLAunicodeString unicodeUserName(L"ciccione1");
     // _aHandleValueMap[_aNameId]= unicodeUserName.encode();
 
     updateAttributeValuesLvEx(rtiHandle,_iParticipantHdl,*_aHandleValueMap);
 
-    parHandleValueMapSetElementString(_pHandleValueMap,&_pTextId,"Ciao a tutti");
-    parHandleValueMapSetElementString(_pHandleValueMap,&_pSenderId,"ciccione1");
+    parHandleValueMapSetHLAunicodeString(_pHandleValueMap,&_pTextId,"Ciao a tutti");
+    parHandleValueMapSetHLAunicodeString(_pHandleValueMap,&_pSenderId,"ciccione1");
     // HLAunicodeString unicodeMessage(L"ciaoMerde");
   
 

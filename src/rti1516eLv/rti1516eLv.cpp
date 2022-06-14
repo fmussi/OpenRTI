@@ -75,11 +75,11 @@ namespace rti1516eLv
 
     EXTERNC int connectLvEx(
         RTIambassador *rtiHandle, 
-        const char address[])
+        const char localSettingsDesignator[])
     {
-        wstring host = chararray2wstring(address);
+        wstring wlocalSettingsDesignator = chararray2wstring(localSettingsDesignator);
         try {
-            oLvFederate->connectLv(host);
+            oLvFederate->connectLv(wlocalSettingsDesignator);
             } catch (Exception &e) {
             return lvErrorCodeFromException(e);
         }
@@ -97,9 +97,13 @@ namespace rti1516eLv
         wstring mimModuleUrl;
         wstring wFedExecName = chararray2wstring(federationExecutionName);
 
+#ifdef _OPENRTI
         FOMmoduleUrls.push_back(OpenRTI::localeToUcs(fomModules));
         mimModuleUrl = OpenRTI::localeToUcs(mimModule);
-
+#else
+        FOMmoduleUrls.push_back(DtToWString(fomModules));
+        mimModuleUrl = DtToWString(mimModule);
+#endif  
         try {
             oLvFederate->createFederationExecutionWithMIMLv(wFedExecName,FOMmoduleUrls,mimModuleUrl,L"");
             } catch (Exception &e) {
@@ -128,7 +132,11 @@ namespace rti1516eLv
         wstring wFedType = chararray2wstring(federateType);
         wstring wFedExecName = chararray2wstring(federationExecutionName);
 
+#ifdef _OPENRTI
         FOMmoduleUrls.push_back(OpenRTI::localeToUcs(additionalFomModules));
+#else
+        FOMmoduleUrls.push_back(DtToWString(additionalFomModules));
+#endif
         try {
             FederateHandle federateHandle = oLvFederate->joinFederationExecutionLv(
             wFedType,

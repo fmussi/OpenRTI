@@ -6,10 +6,16 @@
 // #endif
 
 #include "rti1516eLv_EXPORTS.h"
+#ifdef _OPENRTI
 #include <Options.h>
 #include <StringUtils.h>
+#endif
 
 // RTI specific headers
+#ifdef _OPENRTI
+#include <RTI/SpecificConfig.h>
+#include <RTI/RTI1516.h>
+#endif						
 #include <RTI/RTIambassadorFactory.h>
 #include <RTI/RTIambassador.h>
 #include <RTI/NullFederateAmbassador.h>
@@ -17,6 +23,7 @@
 #include <RTI/time/HLAinteger64Time.h>
 #include <RTI/time/HLAinteger64Interval.h>
 #include <RTI/encoding/BasicDataElements.h>
+#include <RTI/encoding/HLAfixedRecord.h>
 
 
 /* Platform specific LabView includes and lib */
